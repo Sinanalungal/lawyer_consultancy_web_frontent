@@ -53,7 +53,7 @@ const RegisterForm: React.FC = () => {
         .min(8, "Password must be at least 8 characters")
         .matches(
           /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$/,
-          "Password must contain at least one letter, one number, and one special character"
+          "Password must be valid"
         )
         .required("Password is required"),
 
@@ -82,16 +82,16 @@ const RegisterForm: React.FC = () => {
   });
 
   return (
-    <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 bg-slate-50 dark:bg-black">
-      <h2 className="font-bold text-3xl text-neutral-800 dark:text-neutral-200">
-        Create Account
+    <div className="max-w-md w-full mx-auto   rounded-lg md:rounded-2xl border shadow-2xl border-gray-100 px-8 z-50 py-8  bg-white dark:bg-black ">
+      <h2 className="font-bold text-4xl max-md:text-3xl  text-neutral-800 dark:text-neutral-200">
+        Sign Up
       </h2>
-      <p className="text-neutral-600 text-xs max-w-sm mt-2 dark:text-neutral-300">
+      {/* <p className="text-neutral-600 text-xs max-w-sm mt-2 dark:text-neutral-300">
         Provide valid credentials to create an account and enjoy the features.
-      </p>
+      </p> */}
 
-      <form className="my-8" onSubmit={formik.handleSubmit}>
-        <LabelInputContainer className="mb-4">
+      <form className="my-6" onSubmit={formik.handleSubmit}>
+        <LabelInputContainer className="pb-5 relative">
           <Input
             id="full_name"
             name="full_name"
@@ -102,14 +102,16 @@ const RegisterForm: React.FC = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
+          <div className="text-red-500 absolute text-xs pl-1 py-[5px] bottom-0 ">
           {formik.touched.full_name && formik.errors.full_name && (
-            <div className="text-red-500 text-xs pl-2 mt-1">
-              {formik.errors.full_name}
-            </div>
+            // <div className="text-red-500 text-xs pl-2 mt-1">
+              formik.errors.full_name
+            // </div>
           )}
+          </div>
         </LabelInputContainer>
 
-        <LabelInputContainer className="mb-4">
+        <LabelInputContainer className="pb-5 relative">
           <Input
             id="email"
             name="email"
@@ -120,14 +122,16 @@ const RegisterForm: React.FC = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
+          <div className="text-red-500 absolute text-xs pl-1 py-[5px] bottom-0 ">
           {formik.touched.email && formik.errors.email && (
-            <div className="text-red-500 pl-2 text-xs mt-1">
-              {formik.errors.email}
-            </div>
+            // <div className="text-red-500 pl-2 text-xs mt-1">
+              formik.errors.email
+            // </div>
           )}
+          </div>
         </LabelInputContainer>
 
-        <LabelInputContainer className="mb-4">
+        <LabelInputContainer className="pb-5 relative">
           <Input
             id="phone_number"
             name="phone_number"
@@ -138,14 +142,16 @@ const RegisterForm: React.FC = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
+          <div className="text-red-500 absolute text-xs pl-1 py-[5px] bottom-0 ">
           {formik.touched.phone_number && formik.errors.phone_number && (
-            <div className="text-red-500 pl-2 text-xs mt-1">
-              {formik.errors.phone_number}
-            </div>
+            // <div className="text-red-500 pl-2 text-xs mt-1">
+              formik.errors.phone_number
+            // </div>
           )}
+          </div>
         </LabelInputContainer>
 
-        <LabelInputContainer className="mb-4">
+        <LabelInputContainer className="pb-5 relative">
           <Input
             id="password"
             name="password"
@@ -157,14 +163,16 @@ const RegisterForm: React.FC = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
+          <div className="text-red-500 absolute text-xs pl-1 py-[5px] bottom-0 ">
           {formik.touched.password && formik.errors.password && (
-            <div className="text-red-500 pl-2 text-xs mt-1">
-              {formik.errors.password}
-            </div>
+            // <div className="text-red-500 pl-2 text-xs mt-1">
+              formik.errors.password
+            // </div>
           )}
+          </div>
         </LabelInputContainer>
 
-        <LabelInputContainer className="mb-4">
+        <LabelInputContainer className="pb-5 relative">
           <Input
             id="confirm_password"
             name="confirm_password"
@@ -176,24 +184,26 @@ const RegisterForm: React.FC = () => {
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
           />
+          <div className="text-red-500 absolute text-xs pl-1 py-[5px] bottom-0 ">
           {formik.touched.confirm_password &&
             formik.errors.confirm_password && (
-              <div className="text-red-500 pl-2 text-xs mt-1">
-                {formik.errors.confirm_password}
-              </div>
+              // <div className="text-red-500 pl-2 text-xs mt-1">
+                formik.errors.confirm_password
+              // </div>
             )}
+            </div>
         </LabelInputContainer>
 
         <button
-          className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+          className="bg-slate-900 relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-xl h-11 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
           type="submit"
           disabled={formik.isSubmitting || !formik.isValid}
         >
-          Sign up &rarr;
+          REGISTER 
           <BottomGradient />
         </button>
 
-        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-8 h-[1px] w-full" />
+        <div className="bg-gradient-to-r from-transparent via-neutral-300 dark:via-neutral-700 to-transparent my-5 h-[1px] w-full" />
 
         <div className="flex flex-col space-y-4">
           <GoogleLoginButton />

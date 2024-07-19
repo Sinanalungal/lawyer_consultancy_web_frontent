@@ -1,24 +1,22 @@
-import React from "react";
+import React from 'react';
 
 interface PageTitleProps {
-  title:string;
-  subtitle?:string;
+  title: string;
+  description: string;
 }
 
-const PageTitle: React.FC<PageTitleProps> = ({title,subtitle}) => {
+const PageTitle: React.FC<PageTitleProps> = ({ title, description }) => {
   return (
-    <section className="gray-100  dark:bg-dark">
-      <div className="mx-auto px-4  sm:container">
-        <div className="flex flex-col items-center">
-          <h2 className="mb-2 text-4xl font-semibold  text-dark dark:text-white">
-            {title.toUpperCase()}
-          </h2>
-          {subtitle&&(<p className="text-sm font-medium text-body-color dark:text-dark-6">
-            {subtitle}
-          </p>)}
-        </div>
+    <div className="w-full">
+      <h1 className="w-full max-[400px]:text-3xl mt-14 text-center text-gray-700 font-semibold text-3xl">
+        {title}
+      </h1>
+      <div className="w-full flex justify-center">
+        <p className="mb-16 max-w-2xl text-center text-sm px-12 text-gray-500 mt-3">
+          {description}
+        </p>
       </div>
-    </section>
+    </div>
   );
 };
 

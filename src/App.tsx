@@ -6,7 +6,7 @@ import LoginPage from './pages/Common/Login/LoginPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import RegisterPage from './pages/Common/Register/RegisterPage';
 import OtpPage from './pages/Common/Otp/OtpPage';
-import BookAppointment from './pages/User/Booking';
+import BookAppointment from './pages/User/BookingAppointment/BookingAppointment';
 import UserRoutes from './routes/UserRoutes';
 import AdminRoutes from './routes/AdminRoutes';
 import Dashboard from './pages/Admin/Dashboard/Dashboard';
@@ -35,7 +35,7 @@ function App() {
             <Route path="/login" element={<LoginPage/>} />
             <Route path="/register" element={<RegisterPage/>} />
             <Route path="/otp" element={<OtpPage/>} />
-            <Route path="/date" element={<BookAppointment/>} />
+            {/* <Route path="/date" element={<BookAppointment/>} /> */}
             <Route path="/user/*" element={<UserRoutes />} />
             <Route path="/admin/*" element={<AdminRoutes />} />
             <Route path="/dash" element={<Dashboard/>} />

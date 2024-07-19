@@ -129,9 +129,9 @@ const OtpForm: React.FC<OtpFormProps> = () => {
 
   return (
     <>
-      <main className="w-full min-h-screen flex">
-        <div className="flex-1 flex items-center h-full my-auto justify-center">
-          <div className="w-full max-w-md space-y-8 px-4 bg-slate-50 text-gray-600 sm:px-0">
+      <main className="w-full min-h-screen flex ">
+        <div className="flex-1 flex items-center h-full  my-auto justify-center">
+          <div className="w-full max-w-md space-y-8  bg-white py-4 text-gray-600 px-8 rounded-xl shadow-2xl">
             <div className="">
               <div className="mt-5 space-y-2">
                 <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">
@@ -168,7 +168,7 @@ const OtpForm: React.FC<OtpFormProps> = () => {
                 />
               </div>
 
-              <div className="w-full flex justify-end">
+              <div className="w-full flex justify-center">
                 {seconds > 0 ? (
                   <p className="font-semibold text-sm cursor-pointer mt-4 mb-5 text-gray-700">
                     {`00:${seconds > 9 ? seconds : `0${seconds}`}`}
@@ -184,11 +184,11 @@ const OtpForm: React.FC<OtpFormProps> = () => {
               </div>
 
               <button
-                className="bg-gradient-to-br relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-md h-10 font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
+                className="bg-slate-900 relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-xl h-11  font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
                 type="submit"
                 disabled={loader}
               >
-                {loader ? "Verifying..." : "Verify →"}
+                {loader ? "Verifying..." : "Verify"}
                 <BottomGradient />
               </button>
             </form>
