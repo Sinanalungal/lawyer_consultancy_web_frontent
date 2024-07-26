@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GiSuitcase } from "react-icons/gi";
 
 interface DrawerProps {
@@ -7,6 +7,18 @@ interface DrawerProps {
 }
 
 const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose }) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
+
   return (
     <div
       className={`fixed inset-0 z-50 transition-transform transform ${
@@ -14,8 +26,8 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose }) => {
       }`}
     >
       <div className="fixed inset-0 bg-black opacity-50" onClick={onClose}></div>
-      <div className="absolute  right-0 top-0 w-full max-w-md h-full bg-white shadow-xl p-4 overflow-y-auto">
-      <button className="absolute text-2xl  top-1 right-7 text-gray-600" onClick={onClose}>
+      <div className="absolute right-0 top-0 w-full max-w-md h-full bg-white shadow-xl p-4 overflow-y-auto">
+        <button className="absolute text-2xl top-1 right-7 text-gray-600" onClick={onClose}>
           &times;
         </button>
         <div className="p-4">

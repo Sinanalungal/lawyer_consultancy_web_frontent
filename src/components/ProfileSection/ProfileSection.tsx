@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface ProfileSectionProps {
   name: string;
@@ -63,9 +64,9 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <button className="py-3.5 px-5 rounded-full bg-indigo-600 text-white font-semibold text-base leading-7 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-gray-100 hover:bg-indigo-700">
+            <Link to={'../../../../user/edit-profile'}><button className="py-3.5 px-5 rounded-full bg-indigo-600 text-white font-semibold text-base leading-7 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-gray-100 hover:bg-indigo-700">
               Edit Profile
-            </button>
+            </button></Link>
             <button className="py-3.5 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-base leading-7 shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-100">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

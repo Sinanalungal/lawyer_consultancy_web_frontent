@@ -1,12 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import RegisterForm from "../../../components/Auth/RegisterForm";
+import GoogleLoginButton from "../../../components/GoogleLoginButton/GoogleLoginButton";
+
 
 const RegisterPage: React.FC = () => {
-  const {loading, registered } = useSelector((state: any) => state.register);
-  const { isAuthenticated, role } = useSelector(
-    (state: any) => state.login
+  const { loading, registered } = useSelector((state: any) => state.register);
+  const { isAuthenticated, role } = useSelector((state: any) => state.login);
+  const [loginWithCredentials, setLoginWithCredentials] = useState<boolean>(
+    false
   );
   // const { lawyers, fetchLawyerData } = useFetchLawyerData();
   const navigate = useNavigate();
@@ -31,31 +34,47 @@ const RegisterPage: React.FC = () => {
   return (
     <>
       {!loading && (
-        <div className="2xl:container flex justify-center items-center mx-auto  bg-slate-100 bg-cover 3xl:bg-none lg:bg-[url('./still-life-with-scales-justice.webp')] sm:bg-cover ">
-        <div className="w-screen min-h-screen grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-1">
-          <div className="flex justify-center items-center px-4 py-10">
-            <RegisterForm />
+        <div className="3xl:container  min-h-screen flex mx-auto">
+            <div className={`w-[600px]  2xl:w-[800px] xl:h-screen  3xl:h-full h-full 3xl:hidden max-lg:hidden bg-slate-500 ${loginWithCredentials && 'md:h-[700px]'}`}>
+            <img
+              src="/pexels-sora-shimazaki-5669602.webp"
+              alt=""
+              className="h-full 2xl:w-[800px] xl:flex-1 xl:fixed xl:h-screen 3xl:h-full  min-h-screen w-[600px] object-cover"
+            />
+          </div>
+          <div className="w-full flex flex-col xl:flex-1 max-w-4xl py-8 mx-auto justify-center items-center">
+            <div className={!loginWithCredentials ? " p-5 " : "w-full  px-10"}>
+              {!loginWithCredentials ? (
+                <>
+                  <h1 className="text-2xl text-center mb-12 font-bold">
+                    Sign up to Lawyer Consultancy
+                  </h1>
+                  <GoogleLoginButton text="Sign up with google" className="text-sm sm:text-base sm:h-16 bg-black text-white h-14 rounded-full"/>
+
+                  <div className="my-5 relative w-[80%] flex justify-center mx-auto border-t border-gray-300 ">
+                    <p className="absolute top-0 -mt-3 text-gray-500  bg-white px-5">
+                      or
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setLoginWithCredentials(true)}
+                    className="w-full bg-white flex my-4 justify-center items-center font-semibold text-sm sm:text-base sm:h-16 h-14 rounded-full gap-2 text-black border border-gray-300"
+                  >
+                    Sign up with Credentials
+                  </button>
+                </>
+              ) : (
+                <>
+                  <RegisterForm/>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-        // <div className="container mx-auto flex items-center justify-center min-h-screen">
-        //   <main className="w-full mx-auto flex">
-        //     <div className="flex-1 hidden lg:flex justify-end">
-        //       <img
-        //         src="./landing_page_lawyer_image.webp"
-        //         className="object-cover    h-full"
-        //         alt="Lawyers"
-        //       />
-        //     </div>
-
-        //     <div className="flex-1 flex items-center justify-center">
-        //       <div className="w-full space-y-8  bg-slate-50 px-4 text-gray-600">
-        //         <RegisterForm />
-        //       </div>
-        //     </div>
-        //   </main>
-        // </div>
       )}
+      
     </>
   );
 };

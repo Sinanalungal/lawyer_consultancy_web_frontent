@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import OtpForm from "../../../components/Auth/OtpForm";
 
 const OtpPage: React.FC = () => {
-  const { registered, user, loading } = useSelector(
+  const {  user, loading } = useSelector(
     (state: any) => state.register
   );
   const { isAuthenticated, role } = useSelector((state: any) => state.login);
@@ -36,30 +36,21 @@ const OtpPage: React.FC = () => {
   return (
     <>
       {!loading && (
-        <div className="2xl:container flex justify-center items-center mx-auto  bg-slate-100 bg-cover 3xl:bg-none lg:bg-[url('./still-life-with-scales-justice.webp')] sm:bg-cover ">
-        <div className="w-screen min-h-screen grid grid-cols-1 lg:grid-cols-2 3xl:grid-cols-1">
-          <div className="flex justify-center items-center px-4 py-10">
-            <OtpForm />
+        <div className="3xl:container min-h-screen flex mx-auto">
+          <div className="w-[600px]  2xl:w-[800px] xl:h-screen 3xl:h-full h-full 3xl:hidden max-lg:hidden bg-slate-500">
+            <img
+              src="./pexels-sora-shimazaki-5669602.webp"
+              alt=""
+              className="h-full 2xl:w-[800px] xl:flex-1 xl:fixed xl:h-screen 3xl:h-full  min-h-screen w-[600px] object-cover"
+            />
+          </div>
+          <div className="w-full flex xl:flex-1 flex-col max-w-4xl mx-auto justify-center items-center">
+            <div className="w-full py-8 px-10">
+              <OtpForm />
+            </div>
           </div>
         </div>
-      </div>
-        // <div className="container mx-auto  flex items-center justify-center min-h-screen">
-        //   <main className="w-full mx-auto flex">
-        //     <div className="flex-1 hidden lg:flex justify-end">
-        //       <img
-        //         src="./landing_page_lawyer_image.webp"
-        //         className="object-cover h-full"
-        //         alt="Lawyers"
-        //       />
-        //     </div>
-
-        //     <div className="flex-1 flex items-center bg-slate-50 justify-center">
-        //       <div className="w-full space-y-8 px-4  text-gray-600">
-        //         <OtpForm />
-        //       </div>
-        //     </div>
-        //   </main>
-        // </div>
+      
       )}
     </>
   );

@@ -38,11 +38,11 @@ const Modal: FC<ModalProps> = ({ modalOpen, setModalOpen, children }) => {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ${!modalOpen && "hidden"}`}
+      className={`fixed min-h-screen w-screen  inset-0 bg-black flex items-center justify-center px-2 bg-opacity-90  ${!modalOpen && "hidden"}`}
     >
       <div
         ref={modal}
-        className="w-full max-w-[1000px] max-h-screen overflow-y-scroll shadow-lg border border-gray-100 bg-white px-8 py-12 text-center dark:bg-dark-2 md:px-[70px] md:py-[60px]"
+        className="w-full max-w-xl max-h-screen  text-xs rounded overflow-y-scroll shadow-lg border  border-gray-100 bg-white px-8 py-12 dark:bg-dark-2 md:px-[70px] md:py-[60px]"
         style={{ scrollbarWidth: "none" }}
       >
         <p className="float-end -mt-6 cursor-pointer" onClick={() => setModalOpen(false)}>

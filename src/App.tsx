@@ -1,54 +1,64 @@
-import React, { useEffect, useState } from 'react';
+import  { Suspense, lazy, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import LandingPage from './pages/Common/LandingPage/LandingPage';
-import LoginPage from './pages/Common/Login/LoginPage';
 import { GoogleOAuthProvider } from '@react-oauth/google';
-import RegisterPage from './pages/Common/Register/RegisterPage';
-import OtpPage from './pages/Common/Otp/OtpPage';
-import BookAppointment from './pages/User/BookingAppointment/BookingAppointment';
-import UserRoutes from './routes/UserRoutes';
-import AdminRoutes from './routes/AdminRoutes';
-import Dashboard from './pages/Admin/Dashboard/Dashboard';
+import { useSelector } from 'react-redux';
+import Modal from './components/Modal/Modal';
+import ExtraDataAccessingForm from './components/Auth/ExtraDataAccessingForm';
+
+// Lazy load pages
+const LandingPage = lazy(() => import('./pages/Common/LandingPage/LandingPage'));
+const LoginPage = lazy(() => import('./pages/Common/Login/LoginPage'));
+const RegisterPage = lazy(() => import('./pages/Common/Register/RegisterPage'));
+const OtpPage = lazy(() => import('./pages/Common/Otp/OtpPage'));
+const ForgotPassword = lazy(() => import('./pages/Common/ForgotPassword/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/Common/ResetPassword/ResetPassword'));
+// const BookAppointment = lazy(() => import('./pages/User/BookingAppointment/BookingAppointment'));
+const Dashboard = lazy(() => import('./pages/Admin/Dashboard/Dashboard'));
+
+// Lazy load routes
+const UserRoutes = lazy(() => import('./routes/UserRoutes'));
+const AdminRoutes = lazy(() => import('./routes/AdminRoutes'));
+// const LawyerRoute = lazy(() => import('./routes/LawyerRoute'));
 
 function App() {
-
-  // const { dataRequired } = useSelector((state: any) => state.login);
+  const { dataRequired } = useSelector((state: any) => state.login);
   const [isOpen, setIsOpen] = useState(false);
-  
-  // useEffect(() => {
-  //   setIsOpen(dataRequired); // Update isOpen based on dataRequired
-  // }, [dataRequired]);
+
+  useEffect(() => {
+    setIsOpen(dataRequired); // Update isOpen based on dataRequired
+  }, [dataRequired]);
   console.log(process.env.VITE_CLIENT_ID);
 
   return (
     <>
-     {/* {isOpen && (<Modal isOpen={isOpen} onClose={() => {}}>
-        <ExtraDataAccess />
-      </Modal>)} */}
-
-      <Router>
+      {isOpen ? (<Modal  modalOpen={isOpen} setModalOpen={() => {}}>
+        <ExtraDataAccessingForm />
+        
+      </Modal>):
+      (<Router>
         <GoogleOAuthProvider clientId={process?.env.VITE_CLIENT_ID || ''}>
-          <Routes>
-
-            <Route path='/' element={<LandingPage/>} />
-            <Route path="/login" element={<LoginPage/>} />
-            <Route path="/register" element={<RegisterPage/>} />
-            <Route path="/otp" element={<OtpPage/>} />
-            {/* <Route path="/date" element={<BookAppointment/>} /> */}
-            <Route path="/user/*" element={<UserRoutes />} />
-            <Route path="/admin/*" element={<AdminRoutes />} />
-            <Route path="/dash" element={<Dashboard/>} />
-            
-            {/* <Route path="/forgotpassword" element={<ForgotPasswordForm />} />
-            <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
-            <Route path="/lawyer/*" element={<LawyerRoute />} /> */}
-          
-          </Routes>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Routes>
+              <Route path='/' element={<LandingPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/otp" element={<OtpPage />} />
+              <Route path="/forgotpassword" element={<ForgotPassword />} />
+              <Route path="/reset-password/:token" element={<ResetPassword />} />
+              {/* <Route path="/date" element={<BookAppointment />} /> */}
+              <Route path="/user/*" element={<UserRoutes />} />
+              <Route path="/admin/*" element={<AdminRoutes />} />
+              <Route path="/dash" element={<Dashboard />} />
+              {/* <Route path="/lawyer/*" element={<LawyerRoute />} /> */}
+            </Routes>
+          </Suspense>
         </GoogleOAuthProvider>
-      </Router>
+      </Router>)
+      }
+
+      
     </>
-  )
+  );
 }
 
-export default App
+export default App;

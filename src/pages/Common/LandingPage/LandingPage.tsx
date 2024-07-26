@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from "react-redux";
 import {  useNavigate } from "react-router-dom";
 import { fetchLawyerList } from "../../../services/apiService";
 import useRole from "../../../hooks/useRole";
-import Hero from "../../../components/Common/Hero";
-import Navbar from "../../../components/Common/Navbar";
-import Team from "../../../components/TeamSection/Team";
 import Services from "../../../components/Common/Services";
-import StoriesComponent from "../../../components/Common/StoriesComponent";
-import Footer from "../../../components/Footer/Footer";
 import { logout } from "../../../redux/slice/LoginActions";
+import HeroSection from "./Checking";
+import UserLayout from "../../../layouts/UserLayout/UserLayout";
+import ThirdLayer from "./ThirdLayer";
+import Statistic from "../../../components/Statistics/Statistics";
+import TestimonalCarousel from "../../../components/Carousel/TestimonalCarousel";
 
 const LandingPage: React.FC = () => {
   const { registered } = useSelector((state: any) => state.register);
@@ -33,17 +33,17 @@ const LandingPage: React.FC = () => {
       dispatch(logout());
     }
 
-    fetchLawyerData();
+    // fetchLawyerData();
   },[dispatch, isAuthenticated, navigate, registered, authTokens, role]);
   
-  const fetchLawyerData = async () => {
-    try {
-      const lawyerData = await fetchLawyerList();
-      setLawyers(lawyerData);
-    } catch (error) {
-      console.error("Error fetching lawyers:", error);
-    }
-  };
+  // const fetchLawyerData = async () => {
+  //   try {
+  //     const lawyerData = await fetchLawyerList();
+  //     setLawyers(lawyerData);
+  //   } catch (error) {
+  //     console.error("Error fetching lawyers:", error);
+  //   }
+  // };
 
   const handleRoleRedirect = (role: string) => {
     switch (role) {
@@ -69,15 +69,54 @@ const LandingPage: React.FC = () => {
     
   }));
   
+  const statsData = [
+    { value: "144", label: "Users" },
+    { value: "12.9", label: "Lawyers" },
+    { value: "27.3", label: "Consultation" },
+    
+  ];
+  const slides = [
+    {
+      id: 1,
+      image: 'https://pagedone.io/asset/uploads/1696229969.png',
+      text: 'Pagedone has made it possible for me to stay on top of my portfolio and make informed decisions quickly and easily.',
+      author: 'Jane D',
+    },
+    {
+      id: 2,
+      image: 'https://pagedone.io/asset/uploads/1696229994.png',
+      text: 'Thanks to pagedone, I feel more informed and confident about my investment decisions than ever before.',
+      author: 'Harsh P.',
+    },
+    {
+      id: 3,
+      image: 'https://www.befunky.com/images/wp/wp-2021-01-linkedin-profile-picture-after.jpg?auto=avif,webp&format=jpg&width=944',
+      text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetimply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry..',
+      author: 'Janniey',
+    },
+    // Add more slides as needed
+  ];
 
   return (
     <>
-      {!isAuthenticated && <Navbar />}
-      <Hero />
+      
+      {/* <Hero /> */}
+      <UserLayout>
+      <HeroSection
+        title="Legal Advice Online"
+        title1="From Online Top Lawyers"
+        subtitle="It is a long established fact that a reader will be distracted by the readable content of a page"
+        buttonText="Explore Lawyers"
+        buttonLink="#"
+        borderText="Lawyer Consultancy Web"
+      />
+      <Statistic stats={statsData} />
       <Services />
-      <Team teamMembers={teamMembers} />
-      <StoriesComponent/>
-      {!isAuthenticated && <Footer/>}
+      {/* <Team teamMembers={teamMembers} /> */}
+      <ThirdLayer/>
+      {/* <StoriesComponent/> */}
+      <TestimonalCarousel slides={slides} />
+      </UserLayout>
     </>
   );
 };

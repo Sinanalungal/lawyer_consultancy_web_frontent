@@ -45,21 +45,24 @@ const lawyers: Lawyer[] = [
     image:
       "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
     online: true,
-  },{
+  },
+  {
     name: "Dr. Ibrahim M. Kes, Sp. B",
     status: "Online",
     specialization: "Surgeon",
     image:
       "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
     online: true,
-  },{
+  },
+  {
     name: "Dr. Ibrahim M. Kes, Sp. B",
     status: "Online",
     specialization: "Surgeon",
     image:
       "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
     online: true,
-  },{
+  },
+  {
     name: "Dr. Ibrahim M. Kes, Sp. B",
     status: "Online",
     specialization: "Surgeon",
@@ -71,50 +74,47 @@ const lawyers: Lawyer[] = [
 ];
 
 const departments: string[] = [
-  'All',
-  'Family Lawyer',
-  'Criminal Defense Lawyer',
-  'Corporate Lawyer',
-  'Intellectual Property Lawyer',
-  'Immigration Lawyer',
+  "All",
+  "Family Lawyer",
+  "Criminal Defense Lawyer",
+  "Corporate Lawyer",
+  "Intellectual Property Lawyer",
+  "Immigration Lawyer",
 ];
 
 const experienceLevels: string[] = [
-  'All',
-  'Entry Level',
-  'Mid Level',
-  'Senior Level',
-  'Expert',
+  "All",
+  "Entry Level",
+  "Mid Level",
+  "Senior Level",
+  "Expert",
 ];
 
-const ratings: string[] = [
-  'All',
-  '1 ⭐',
-  '2 ⭐',
-  '3 ⭐',
-  '4 ⭐',
-  '5 ⭐',
-];
+const ratings: string[] = ["All", "1 ⭐", "2 ⭐", "3 ⭐", "4 ⭐", "5 ⭐"];
 
 const LawyerListing: React.FC = () => {
-  const [selectedDepartment, setSelectedDepartment] = useState<string>(departments[0]);
+  const [selectedDepartment, setSelectedDepartment] = useState<string>(
+    departments[0]
+  );
   const [selectedRating, setSelectedRating] = useState<string>(ratings[0]);
-  const [selectedExperience, setSelectedExperience] = useState<string>(experienceLevels[0]);
+  const [selectedExperience, setSelectedExperience] = useState<string>(
+    experienceLevels[0]
+  );
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
 
   const handleCancel = () => {
-    setOpenFilter(false); // Close the filter without applying changes
+    setOpenFilter(false); 
   };
 
   const handleUpdate = () => {
     // Implement the logic to apply the filters, e.g., updating state or making an API call
-    console.log('Filters applied:', {
+    console.log("Filters applied:", {
       selectedDepartment,
       selectedExperience,
       selectedRating,
     });
-    setOpenFilter(false); // Optionally close the filter after applying changes
+    setOpenFilter(false);
   };
 
   const toggleDrawer = () => {
@@ -123,14 +123,18 @@ const LawyerListing: React.FC = () => {
 
   return (
     <UserLayout>
-      <section className="2xl:container min-h-screen mx-auto">
+      <section className=" min-h-screen mx-auto">
+        {/* <div className="b  h-20 w-screen flex justify-center items-center p-3 absolute"><div className=" text-white w-[400px]  bg-slate-50 h-full">dfdfdfdf</div></div> */}
         <PageTitle
-        title="LAWYERS"
-        description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-      />
+          title="LAWYERS"
+          description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+        />
 
         <div className="w-full h-12 border-gray-300 flex justify-between items-center border-t border-b px-10">
-          <div onClick={() => setOpenFilter(!openFilter)} className="flex text-xs items-center gap-1 h-full px-3 border-r cursor-pointer hover:bg-gray-200 rounded">
+          <div
+            onClick={() => setOpenFilter(!openFilter)}
+            className="flex text-xs items-center gap-1 h-full px-3 border-r cursor-pointer hover:bg-gray-200 rounded"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 16 16"
@@ -141,25 +145,32 @@ const LawyerListing: React.FC = () => {
             </svg>
             <p className="text-slate-600 font-medium">Filters</p>
           </div>
-          {/* <div className="text-sm text-slate-600 items-center font-medium flex gap-1 cursor-pointer px-3 h-full hover:bg-gray-200 rounded">
-            <p>Sort</p>
+          <div className="text-xs text-slate-600 items-center font-medium flex gap-1 cursor-pointer px-3 h-full hover:bg-gray-200 rounded">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 20 20"
+              viewBox="0 0 24 24"
               fill="currentColor"
               className="size-4"
             >
               <path
                 fillRule="evenodd"
-                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                clipRule="evenodd"
+                d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                clip-rule="evenodd"
               />
             </svg>
-          </div> */}
+
+            <p>Search</p>
+          </div>
         </div>
 
         <div className="flex relative justify-center">
-          <div className={openFilter ? "absolute p-10 pb-20 bg-white border-b max-sm:grid-cols-1 grid-cols-2 w-full sm:px-16 grid lg:grid-cols-3" : 'hidden'}>
+          <div
+            className={
+              openFilter
+                ? "absolute p-10 pb-20 bg-white border-b max-sm:grid-cols-1 grid-cols-2 w-full sm:px-16 grid lg:grid-cols-3"
+                : "hidden"
+            }
+          >
             <div className="sm:border-r-2 flex justify-start">
               <DepartmentSelector
                 title="Select Department"
@@ -206,10 +217,7 @@ const LawyerListing: React.FC = () => {
           </div>
           <div className="grid pt-16 xl:grid-cols-4 lg:grid-cols-3 grid-cols-1 sm:grid-cols-2 2xl:grid-cols-5 3xl:grid-cols-7 gap-8">
             {lawyers.map((lawyer, index) => (
-              <div
-                key={index}
-                onClick={() => setIsDrawerOpen(true)}
-              >
+              <div key={index} onClick={() => setIsDrawerOpen(true)}>
                 <LawyerListingCard lawyer={lawyer} />
               </div>
             ))}

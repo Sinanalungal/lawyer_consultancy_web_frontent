@@ -6,14 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { AppDispatch } from "../../redux/store";
 import { IoIosClose } from "react-icons/io";
 import { useToast } from "../Toast/ToastManager";
+import CustomButton from "../Button/Button";
 
 interface OtpFormProps {
-  // email: string; // Assuming the email is required for OTP verification
+  // email: string;
 }
-// interface OtpSubmitProp {
-//     email: string;
-//     otp:string;
-// }
 
 const OtpForm: React.FC<OtpFormProps> = () => {
   const [otp, setOtp] = useState<string>("");
@@ -21,7 +18,6 @@ const OtpForm: React.FC<OtpFormProps> = () => {
   const [closed, setClosed] = useState<boolean>(false);
   const [seconds, setSeconds] = useState<number>(0);
   const { user, timer } = useSelector((state: any) => state.register);
-
   const { addToast } = useToast();
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
@@ -31,22 +27,14 @@ const OtpForm: React.FC<OtpFormProps> = () => {
     e.preventDefault();
     setLoader(true);
     try {
-      const response = await dispatch(
-        OtpVerification({ email: user?.email, otp: otp })
-      );
-      console.log(response);
-
+      const response = await dispatch(OtpVerification({ email: user?.email, otp: otp }));
       if (response.meta.requestStatus === "fulfilled") {
         setLoader(false);
         addToast("success", "OTP verified successfully!");
         navigate("../login");
       } else {
         addToast("danger", response.payload.message);
-
         setLoader(false);
-        console.log(response);
-
-        // Handle other cases if needed
       }
     } catch (error) {
       addToast("danger", "Something went wrong");
@@ -55,29 +43,42 @@ const OtpForm: React.FC<OtpFormProps> = () => {
     }
   };
 
-  // Function to handle OTP input change
   const handleInputChange = (otpValue: string) => {
     setOtp(otpValue);
   };
 
-  // Function to render each input in the OTP input component
-  const renderInput = (inputProps: any, index: number) => {
-    return (
-      <input
-        {...inputProps}
-        key={index}
-        style={{
-          width: "3rem",
-          height: "3rem",
-          fontSize: "1.5rem",
-          textAlign: "center",
-          margin: "0 0.5rem",
-          border: "1px solid black",
-          borderRadius: "0.25rem",
-        }}
-      />
-    );
-  };
+  const renderInput = (inputProps: any, index: number) => (
+    <input
+      {...inputProps}
+      key={index}
+      style={{
+        width: "3rem",
+        height: "3rem",
+        fontSize: "1.5rem",
+        textAlign: "center",
+        margin: "0 0.5rem",
+        border: "1px solid gray",
+        borderRadius: "0.25rem",
+      }}
+    />
+  );
+
+  const renderInput1 = (inputProps: any, index: number) => (
+    <input
+      {...inputProps}
+      key={index}
+      style={{
+        width: "20px",
+        height: "20px",
+        fontSize: "11px",
+        textAlign: "center",
+        margin: "0 0.5rem",
+        border: "1px solid gray",
+        borderRadius: "0.25rem",
+      }}
+    />
+  );
+
   useEffect(() => {
     console.log("Timer:", timer);
     const timerId = setInterval(() => {
@@ -101,15 +102,13 @@ const OtpForm: React.FC<OtpFormProps> = () => {
   const resendOtp = async () => {
     try {
       const response = await dispatch(ResendOtp(user));
-      console.log(response, "response fo resend otp");
-
       if (response.meta.requestStatus === "rejected") {
         addToast("danger", "Timeout error, please register once again.");
         navigate("/register");
       } else {
-        
-        setSeconds(response.timer); 
-        startResendTimer(); 
+        const timerString = response.payload.timer as string; // Ensure timer is treated as string
+        setSeconds(calculateTimeLeft(timerString));
+        startResendTimer();
         addToast("success", "OTP sent successfully");
       }
     } catch (error) {
@@ -129,81 +128,65 @@ const OtpForm: React.FC<OtpFormProps> = () => {
 
   return (
     <>
-      <main className="w-full min-h-screen flex ">
-        <div className="flex-1 flex items-center h-full  my-auto justify-center">
-          <div className="w-full max-w-md space-y-8  bg-white py-4 text-gray-600 px-8 rounded-xl shadow-2xl">
-            <div className="">
-              <div className="mt-5 space-y-2">
-                <h3 className="text-gray-800 text-2xl font-bold sm:text-3xl">
-                  OTP VERIFICATION
-                </h3>
-              </div>
-            </div>
+      <h1 className="text-2xl text-center mb-10 font-bold">Otp Verification</h1>
 
-            <form onSubmit={handleSubmit}>
-              <div
-                className={`${
-                  closed
-                    ? "hidden"
-                    : "bg-yellow-100 mb-4 text-yellow-600 text-xs p-4 w-full rounded-md flex justify-between"
-                }`}
-              >
-                <span>OTP sent to your phone number.</span>
-                <span
-                  className="text-gray-600 cursor-pointer"
-                  onClick={() => setClosed(true)}
-                >
-                  <IoIosClose size={18} />
-                </span>
-              </div>
-
-              <div className="w-full flex justify-center">
-                <OtpInput
-                  value={otp}
-                  onChange={handleInputChange}
-                  numInputs={6}
-                  renderSeparator={<span> </span>}
-                  inputStyle="otp-input"
-                  renderInput={renderInput}
-                />
-              </div>
-
-              <div className="w-full flex justify-center">
-                {seconds > 0 ? (
-                  <p className="font-semibold text-sm cursor-pointer mt-4 mb-5 text-gray-700">
-                    {`00:${seconds > 9 ? seconds : `0${seconds}`}`}
-                  </p>
-                ) : (
-                  <p
-                    onClick={resendOtp}
-                    className="font-semibold text-xs cursor-pointer mt-3 mb-5 hover:underline text-gray-700"
-                  >
-                    Resend OTP?
-                  </p>
-                )}
-              </div>
-
-              <button
-                className="bg-slate-900 relative group/btn from-black dark:from-zinc-900 dark:to-zinc-900 to-neutral-600 block dark:bg-zinc-800 w-full text-white rounded-xl h-11  font-medium shadow-[0px_1px_0px_0px_#ffffff40_inset,0px_-1px_0px_0px_#ffffff40_inset] dark:shadow-[0px_1px_0px_0px_var(--zinc-800)_inset,0px_-1px_0px_0px_var(--zinc-800)_inset]"
-                type="submit"
-                disabled={loader}
-              >
-                {loader ? "Verifying..." : "Verify"}
-                <BottomGradient />
-              </button>
-            </form>
-          </div>
+      <form onSubmit={handleSubmit}>
+        <div
+          className={`${
+            closed ? "hidden" : "bg-slate-50 mb-4 max-w-md mx-auto border-gray-200 border text-gray-600 text-xs p-4 w-full rounded-md flex justify-between"
+          }`}
+        >
+          <span>OTP sent to your phone number.</span>
+          <span
+            className="text-gray-600 cursor-pointer"
+            onClick={() => setClosed(true)}
+          >
+            <IoIosClose size={18} />
+          </span>
         </div>
-      </main>
-    </>
-  );
-};
 
-const BottomGradient = () => {
-  return (
-    <>
-      <span className="group-hover/btn:opacity-100 block transition duration-500 opacity-0 absolute h-px w-full -bottom-px inset-x-0 bg-gradient-to-r from-transparent via-cyan-500 to-transparent" />
-      <span className="group-hover/btn:opacity-100 blur-sm block transition duration-500 opacity-0 absolute h-px w-1/2 mx-auto -bottom-px inset-x-10 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
+        <div className="w-full max-[400px]:hidden flex justify-center">
+          <OtpInput
+            value={otp}
+            onChange={handleInputChange}
+            numInputs={6}
+            renderSeparator={<span> </span>}
+            inputStyle="otp-input"
+            renderInput={renderInput}
+          />
+        </div>
+        <div className="w-full min-[400px]:hidden flex justify-center">
+          <OtpInput
+            value={otp}
+            onChange={handleInputChange}
+            numInputs={6}
+            renderSeparator={<span> </span>}
+            inputStyle="otp-input"
+            renderInput={renderInput1}
+          />
+        </div>
+
+        <div className="w-full flex justify-center">
+          {seconds > 0 ? (
+            <p className="font-semibold text-sm cursor-pointer mt-4 mb-5 text-gray-700">
+              {`00:${seconds > 9 ? seconds : `0${seconds}`}`}
+            </p>
+          ) : (
+            <p
+              onClick={resendOtp}
+              className="font-semibold text-xs cursor-pointer mt-3 mb-5 hover:underline text-gray-700"
+            >
+              Resend OTP?
+            </p>
+          )}
+        </div>
+
+        <CustomButton
+          text={`${loader ? "Verifying..." : "Verify"}`}
+          type="submit"
+          className={`bg-[#131314] py-3 w-full text-white hover:bg-slate-900 ${loader && "disabled"}`}
+        />
+      </form>
     </>
   );
 };

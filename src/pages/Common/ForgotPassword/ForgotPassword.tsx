@@ -1,11 +1,12 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import ForgotPasswordForm from "../../../components/Auth/ForgotPasswordForm";
 import { useSelector } from "react-redux";
-import LoginForm from "../../../components/Auth/LoginForm";
+import { useNavigate } from "react-router-dom";
 
-const LoginPage: React.FC = () => {
+const ForgotPassword: React.FC = () => {
+
   const { registered } = useSelector((state: any) => state.register);
-  const { isAuthenticated, role, loader } = useSelector(
+  const { isAuthenticated, role } = useSelector(
     (state: any) => state.login
   );
   // const { lawyers, fetchLawyerData } = useFetchLawyerData();
@@ -26,11 +27,10 @@ const LoginPage: React.FC = () => {
         navigate("/admin");
       }
     }
-  }, [isAuthenticated, registered, navigate, role]);
+  }, [isAuthenticated,  registered, navigate, role]);
 
   return (
     <>
-      {!loader && (
         <div className="3xl:container min-h-screen flex mx-auto">
         <div className="w-[600px]  2xl:w-[800px] xl:h-screen 3xl:h-full h-full 3xl:hidden max-lg:hidden bg-slate-500">
             <img
@@ -41,15 +41,12 @@ const LoginPage: React.FC = () => {
           </div>
         <div className="w-full flex xl:flex-1 flex-col max-w-4xl mx-auto justify-center items-center">
           <div className= "w-full py-8 px-10">
-            
-                <LoginForm/>
-
+            <ForgotPasswordForm/>
           </div>
         </div>
       </div>
-      )}
     </>
   );
 };
 
-export default LoginPage;
+export default ForgotPassword;
