@@ -11,7 +11,7 @@ interface LoginState {
 
 const UserPrivateRoute: React.FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const { isAuthenticated, role } = useSelector(
     (state: RootState) => state.login as LoginState
@@ -20,11 +20,13 @@ const UserPrivateRoute: React.FC = () => {
   const authTokens = localStorage.getItem("authTokens");
 
   useEffect(() => {
-    if (!authTokens || !isAuthenticated) {
+    if (!authTokens && !isAuthenticated) {
       dispatch(logout());
-      navigate("/");
+      console.log('logged out worked');
+      
+      // navigate("/");
     }
-  }, [authTokens, isAuthenticated, dispatch, navigate]);
+  }, [authTokens, isAuthenticated]);
 
   return isAuthenticated && role === "user" && authTokens ? (
     <Outlet />

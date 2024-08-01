@@ -4,6 +4,8 @@ import { BASE_URL } from '../constants';
 
 export const getAxiosInstance = async (): Promise<AxiosInstance> => {
   const authTokens = localStorage.getItem('authTokens');
+  console.log(authTokens,'this is the auth token from axios instance');
+  
   const parsedTokens = authTokens ? JSON.parse(authTokens) : null;
 
   const accessTokenManager = new AccessTokenManager(BASE_URL, parsedTokens);

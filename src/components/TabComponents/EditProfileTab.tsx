@@ -9,7 +9,6 @@ interface EditProfileTabsProps {
 const EditProfileTabs: React.FC<EditProfileTabsProps> = ({ options, selected, onSelect }) => {
   return (
     <div>
-      {/* Dropdown for small screens */}
       <div className="sm:hidden">
         <label htmlFor="tabs" className="sr-only">Select your option</label>
         <select

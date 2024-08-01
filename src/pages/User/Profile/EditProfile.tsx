@@ -4,9 +4,11 @@ import UserLayout from "../../../layouts/UserLayout/UserLayout";
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import ProfileForm from "../../../components/ProfileForm/ProfileForm";
 import EditPassword from "../../../components/ProfileForm/EditPassword";
+import { RootState, useAppSelector } from "../../../redux/store";
 
 const EditProfilePage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<string>("Edit Profile");
+  const { userDetail } = useAppSelector((state: RootState) => state.userData);
   const tabs = ["Edit Profile", "Change Password", "Settings", "Invoice"];
 
   return (
@@ -18,7 +20,19 @@ const EditProfilePage: React.FC = () => {
         />
         <div className="sm:px-32 px-12 max-w-8xl mx-auto flex-wrap sm:flex mb-10 flex gap-4  ">
           <div className="bg-slate-300 w-[80px] max-sm:w-[50px] max-sm:h-[50px] h-[80px]  rounded-full">
-            <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" alt="" className="object-cover w-[80px] max-sm:w-[50px] max-sm:h-[50px] h-[80px] rounded-full"/>
+            {userDetail?.profile_image ? (
+              <img
+                src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                alt=""
+                className="object-cover w-[80px] max-sm:w-[50px] max-sm:h-[50px] h-[80px] rounded-full"
+              />
+            ) : (
+              <div className="bg-pink-800 w-[80px] max-sm:w-[50px] max-sm:h-[50px] h-[80px]  text-white text-3xl max-sm:text-base font-medium flex items-center justify-center rounded-full">
+                {userDetail?.full_name && userDetail?.full_name.length > 0
+                  ? userDetail?.full_name[0]
+                  : ""}
+              </div>
+            )}
           </div>
           <div className=" inline-flex items-center text-xs">
             <p className=" px-3 py-2 rounded-full ring-1 text-slate-800 font-medium ring-gray-300">
@@ -38,8 +52,16 @@ const EditProfilePage: React.FC = () => {
             onSelect={setSelectedTab}
           />
           <div className="max-sm:mt-6  p-3 w-full">
-            {selectedTab === "Edit Profile" && <div><ProfileForm/></div>}
-            {selectedTab === "Change Password" && <div><EditPassword/></div>}
+            {selectedTab === "Edit Profile" && (
+              <div>
+                <ProfileForm />
+              </div>
+            )}
+            {selectedTab === "Change Password" && (
+              <div>
+                <EditPassword />
+              </div>
+            )}
             {selectedTab === "Settings" && <div>Settings Content</div>}
             {selectedTab === "Invoice" && <div>Invoice Content</div>}
           </div>

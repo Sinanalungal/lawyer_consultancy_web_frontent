@@ -1,0 +1,11 @@
+.jodit-status-bar{
+    display: none!important;
+
+}
+.jodit-add-new-line{
+    display: none!important;
+
+}
+.jodit-wysiwyg{
+    font-size: 14px!important;
+}

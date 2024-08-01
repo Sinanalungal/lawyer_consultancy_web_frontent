@@ -10,7 +10,7 @@ class AccessTokenManager {
     this.user = user;
   }
 
-  private async getAccessToken(): Promise<string> {
+  private async getAccessToken(): Promise<string|undefined> {
     try {
       console.log('getting token...')
       return this.user.access;
@@ -23,7 +23,7 @@ class AccessTokenManager {
   private async refreshToken(): Promise<void> {
     console.log('refreshing token...')
     const refreshToken = this.user.refresh;
-    const response = await axios.post(`${this.baseUrl}token/refresh/`, { refresh: refreshToken });
+    const response = await axios.post(`${this.baseUrl}/token/refresh/`, { refresh: refreshToken });
     console.log(response, 'refreshtoken response');
 
     console.log(response.data, 'new token gets ');
@@ -73,7 +73,7 @@ class AccessTokenManager {
         return config;
       },
       (error) => {
-        return Promise.reject(error); // Ensure a rejection is handled
+        return Promise.reject(error); 
       }
     );
 

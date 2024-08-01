@@ -1,60 +1,21 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { RootState } from "../../redux/store"; // Assuming RootState is your Redux state type
-import { logout } from "../../redux/slice/LoginActions";
+import React, { useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "../../redux/store"; 
 import Navbar from "../../components/Common/Navbar";
 import Footer from "../../components/Footer/Footer";
+import { fetchUserAsync } from "../../redux/slice/UserDataFetch";
 
 interface UserLayoutProps {
   children: React.ReactNode;
 }
 
-interface ProfileContextProps {
-  profileImage: string;
-  setProfileImage: (image: string) => void;
-}
-
-interface DecodedToken {
-  id: string;
-  role: string;
-
-}
-
-interface AuthTokens {
-  access: string;
-  refresh?: string; 
-}
-
-export const ProfileContext = createContext<ProfileContextProps | undefined>(
-  undefined
-);
-
 const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
-  const { isAuthenticated } = useSelector((state: RootState) => state.login);
+  const { isAuthenticated } = useAppSelector((state) => state.login);
+  const {  error } = useAppSelector((state) => state.userData);
   const [isVisible, setIsVisible] = useState<boolean>(true);
-  const [profileImage, setProfileImage] = useState<string>("");
+  const dispatch = useAppDispatch();
   const lastScrollTop = useRef(0);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      // const tokens = localStorage.getItem('authTokens');
-      
-      // if (tokens) {
-      //   const authTokens: AuthTokens = JSON.parse(tokens);
-        
-      //   const { access } = authTokens;
-      //   const decodedToken: DecodedToken = JSON.parse(atob(access.split('.')[1]));
-        
-      //   const { id, role } = decodedToken;
-        
-      //   console.log('User ID:', decodedToken);
-      //   console.log('User Role:', role);
-  
-      // } else {
-      //   console.error('No auth tokens found');
-      // }
-    }
     const handleScroll = () => {
       const currentScrollTop = window.scrollY;
 
@@ -75,7 +36,14 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
-  // const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchUserAsync());
+    }
+  }, [isAuthenticated, dispatch]);
+
+    // const navigate = useNavigate();
   // const dispatch = useDispatch();
 
   // useEffect(() => {
@@ -87,24 +55,25 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
   //   }
   // }, [dispatch, isAuthenticated, navigate]);
   // console.log(profileImage, "hi");
-
   return (
     <>
-      <ProfileContext.Provider value={{ profileImage, setProfileImage }}>
-        <div className="min-h-screen mx-auto  justify-center   3xl:container">
-          <div className="my-auto ">
-            <div
-              className={`  transition-opacity duration-300 ${
-                isVisible ? "visible" : "invisible"
-              }`}
-            >
-              <Navbar />
-            </div>
-            {children}
-            <Footer />
+      <div className="min-h-screen mx-auto justify-center 3xl:container">
+        <div className="my-auto">
+          <div
+            className={`transition-opacity duration-300 ${
+              isVisible ? "visible" : "invisible"
+            }`}
+          >
+            <Navbar />
           </div>
+          {error ? (
+            <div className="w-full h-svh flex justify-center items-center text-xs text-gray-600">{error}</div>
+          ) : (
+            children
+          )}
+          <Footer />
         </div>
-      </ProfileContext.Provider>
+      </div>
     </>
   );
 };

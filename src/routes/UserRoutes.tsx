@@ -1,13 +1,13 @@
-import React, { Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import UserPrivateRoute from './PrivateRouter/UserPrivateRoute';
 
 // Lazy load pages
 const LawyerListing = lazy(() => import('../pages/User/LawyerListing/LawyerListing'));
 const BookAppointment = lazy(() => import('../pages/User/BookingAppointment/BookingAppointment'));
-const Profile = lazy(() => import('../pages/Common/Profile/Profile'));
-const Blog = lazy(() => import('../pages/Common/Blog/Blog'));
-const EditProfilePage = lazy(() => import('../pages/Common/Profile/EditProfile'));
+const Profile = lazy(() => import('../pages/User/Profile/Profile'));
+const Blog = lazy(() => import('../pages/User/Blog/Blog'));
+const EditProfilePage = lazy(() => import('../pages/User/Profile/EditProfile'));
 const LandingPage = lazy(() => import('../pages/Common/LandingPage/LandingPage'));
 
 function UserRoutes() {

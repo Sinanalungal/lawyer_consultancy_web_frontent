@@ -1,21 +1,26 @@
-import { useContext, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { RootState } from "../../redux/store";
-import { ProfileContext } from "../../layouts/UserLayout/UserLayout";
+import { RootState, useAppSelector } from "../../redux/store";
 import { motion } from "framer-motion";
 import { logout } from "../../redux/slice/LoginActions";
 
-interface ProfileContextProps {
-  setProfileImage: (image: string) => void;
-}
-
+// interface Profile {
+//   full_name?: string;
+//   email?: string;
+//   phone_number?: string;
+//   profile_image?: string | null;
+// }
+// interface ProfileContextType {
+//   profile: Profile | undefined;
+//   setProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>;
+// }
 export default function Navbar() {
   const { isAuthenticated } = useSelector((state: RootState) => state.login);
+  const { userDetail } = useAppSelector((state:RootState) => state.userData);
   const [active, setActive] = useState<string | null>(null);
-  const [isHoveringMenu, setIsHoveringMenu] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const profileContext = useContext(ProfileContext);
+  const [isHoveringMenu, setIsHoveringMenu] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const dispatch = useDispatch()
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -118,8 +123,8 @@ export default function Navbar() {
             </div>
 
             <Link to={'../../../../user/lawyers'}><p>Lawyers </p></Link>
-            <p>Blogs </p>
             <p>Another </p>
+            <Link to={'../../../../user/blog'}><p>Blogs </p></Link>
           </div>
         </div>
         <div className="flex justify-center sm:gap-4 max-sm:gap-4  md:gap-4 items-center">
@@ -180,9 +185,11 @@ export default function Navbar() {
               className="flex items-center gap-1 cursor-pointer"
               transition={{ duration: 0.3 }}
             >
-              <div className="w-[50px] h-[50px] rounded-full bg-black text-white">
-              {profileContext?.profileImage}
-            </div>
+              <div className="w-[50px] h-[50px] rounded-full flex items-center  justify-center  font-semibold bg-pink-800 overflow-hidden text-white">
+              
+              {(userDetail?.profile_image)?<img src={userDetail?.profile_image} className="object-contain  rounded-full w-[50px] h-[50px]" alt="Profile" />:<p className="text-xl">{userDetail?.full_name && userDetail.full_name.length > 0 ? userDetail.full_name[0] : ''}
+              </p>}
+              </div>
             </motion.p>
             {active === "Profile" && (
               <motion.div
@@ -193,10 +200,11 @@ export default function Navbar() {
               >
                 <div className="w-48 bg-white border border-gray-200 shadow-lg rounded-md p-4 space-y-1">
                   <div className="w-full flex flex-col items-center py-4">
-                  <div className="w-[70px] h-[70px] rounded-full bg-black text-white">
-                    {profileContext?.profileImage}
+                  <div className="w-[70px]  h-[70px] overflow-hidden justify-center items-center flex rounded-full font-semibold bg-pink-800 text-white">
+                  {(userDetail?.profile_image)?<img src={userDetail?.profile_image} className="object-contain  rounded-full w-[70px]  h-[70px]" alt="Profile" />:<p className="text-3xl">{userDetail?.full_name && userDetail.full_name.length > 0 ? userDetail.full_name[0] : ''}
+              </p>}
                   </div>
-                  <div className="text-center w-full mt-2 font-bold text-sm truncate">Name is ger</div>
+                  <div className="text-center w-full mt-2 font-bold text-sm truncate">{userDetail?.full_name?.toUpperCase()}</div>
                   </div>
                   <Link
                     to="/"
