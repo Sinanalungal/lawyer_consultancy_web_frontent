@@ -18,7 +18,7 @@ const Dashboard = lazy(() => import('./pages/Admin/Dashboard/Dashboard'));
 // Lazy load routes
 const UserRoutes = lazy(() => import('./routes/UserRoutes'));
 const AdminRoutes = lazy(() => import('./routes/AdminRoutes'));
-// const LawyerRoute = lazy(() => import('./routes/LawyerRoute'));
+const LawyerRoute = lazy(() => import('./routes/LawyerRoutes'));
 
 function App() {
   const { dataRequired } = useSelector((state: any) => state.login);
@@ -49,7 +49,7 @@ function App() {
               <Route path="/user/*" element={<UserRoutes />} />
               <Route path="/admin/*" element={<AdminRoutes />} />
               <Route path="/dash" element={<Dashboard />} />
-              {/* <Route path="/lawyer/*" element={<LawyerRoute />} /> */}
+              <Route path="/lawyer/*" element={<LawyerRoute />} />
             </Routes>
           </Suspense>
         </GoogleOAuthProvider>

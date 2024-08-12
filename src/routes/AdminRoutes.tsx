@@ -6,7 +6,8 @@ import UserList from '../pages/Admin/UserList/UserList';
 import AdminBlog from '../pages/Admin/Blog/AdminBlog';
 import AdminSubscription from '../pages/Admin/Subscription/AdminSubscription';
 import AdminProfile from '../pages/Admin/AdminProfile/AdminProfile';
-import AddBlog from '../pages/Admin/Blog/AddBlog';
+import AddBlog from '../pages/Common/BlogManage/AddBlog';
+import AddLawyer from '../pages/Admin/LawyerList/AddLawyer';
 
 
 
@@ -17,6 +18,7 @@ function AdminRoutes() {
         <Route path='*' element={<AdminPrivateRoute/>}>
         <Route path="" element={<Dashboard/>} />
         <Route path="lawyers" element={<LawyerList/>} />
+        <Route path="lawyers/add-lawyer" element={<AddLawyer/>} />
         <Route path="users" element={<UserList/>} />
         <Route path="blog" element={<AdminBlog/>} />
         <Route path="subscription" element={<AdminSubscription/>} />

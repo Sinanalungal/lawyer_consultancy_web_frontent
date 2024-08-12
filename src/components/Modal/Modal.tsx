@@ -26,7 +26,6 @@ const Modal: FC<ModalProps> = ({ modalOpen, setModalOpen, children }) => {
     return () => document.removeEventListener("click", clickHandler);
   }, [modalOpen, setModalOpen]);
 
-  // Close if the esc key is pressed
   useEffect(() => {
     const keyHandler = ({ keyCode }: KeyboardEvent) => {
       if (!modalOpen || keyCode !== 27) return;
@@ -36,13 +35,25 @@ const Modal: FC<ModalProps> = ({ modalOpen, setModalOpen, children }) => {
     return () => document.removeEventListener("keydown", keyHandler);
   }, [modalOpen, setModalOpen]);
 
+  useEffect(() => {
+    if (modalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [modalOpen]);
+
   return (
     <div
-      className={`fixed min-h-screen w-screen  inset-0 bg-black flex items-center justify-center px-2 bg-opacity-90  ${!modalOpen && "hidden"}`}
+      className={`fixed inset-0 bg-black flex items-center justify-center px-2 bg-opacity-90 ${!modalOpen && "hidden"}`}
+      style={{ zIndex: 9999 }} // Ensure the modal is on top
     >
       <div
         ref={modal}
-        className="w-full max-w-xl max-h-screen  text-xs rounded overflow-y-scroll shadow-lg border  border-gray-100 bg-white px-8 py-12 dark:bg-dark-2 md:px-[70px] md:py-[60px]"
+        className="w-full max-w-xl max-h-screen text-xs rounded overflow-y-scroll shadow-lg border border-gray-100 bg-white px-8 py-12 dark:bg-dark-2 md:px-[70px] md:py-[60px]"
         style={{ scrollbarWidth: "none" }}
       >
         <p className="float-end -mt-6 cursor-pointer" onClick={() => setModalOpen(false)}>

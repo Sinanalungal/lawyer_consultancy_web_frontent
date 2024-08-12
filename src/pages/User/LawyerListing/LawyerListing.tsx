@@ -122,7 +122,7 @@ const LawyerListing: React.FC = () => {
   };
 
   return (
-    <UserLayout>
+    // <UserLayout>
       <section className=" min-h-screen mx-auto">
         {/* <div className="b  h-20 w-screen flex justify-center items-center p-3 absolute"><div className=" text-white w-[400px]  bg-slate-50 h-full">dfdfdfdf</div></div> */}
         <PageTitle
@@ -225,7 +225,7 @@ const LawyerListing: React.FC = () => {
         </div>
         <Drawer isOpen={isDrawerOpen} onClose={toggleDrawer} />
       </section>
-    </UserLayout>
+    // </UserLayout>
   );
 };
 

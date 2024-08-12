@@ -3,6 +3,7 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { logout } from "../../redux/slice/LoginActions";
+import UserLayout from "../../layouts/UserLayout/UserLayout";
 
 interface LoginState {
   isAuthenticated: boolean;
@@ -29,7 +30,9 @@ const UserPrivateRoute: React.FC = () => {
   }, [authTokens, isAuthenticated]);
 
   return isAuthenticated && role === "user" && authTokens ? (
-    <Outlet />
+    <UserLayout>
+      <Outlet />
+    </UserLayout>
   ) : (
     <Navigate to="/" replace />
   );

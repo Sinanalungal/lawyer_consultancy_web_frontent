@@ -16,10 +16,11 @@ const SelectionBox: React.FC<SelectionBoxProps> = ({
   buttonLabel,
   options,
 }) => {
+  
   return (
-    <Menu as="div" className="relative inline-block text-left">
+    <Menu as="div" className="relative bg-slate-100 rounded-md inline-block text-left">
       <div>
-        <MenuButton className="inline-flex w-full  justify-center gap-x-1.5 rounded-md bg-transparent px-3 py-2 text-xs items-center font-semibold text-gray-900   ring-gray-300 hover:bg-gray-50">
+        <MenuButton className="inline-flex  w-[140px] justify-between gap-x-1.5  bg-transparent px-3 py-2 text-xs items-center font-semibold text-gray-900   ring-gray-300 hover:bg-gray-50">
           {buttonLabel}
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -40,7 +41,7 @@ const SelectionBox: React.FC<SelectionBoxProps> = ({
 
       <MenuItems
         transition
-        className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
+        className="absolute right-0 z-10 mt-2 w-36  origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
       >
         <div className="py-1">
           {options.map((option, index) => (
@@ -48,7 +49,7 @@ const SelectionBox: React.FC<SelectionBoxProps> = ({
               {({ active }) => (
                 <button
                   onClick={option.action}
-                  className={`block w-full px-4 py-2 text-left text-sm ${
+                  className={`block w-full px-4 py-2 text-left text-xs ${
                     active ? "bg-gray-100 text-gray-900" : "text-gray-700"
                   }`}
                 >

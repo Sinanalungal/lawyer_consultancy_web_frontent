@@ -185,9 +185,9 @@ export default function Navbar() {
               className="flex items-center gap-1 cursor-pointer"
               transition={{ duration: 0.3 }}
             >
-              <div className="w-[50px] h-[50px] rounded-full flex items-center  justify-center  font-semibold bg-pink-800 overflow-hidden text-white">
+              <div className="w-[43px] h-[43px] rounded-full flex items-center  justify-center  font-semibold bg-pink-800 overflow-hidden text-white">
               
-              {(userDetail?.profile_image)?<img src={userDetail?.profile_image} className="object-contain  rounded-full w-[50px] h-[50px]" alt="Profile" />:<p className="text-xl">{userDetail?.full_name && userDetail.full_name.length > 0 ? userDetail.full_name[0] : ''}
+              {(userDetail?.profile_image)?<img src={userDetail?.profile_image} className="object-cover  rounded-full w-[43px] h-[43px]" alt="Profile" />:<p className="text-xl">{userDetail?.full_name && userDetail.full_name.length > 0 ? userDetail.full_name[0] : ''}
               </p>}
               </div>
             </motion.p>

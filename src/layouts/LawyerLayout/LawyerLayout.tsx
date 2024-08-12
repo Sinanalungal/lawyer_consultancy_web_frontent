@@ -1,21 +1,20 @@
-// src/components/AdminLayout.tsx
+// src/components/LawyerLayout.tsx
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { RootState, useAppDispatch, useAppSelector } from "../../redux/store"; // Assuming RootState is your Redux state type
 import { logout } from "../../redux/slice/LoginActions";
-import { IoSearch } from "react-icons/io5";
 import { fetchUserAsync } from "../../redux/slice/UserDataFetch";
 import { motion } from "framer-motion";
 
-interface AdminLayoutProps {
+interface LawyerLayoutProps {
   children: React.ReactNode;
   selected: string;
 }
 
-const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
+const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
   const [active, setActive] = useState<boolean>(false);
-  const { isAuthenticated } = useSelector((state: RootState) => state.login); // Replace RootState with your actual Redux state type
+  const { isAuthenticated,role } = useSelector((state: RootState) => state.login); // Replace RootState with your actual Redux state type
   const { userDetail } = useAppSelector((state: RootState) => state.userData);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -33,19 +32,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
     restDelta: 0.001,
     restSpeed: 0.001,
   };
-  //   useEffect(() => {
-  //     const authTokens = localStorage.getItem('authTokens');
-
-  //     if (!isAuthenticated || !authTokens) {
-  //       dispatch(logout());
-  //       navigate('/login');
-  //     }
-
-  //   }, [dispatch, isAuthenticated, navigate]);
 
   return (
     <div className="bg-white  flex h-screen">
-      {/* Sidebar */}
       <aside className="fixed  z-50 ">
         <input type="checkbox" className="peer hidden" id="sidebar-open" />
         <label
@@ -95,7 +84,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
               <li className="relative">
                 <button
                   onClick={() => {
-                    navigate("../../../../admin");
+                    navigate("../../../../lawyer");
                   }}
                   className="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-8 py-4 font-semibold focus:outline-none"
                 >
@@ -122,25 +111,17 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
               <li className="relative">
                 <button
                   onClick={() => {
-                    navigate("../../../../admin/lawyers");
+                    navigate("../../../../lawyer/sessions");
                   }}
                   className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
                 >
                   <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="size-6"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M12 2.25a.75.75 0 0 1 .75.75v.756a49.106 49.106 0 0 1 9.152 1 .75.75 0 0 1-.152 1.485h-1.918l2.474 10.124a.75.75 0 0 1-.375.84A6.723 6.723 0 0 1 18.75 18a6.723 6.723 0 0 1-3.181-.795.75.75 0 0 1-.375-.84l2.474-10.124H12.75v13.28c1.293.076 2.534.343 3.697.776a.75.75 0 0 1-.262 1.453h-8.37a.75.75 0 0 1-.262-1.453c1.162-.433 2.404-.7 3.697-.775V6.24H6.332l2.474 10.124a.75.75 0 0 1-.375.84A6.723 6.723 0 0 1 5.25 18a6.723 6.723 0 0 1-3.181-.795.75.75 0 0 1-.375-.84L4.168 6.241H2.25a.75.75 0 0 1-.152-1.485 49.105 49.105 0 0 1 9.152-1V3a.75.75 0 0 1 .75-.75Zm4.878 13.543 1.872-7.662 1.872 7.662h-3.744Zm-9.756 0L5.25 8.131l-1.872 7.662h3.744Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
+  <path d="M4.5 4.5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h8.25a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3H4.5ZM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06Z" />
+</svg>
+
                   </span>
-                  <span className="">Lawyers</span>
+                  <span className="">Sessions</span>
                 </button>
                 {selected == "2" && <SvgComponent />}
               </li>
@@ -172,7 +153,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
               <li className="relative">
                 <button
                   onClick={() => {
-                    navigate("../../../../admin/blog");
+                    navigate("../../../../lawyer/blog");
                   }}
                   className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
                 >
@@ -315,15 +296,15 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                   initial={{ opacity: 0, scale: 0.85, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={transition}
-                  className="absolute top-[calc(100%_-_.6rem)] md:top-[calc(100%_-_.8rem)] max-[400px]:right-3 right-36 sm:right-3 transform  "
+                  className="absolute z-50 top-[calc(100%_-_.6rem)] md:top-[calc(100%_-_.8rem)] max-[400px]:right-3 right-36 sm:right-3 transform  "
                 >
                   <div className="w-48 bg-white border border-gray-200 shadow-lg rounded-md p-4 space-y-1">
                     
                     <Link
-                      to="/"
+                      to={role=='lawyer'?'../../../../../lawyer/self-blog':'../../../../../admin/self-blog'}
                       className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
                     >
-                      Service 1
+                      Your Blogs
                     </Link>
                     <Link
                       to="../../../../admin/profile"
@@ -403,7 +384,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
   );
 };
 
-export default AdminLayout;
+export default LawyerLayout;
 
 const SvgComponent = ({
   className = "",

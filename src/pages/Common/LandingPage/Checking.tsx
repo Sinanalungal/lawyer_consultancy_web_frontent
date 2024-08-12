@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import FadeInWhenVisible from "../../../components/Animation/FadeInWhenVisible";
+import { useSelector } from "react-redux";
 
 interface HeroSectionProps {
   title: string;
@@ -26,6 +27,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   title1,
   borderText,
 }) => {
+  const { role } = useSelector((store: any) => store.login);
   return (
     <section className=" sm:pt-32  pt-24 pb-14 flex items-center  bg-gradient-to-b from-[#f7f8fb] to-[#ffffff] bg-center bg-cover">
       <div className="mx-auto  max-w-7xl  px-4 sm:px-6 lg:px-8 relative text-center">
@@ -36,7 +38,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           <p className="max-w-sm mx-auto text-center text-base max-sm:text-[13px] font-normal sm:leading-7 text-gray-500 mb-9">
             {subtitle}
           </p>
-          <div className="-space-x-2 pb-5 mx-auto w-full  flex justify-center ">
+          {role =='user' && (<div className="-space-x-2 pb-5 mx-auto w-full  flex justify-center ">
             <img
               className="inline-block size-9 rounded-full ring-2 ring-white  dark:ring-neutral-900"
               src="https://images.unsplash.com/photo-1568602471122-7832951cc4c5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=facearea&facepad=2&w=300&h=300&q=80"
@@ -57,7 +59,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               src="https://images.unsplash.com/photo-1541101767792-f9b2b1c4f127?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&&auto=format&fit=facearea&facepad=3&w=300&h=300&q=80"
               alt="Image Description"
             />
-          </div>
+          </div>)}
           <Link
             to={buttonLink}
             className="sm:w-full md:w-auto  inline-flex items-center justify-center py-3 px-7  text-base max-sm:text-xs font-semibold text-center text-white rounded-full bg-indigo-600 shadow-xs hover:bg-indigo-700 transition-all duration-500"

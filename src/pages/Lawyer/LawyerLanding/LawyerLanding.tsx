@@ -4,13 +4,12 @@ import {  useNavigate } from "react-router-dom";
 import useRole from "../../../hooks/useRole";
 import Services from "../../../components/Common/Services";
 import { logout } from "../../../redux/slice/LoginActions";
-import HeroSection from "./Checking";
-import UserLayout from "../../../layouts/UserLayout/UserLayout";
-import ThirdLayer from "./ThirdLayer";
 import Statistic from "../../../components/Statistics/Statistics";
 import TestimonalCarousel from "../../../components/Carousel/TestimonalCarousel";
+import HeroSection from "../../Common/LandingPage/Checking";
+import ThirdLayer from "../../Common/LandingPage/ThirdLayer";
 
-const LandingPage: React.FC = () => {
+const LawyerLanding: React.FC = () => {
   const { registered } = useSelector((state: any) => state.register);
   const { isAuthenticated } = useSelector((store: any) => store.login);
   const [lawyers, setLawyers] = useState<any[]>([]);
@@ -69,9 +68,9 @@ const LandingPage: React.FC = () => {
   }));
   
   const statsData = [
-    { value: "144", label: "Users" },
-    { value: "12.9", label: "Lawyers" },
-    { value: "27.3", label: "Consultation" },
+    { value: "144", label: "Your Clients" },
+    { value: "100", label: "Your Total Sessions" },
+    { value: "4.3", label: "Client Satisfaction" },
     
   ];
   const slides = [
@@ -98,42 +97,26 @@ const LandingPage: React.FC = () => {
 
   return (
     <>
-      
+      Dashboard comes here
       {/* <Hero /> */}
-      {isAuthenticated?(
-        <>
-      <HeroSection
-        title="Legal Advice Online"
-        title1="From Online Top Lawyers"
-        subtitle="It is a long established fact that a reader will be distracted by the readable content of a page"
-        buttonText="Explore Lawyers"
+      {/* <UserLayout> */}
+      {/* <HeroSection
+        title="Expert Legal Guidance"
+        title1="In Your Hands..."
+        subtitle="Providing personalized legal solutions for Clients needs . Their Happy is in Your Hands"
+        buttonText="Set Sessions"
         buttonLink="#"
         borderText="Lawyer Consultancy Web"
       />
-      <Statistic stats={statsData} />
-      <Services />
+      <Statistic stats={statsData} /> */}
+      {/* <Services /> */}
       {/* <Team teamMembers={teamMembers} /> */}
-      <ThirdLayer/>
+      {/* <ThirdLayer/> */}
       {/* <StoriesComponent/> */}
-      <TestimonalCarousel slides={slides} /></>
-    ):(<UserLayout>
-      <HeroSection
-        title="Legal Advice Online"
-        title1="From Online Top Lawyers"
-        subtitle="It is a long established fact that a reader will be distracted by the readable content of a page"
-        buttonText="Explore Lawyers"
-        buttonLink="#"
-        borderText="Lawyer Consultancy Web"
-      />
-      <Statistic stats={statsData} />
-      <Services />
-      {/* <Team teamMembers={teamMembers} /> */}
-      <ThirdLayer/>
-      {/* <StoriesComponent/> */}
-      <TestimonalCarousel slides={slides} />
-      </UserLayout>)}
+      {/* <TestimonalCarousel slides={slides} /> */}
+      {/* </UserLayout> */}
     </>
   );
 };
 
-export default LandingPage;
+export default LawyerLanding;

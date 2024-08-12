@@ -1,8 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { RootState, useAppSelector } from "../../redux/store";
+import { useSelector } from "react-redux";
+import { LoginState } from "../../redux/slice/LoginActions";
 
 const ProfileSection: React.FC = () => {
+    const { role } = useSelector((state: RootState) => state.login as LoginState)
   const { userDetail } = useAppSelector((state: RootState) => state.userData);
   return (
     <section className="relative pt-20">
@@ -11,7 +14,7 @@ const ProfileSection: React.FC = () => {
         <div className="flex items-center justify-center sm:justify-start relative z-10 mb-5">
           {userDetail?.profile_image ? (
             <img
-              src={""}
+              src={userDetail?.profile_image}
               alt="user-avatar-image"
               className="border-4 border-solid w-[140px] bg-slate-100 h-[140px] border-white rounded-full"
             />
@@ -68,7 +71,7 @@ const ProfileSection: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link to="/user/edit-profile">
+            <Link to={role?"/lawyer/edit-profile":"/user/edit-profile"}>
               <button className="sm:py-3.5 py-1.5  px-5 rounded-full bg-slate-800 text-white font-semibold text-xs sm:text-base leading-7 shadow-sm transition-all duration-500 hover:bg-indigo-700">
                 Edit Profile
               </button>

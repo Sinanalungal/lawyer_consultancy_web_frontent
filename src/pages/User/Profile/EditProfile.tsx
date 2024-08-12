@@ -5,6 +5,7 @@ import PageTitle from "../../../components/PageTitle/PageTitle";
 import ProfileForm from "../../../components/ProfileForm/ProfileForm";
 import EditPassword from "../../../components/ProfileForm/EditPassword";
 import { RootState, useAppSelector } from "../../../redux/store";
+import UserProfilePicture from "../../../components/ProfilePicManager/ProfilePicManager";
 
 const EditProfilePage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<string>("Edit Profile");
@@ -12,39 +13,18 @@ const EditProfilePage: React.FC = () => {
   const tabs = ["Edit Profile", "Change Password", "Settings", "Invoice"];
 
   return (
-    <UserLayout>
-      <div className="mb-16 ">
+    // <UserLayout>
+      <div className="mb-16 max-w-7xl mx-auto">
         <PageTitle
           title="EDIT PROFILE"
           description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
         />
-        <div className="sm:px-32 px-12 max-w-8xl mx-auto flex-wrap sm:flex mb-10 flex gap-4  ">
-          <div className="bg-slate-300 w-[80px] max-sm:w-[50px] max-sm:h-[50px] h-[80px]  rounded-full">
-            {userDetail?.profile_image ? (
-              <img
-                src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-                alt=""
-                className="object-cover w-[80px] max-sm:w-[50px] max-sm:h-[50px] h-[80px] rounded-full"
-              />
-            ) : (
-              <div className="bg-pink-800 w-[80px] max-sm:w-[50px] max-sm:h-[50px] h-[80px]  text-white text-3xl max-sm:text-base font-medium flex items-center justify-center rounded-full">
-                {userDetail?.full_name && userDetail?.full_name.length > 0
-                  ? userDetail?.full_name[0]
-                  : ""}
-              </div>
-            )}
-          </div>
-          <div className=" inline-flex items-center text-xs">
-            <p className=" px-3 py-2 rounded-full ring-1 text-slate-800 font-medium ring-gray-300">
-              Upload new picture
-            </p>
-          </div>
-          <div className=" inline-flex items-center text-xs">
-            <p className=" px-3 py-2 rounded-full ring-1 bg-gray-300 text-slate-800 font-medium ring-gray-300">
-              Delete
-            </p>
-          </div>
-        </div>
+        <UserProfilePicture
+          profileImage={userDetail?.profile_image ?? ""}
+          fullName={userDetail?.full_name ?? ""}
+          // onUploadClick={handleUploadClick}
+          // onDeleteClick={handleDeleteClick}
+        />
         <div className="px-10 max-w-8xl mx-auto  sm:flex  ">
           <EditProfileTabs
             options={tabs}
@@ -67,7 +47,7 @@ const EditProfilePage: React.FC = () => {
           </div>
         </div>
       </div>
-    </UserLayout>
+    // </UserLayout>
   );
 };
 

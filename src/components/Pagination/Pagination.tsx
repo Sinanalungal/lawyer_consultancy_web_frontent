@@ -1,11 +1,22 @@
+import React from 'react';
 
-export default function Pagination() {
+interface PaginationProps {
+  nextButton: () => void;
+  previousButton: () => void;
+  pageNum: number;
+  totalPages: number; 
+}
+
+const Pagination: React.FC<PaginationProps> = ({ nextButton, previousButton, pageNum, totalPages }) => {
   return (
     <div className="bg-white py-4 text-center dark:bg-dark">
       <div>
         <ul className="mx-auto flex w-full max-w-[400px] items-center justify-between">
           <li>
-            <button className="inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 py-2 text-[11px] font-medium text-gray-800 hover:bg-gray-2 dark:text-white dark:hover:bg-white/5">
+            <button 
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 py-2 text-[11px] font-medium text-gray-800 hover:bg-gray-2 dark:text-white dark:hover:bg-white/5"
+              onClick={previousButton}
+            >
               <span>
                 <svg
                   width="17"
@@ -23,11 +34,14 @@ export default function Pagination() {
               <span className="max-sm:hidden"> Previous </span>
             </button>
           </li>
-          <p className="text-[11px] font-medium  text-gray-800 dark:text-white">
-            Page 1 to 10
+          <p className="text-[11px] font-medium text-gray-800 dark:text-white">
+            Page {pageNum} of {totalPages}
           </p>
           <li>
-            <button className="inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 py-2 text-[11px] font-medium text-gray-800 hover:bg-gray-2 dark:text-white dark:hover:bg-white/5">
+            <button 
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 py-2 text-[11px] font-medium text-gray-800 hover:bg-gray-2 dark:text-white dark:hover:bg-white/5"
+              onClick={nextButton}
+            >
               <span className="max-sm:hidden"> Next </span>
               <span>
                 <svg
@@ -39,7 +53,7 @@ export default function Pagination() {
                 >
                   <path
                     d="M5.67495 14.825C5.52495 14.825 5.39995 14.775 5.27495 14.675C5.04995 14.45 5.04995 14.1 5.27495 13.875L10.525 8.50003L5.27495 3.15002C5.04995 2.92502 5.04995 2.57502 5.27495 2.35002C5.49995 2.12502 5.84995 2.12502 6.07495 2.35002L11.725 8.10002C11.95 8.32503 11.95 8.67502 11.725 8.90002L6.07495 14.65C5.97495 14.75 5.82495 14.825 5.67495 14.825Z"
-                    fill="currentCOlor"
+                    fill="currentColor"
                   />
                 </svg>
               </span>
@@ -49,4 +63,6 @@ export default function Pagination() {
       </div>
     </div>
   );
-}
+};
+
+export default Pagination;

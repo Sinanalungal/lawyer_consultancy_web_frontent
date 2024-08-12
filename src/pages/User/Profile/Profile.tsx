@@ -9,12 +9,12 @@ interface ProfileProps {}
 const Profile: React.FC<ProfileProps> = () => {
   return (
     <>
-      <UserLayout>
+      {/* <UserLayout> */}
         <div className="w-full min-h-screen">
           <ProfileSection />
           <Tab />
         </div>
-      </UserLayout>
+      {/* </UserLayout> */}
     </>
   );
 };
