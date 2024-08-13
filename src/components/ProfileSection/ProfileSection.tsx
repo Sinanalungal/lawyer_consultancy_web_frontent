@@ -71,7 +71,7 @@ const ProfileSection: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link to={role?"/lawyer/edit-profile":"/user/edit-profile"}>
+            <Link to="/user/edit-profile" >
               <button className="sm:py-3.5 py-1.5  px-5 rounded-full bg-slate-800 text-white font-semibold text-xs sm:text-base leading-7 shadow-sm transition-all duration-500 hover:bg-indigo-700">
                 Edit Profile
               </button>

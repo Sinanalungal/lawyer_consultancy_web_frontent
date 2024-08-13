@@ -14,6 +14,21 @@ export const fetchDepartmentsAndLanguages = async () => {
 
 
 
+// export const addLawyer = async (formData: FormData) => {
+//     const axiosInstance = await getAxiosInstance();
+//     try {
+//         const response = await axiosInstance.post('/adminside/add-lawyer/', formData, {
+//             headers: {
+//                 'Content-Type': 'multipart/form-data',
+//             },
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.error("Error adding lawyer:", error);
+//         throw error;
+//     }
+// };
+
 export const addLawyer = async (formData: FormData) => {
     const axiosInstance = await getAxiosInstance();
     try {

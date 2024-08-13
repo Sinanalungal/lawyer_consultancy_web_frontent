@@ -72,3 +72,21 @@ interface UpdatePasswordParams {
   newPassword: string;
   confirmPassword: string;
 }
+
+interface Schedule {
+  date: string;
+  start_time: string;
+  end_time: string;
+  price: string;
+  reference_until: string;
+  uuid: string;
+  is_completed: boolean;
+}
+
+
+interface SchedulesResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Schedule[];
+}

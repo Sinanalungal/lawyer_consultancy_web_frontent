@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import BlogCard from "../../../components/BlogCard/BlogCard";
 import PageTitle from "../../../components/PageTitle/PageTitle";
-import UserLayout from "../../../layouts/UserLayout/UserLayout";
 import DrawerBottomToTop from "../../../components/Animation/DrawerBottomToTop";
 import CommentSection from "../../../components/Comments/Comments";
 import { fetchBlogsUser, updateBlogLike, updateBlogSave } from "../../../services/Blogs";
