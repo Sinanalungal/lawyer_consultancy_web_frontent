@@ -90,3 +90,26 @@ interface SchedulesResponse {
   previous: string | null;
   results: Schedule[];
 }
+
+interface Lawyer {
+  pk:number;
+  user_full_name: string;
+  user_profile_image: string;
+  departments: { department_name: string }[];
+  experience: number;
+  description: string;
+  languages: { name: string }[];
+  address?: string | null;
+  city?: string | null;
+  state?: string | null;
+  postal_code?: string | null;
+}
+
+interface Departments{
+  id: number;
+  department_name: string;
+}
+interface Languages{
+  id: number;
+  name: string;
+}

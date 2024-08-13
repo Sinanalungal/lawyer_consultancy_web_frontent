@@ -1,100 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import LawyerListingCard from "../../../components/LawyerListingCard/LawyerListingCard";
-import UserLayout from "../../../layouts/UserLayout/UserLayout";
 import Drawer from "../../../components/Drawer/Drawer";
-import DepartmentSelector from "../../../components/Filter/FilterComponent";
+import DepartmentSelector from "../../../components/Filter/FilterComponentDepartment";
 import PageTitle from "../../../components/PageTitle/PageTitle";
-
-interface Lawyer {
-  name: string;
-  status: string;
-  specialization: string;
-  image: string;
-  online: boolean;
-}
-
-const lawyers: Lawyer[] = [
-  {
-    name: "Dr. Nabilla Sp. PD",
-    status: "Away",
-    specialization: "Internist",
-    image:
-      "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
-    online: false,
-  },
-  {
-    name: "Dr. Ibrahim M. Kes, Sp. B",
-    status: "Online",
-    specialization: "Surgeon",
-    image:
-      "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
-    online: true,
-  },
-  {
-    name: "Dr. Ibrahim M. Kes, Sp. B",
-    status: "Online",
-    specialization: "Surgeon",
-    image:
-      "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
-    online: true,
-  },
-  {
-    name: "Dr. Ibrahim M. Kes, Sp. B",
-    status: "Online",
-    specialization: "Surgeon",
-    image:
-      "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
-    online: true,
-  },
-  {
-    name: "Dr. Ibrahim M. Kes, Sp. B",
-    status: "Online",
-    specialization: "Surgeon",
-    image:
-      "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
-    online: true,
-  },
-  {
-    name: "Dr. Ibrahim M. Kes, Sp. B",
-    status: "Online",
-    specialization: "Surgeon",
-    image:
-      "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
-    online: true,
-  },
-  {
-    name: "Dr. Ibrahim M. Kes, Sp. B",
-    status: "Online",
-    specialization: "Surgeon",
-    image:
-      "https://resize.indiatvnews.com/en/resize/newbucket/1200_-/2022/01/dileep-1641808836.jpg",
-    online: true,
-  },
-  // Add additional lawyer data as needed
-];
-
-const departments: string[] = [
-  "All",
-  "Family Lawyer",
-  "Criminal Defense Lawyer",
-  "Corporate Lawyer",
-  "Intellectual Property Lawyer",
-  "Immigration Lawyer",
-];
+import { fetchUserSideLawyerList } from "../../../services/fetchLawyers";
+import { Departments, Languages, Lawyer } from "../../../types";
+import { fetchDepartmentsAndLanguages } from "../../../services/AddLawyerServices";
+import LanguageSelector from "../../../components/Filter/FilterComponentLanguage";
+import ExperienceSelector from "../../../components/Filter/FilterComponentExperience";
+import SearchComponent from "./Search";
 
 const experienceLevels: string[] = [
   "All",
-  "Entry Level",
-  "Mid Level",
-  "Senior Level",
-  "Expert",
+  "Less than five",
+  "In between five to ten",
+  "Greater than ten",
 ];
 
+interface LawyerListResponse {
+  count?: number;
+  next?: any;
+  previous?: string | null;
+  results: Lawyer[];
+}
 const ratings: string[] = ["All", "1 ⭐", "2 ⭐", "3 ⭐", "4 ⭐", "5 ⭐"];
 
 const LawyerListing: React.FC = () => {
-  const [selectedDepartment, setSelectedDepartment] = useState<string>(
-    departments[0]
+  const [departments, setDepartments] = useState<Departments[] | []>([]);
+  const [languages, setLanguages] = useState<Languages[] | []>([]);
+  const [selectedDepartment, setSelectedDepartment] = useState<number | null>(
+    null
+  );
+  const [selectedLanguages, setSelectedLanguages] = useState<number | null>(
+    null
   );
   const [selectedRating, setSelectedRating] = useState<string>(ratings[0]);
   const [selectedExperience, setSelectedExperience] = useState<string>(
@@ -102,13 +40,95 @@ const LawyerListing: React.FC = () => {
   );
   const [openFilter, setOpenFilter] = useState<boolean>(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [drawerData, setDrawerData] = useState<Lawyer | null>(null);
+  const [lawyers, setLawyers] = useState<Lawyer[]>([]);
+  const [searchOpen, setSearchOpen] = useState<boolean>(false);
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
+  // const [currentPage, setCurrentPage] = useState<string>(); // For pagination
+  const [next, setNext] = useState<string | null>(null); // Total number of pages
+  console.log(searchQuery);
+  useEffect(() => {
+    const fetchLawyers = async () => {
+      try {
+        const params = {
+          department: selectedDepartment || "",
+          experience: selectedExperience || "",
+          language: selectedLanguages || "",
+          search: searchQuery,
+        };
+        const fetchedLawyers: LawyerListResponse = await fetchUserSideLawyerList(
+          "userside/lawyers/",
+          params as any
+        );
+        
+        // const newLawyers = fetchedLawyers.results.filter(
+        //   (lawyer) => !lawyers.some((existing) => existing.pk === lawyer.pk)
+        // );
+  
+        setLawyers(fetchedLawyers?.results); 
+  
+        // if (fetchedLawyers.next) {
+          setNext(fetchedLawyers.next);
+        // } 
+      } catch (error) {
+        console.error("Failed to fetch lawyers:", error);
+      }
+    };
+  
+    fetchLawyers();
+  }, [
+    selectedDepartment,
+    selectedExperience,
+    searchQuery,
+    selectedLanguages,
+  ]);
+  
+
+  useEffect(()=>{
+    const fetchDepartmentAndLanguages = async () => {
+      try {
+        const fetchedData = await fetchDepartmentsAndLanguages();
+        setDepartments(fetchedData?.departments);
+        setLanguages(fetchedData?.languages);
+      } catch (error) {
+        console.error("Failed to fetch departments and languages:", error);
+      }
+    };
+
+    fetchDepartmentAndLanguages();
+  },[])
+
+  const handleNextCalling = async() => {
+
+    if (next!=null) {
+      try {
+        const params = {
+          department: selectedDepartment || "",
+          experience: selectedExperience || "",
+          language: selectedLanguages || "",
+          search: searchQuery,
+        };
+        const fetchedLawyers: LawyerListResponse = await fetchUserSideLawyerList(
+          next,
+          params as any
+        );
+      
+        setLawyers([...lawyers,...fetchedLawyers?.results]); 
+  
+        // if (fetchedLawyers.next) {
+        setNext(fetchedLawyers?.next);
+        // }
+      } catch (error) {
+        console.error("Failed to fetch lawyers:", error);
+      }
+    }
+  };
   const handleCancel = () => {
-    setOpenFilter(false); 
+    setOpenFilter(false);
   };
 
   const handleUpdate = () => {
-    // Implement the logic to apply the filters, e.g., updating state or making an API call
     console.log("Filters applied:", {
       selectedDepartment,
       selectedExperience,
@@ -117,20 +137,29 @@ const LawyerListing: React.FC = () => {
     setOpenFilter(false);
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    
+    
+  };
+
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
   return (
-    // <UserLayout>
-      <section className=" min-h-screen mx-auto">
-        {/* <div className="b  h-20 w-screen flex justify-center items-center p-3 absolute"><div className=" text-white w-[400px]  bg-slate-50 h-full">dfdfdfdf</div></div> */}
-        <PageTitle
-          title="LAWYERS"
-          description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
-        />
+    <section className="min-h-screen mx-auto">
+      <PageTitle
+        title="LAWYERS"
+        description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
+      />
 
-        <div className="w-full h-12 border-gray-300 flex justify-between items-center border-t border-b px-10">
+      <div
+        className={`w-full relative h-12 border-gray-300 flex items-center border-t border-b ${
+          searchOpen ? "justify-end sm:pr-10 pr-2" : "justify-between px-10"
+        }`}
+      >
+        {!searchOpen && (
           <div
             onClick={() => setOpenFilter(!openFilter)}
             className="flex text-xs items-center gap-1 h-full px-3 border-r cursor-pointer hover:bg-gray-200 rounded"
@@ -145,7 +174,19 @@ const LawyerListing: React.FC = () => {
             </svg>
             <p className="text-slate-600 font-medium">Filters</p>
           </div>
-          <div className="text-xs text-slate-600 items-center font-medium flex gap-1 cursor-pointer px-3 h-full hover:bg-gray-200 rounded">
+        )}
+        {searchOpen ? (
+          <div className="absolute">
+            <SearchComponent
+              setSearchOpen={setSearchOpen}
+              onSearch={handleSearch}
+            />
+          </div>
+        ) : (
+          <div
+            onClick={() => setSearchOpen(true)}
+            className="text-xs text-slate-600 items-center font-medium flex gap-1 cursor-pointer px-3 h-full hover:bg-gray-200 rounded"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -161,71 +202,95 @@ const LawyerListing: React.FC = () => {
 
             <p>Search</p>
           </div>
-        </div>
+        )}
+      </div>
 
-        <div className="flex relative justify-center">
-          <div
-            className={
-              openFilter
-                ? "absolute p-10 pb-20 bg-white border-b max-sm:grid-cols-1 grid-cols-2 w-full sm:px-16 grid lg:grid-cols-3"
-                : "hidden"
-            }
-          >
-            <div className="sm:border-r-2 flex justify-start">
-              <DepartmentSelector
-                title="Select Department"
-                data={departments}
-                name="department"
-                selectedDepartment={selectedDepartment}
-                onChange={setSelectedDepartment}
-              />
-            </div>
-            <div className="lg:border-r-2 flex justify-start">
-              <DepartmentSelector
-                title="Select Experience"
-                data={experienceLevels}
-                name="experienceLevels"
-                selectedDepartment={selectedExperience}
-                onChange={setSelectedExperience}
-              />
-            </div>
-            <div className="flex justify-start">
-              <DepartmentSelector
-                title="Select Rating"
-                data={ratings}
-                name="ratings"
-                selectedDepartment={selectedRating}
-                onChange={setSelectedRating}
-              />
-            </div>
-
-            {/* Buttons for cancel and update */}
-            <div className="flex absolute bottom-0 right-0 p-4 col text-xs xl:text-sm justify-end gap-1 mt-4">
-              <button
-                onClick={handleCancel}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleUpdate}
-                className="px-4 py-2 bg-slate-900 text-white rounded-full hover:bg-slate-800"
-              >
-                Update
-              </button>
-            </div>
+      <div className="flex relative justify-center">
+        <div
+          className={
+            openFilter
+              ? "absolute p-10 pb-20 bg-white border-b max-sm:grid-cols-1 grid-cols-2 w-full sm:px-16 grid lg:grid-cols-3 xl:grid-cols-4"
+              : "hidden"
+          }
+        >
+          <div className="flex items-start justify-start">
+            <DepartmentSelector
+              title="Select Department"
+              data={departments}
+              name="department"
+              selectedDepartment={selectedDepartment}
+              onChange={setSelectedDepartment}
+            />
           </div>
-          <div className="grid pt-16 xl:grid-cols-4 lg:grid-cols-3 grid-cols-1 sm:grid-cols-2 2xl:grid-cols-5 3xl:grid-cols-7 gap-8">
-            {lawyers.map((lawyer, index) => (
-              <div key={index} onClick={() => setIsDrawerOpen(true)}>
+          <div className="flex items-start justify-start">
+            <LanguageSelector
+              title="Select Languages"
+              data={languages}
+              name="language"
+              selectedlanguages={selectedLanguages}
+              onChange={setSelectedLanguages}
+            />
+          </div>
+
+          <div className="items-start flex justify-start">
+            <ExperienceSelector
+              title="Select Experience"
+              data={experienceLevels}
+              name="experienceLevels"
+              selectedKey={selectedExperience}
+              onChange={setSelectedExperience}
+            />
+          </div>
+
+          <div className="flex absolute bottom-0 right-0 p-4 col text-xs xl:text-sm justify-end gap-1 mt-4">
+            <button
+              onClick={handleCancel}
+              className="px-4 py-2 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleUpdate}
+              className="px-4 py-2 bg-slate-900 text-white rounded-full hover:bg-slate-800"
+            >
+              Update
+            </button>
+          </div>
+        </div>
+        <div className="grid pt-16 xl:grid-cols-4 lg:grid-cols-3 grid-cols-1 sm:grid-cols-2 2xl:grid-cols-5 3xl:grid-cols-7 gap-8">
+          {lawyers && Array.isArray(lawyers) && lawyers.length > 0 ? (
+            lawyers.map((lawyer, index) => (
+              <div
+                key={index}
+                onClick={() => {
+                  setIsDrawerOpen(true);
+                  setDrawerData(lawyer);
+                }}
+              >
                 <LawyerListingCard lawyer={lawyer} />
               </div>
-            ))}
-          </div>
+            ))
+          ) : (
+            <p className="xl:col-span-4 lg:col-span-3 h-[200px] text-xs text-center flex items-center col-span-1 sm:col-span-2 2xl:col-span-5 3xl:col-span-7">No lawyers available</p>
+          )}
         </div>
-        <Drawer isOpen={isDrawerOpen} onClose={toggleDrawer} />
-      </section>
-    // </UserLayout>
+      </div>
+      {next && (
+        <div className="w-full flex mt-10 mb-6">
+          <button
+            onClick={() => handleNextCalling()}
+            className="py-2 text-xs px-4 mx-auto  bg-slate-600 text-white font-semibold rounded-full  hover:bg-slate-700 focus:outline-none "
+          >
+            More Lawyers
+          </button>
+        </div>
+      )}
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={toggleDrawer}
+        lawyer={drawerData}
+      />
+    </section>
   );
 };
 

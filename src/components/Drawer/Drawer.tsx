@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { GiSuitcase } from "react-icons/gi";
+import { Lawyer } from '../../types';
 
 interface DrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  lawyer?:Lawyer|null;
 }
 
-const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose }) => {
+const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose ,lawyer }) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -31,44 +33,58 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose }) => {
           &times;
         </button>
         <div className="p-4">
-          <img
-            src="https://images.unsplash.com/photo-1575936123452-b67c3203c357?fm=jpg&q=60&w=3000&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          {lawyer?.user_profile_image?(<img
+            src={lawyer.user_profile_image}
             alt="Profile"
-            className="w-full h-40 object-cover rounded-lg"
-          />
+            className="w-full h-80 object-cover rounded-lg"
+          />):(<img
+            src="https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
+            alt="Profile"
+            className="w-full h-80 object-cover rounded-lg"
+          />)}
           <h2 className="text-lg font-bold mt-4">
-            Ashley Porter <span className="text-green-500">•</span>
+            {lawyer?.user_full_name} <span className="text-green-500">•</span>
           </h2>
-          <p className="text-sm text-gray-500 flex items-center gap-1"><GiSuitcase size={18}/> 1 year experience</p>
+          <p className="text-sm text-gray-500 flex items-center gap-1"><GiSuitcase size={18}/> {lawyer?.experience} year experience</p>
           <div className="mt-4">
-            <button className="bg-blue-500 text-white py-2 px-4 rounded-full mr-2">
+            <button className="bg-blue-500 text-sm text-white py-2 px-4 rounded-full mr-2">
               Message
             </button>
-            <button className="border border-gray-300 text-gray-700 py-2 px-4 rounded-full">
+            <button className="border mr-2 text-sm  border-gray-300 text-gray-700 py-2 px-4 rounded-full">
+              Sessions
+            </button>
+            <button className="border text-sm border-gray-300 text-gray-700 py-2 px-4 rounded-full">
               Call
             </button>
+            
           </div>
           <div className="mt-4 text-sm">
             <p>
               <strong>Bio</strong>
             </p>
             <p>
-              Enim feugiat ut ipsum, neque ut. Tristique mi id elementum
-              praesent. Gravida in tempus feugiat netus enim aliquet a, quam
-              scelerisque. Dictumst in convallis nec in bibendum aenean arcu.
+             {lawyer?.description}
             </p>
+            <p className="mt-4">
+              <strong>Deparments</strong>
+            </p>
+            <p>{lawyer?.departments.map(department => department.department_name).join(", ")}</p>
+            <p className="mt-4">
+              <strong>Languages</strong>
+            </p>
+            <p>{lawyer?.languages.map(lang => lang.name).join(", ")}</p>
             <p className="mt-4">
               <strong>Location</strong>
             </p>
-            <p>New York, NY, USA</p>
-            <p className="mt-4">
+            <p>{lawyer?.city},{lawyer?.state}</p>
+            {/* <p className="mt-4">
               <strong>Website</strong>
             </p>
             <p>ashleyporter.com</p>
             <p className="mt-4">
               <strong>Birthday</strong>
             </p>
-            <p>June 23, 1988</p>
+            <p>June 23, 1988</p> */}
           </div>
         </div>
       </div>
