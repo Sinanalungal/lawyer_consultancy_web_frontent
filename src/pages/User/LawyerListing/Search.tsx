@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 
 interface SearchComponentProps {
   setSearchOpen: (isOpen: boolean) => void;
-  onSearch: (query: string) => void; // Callback for search
+  onSearch: (query: string) => void;
 }
 
 // Debounce function definition
@@ -46,7 +46,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ setSearchOpen, onSear
     <div className="relative flex items-center">
       <input
         placeholder="Search..."
-        className="input border text-xs focus:border-2 border-gray-300 px-5 py-3 rounded-xl max-w-56 md:min-w-64 transition-all sm:focus:w-72 outline-none"
+        className="input border text-xs focus:border-2 border-gray-300 px-5 py-3 rounded-xl max-w-56 md:min-w-64 transition-all duration-500 ease-in-out sm:focus:w-72 outline-none transform-gpu sm:hover:scale-105"
         name="search"
         type="search"
         value={searchQuery} // Keep input value controlled
@@ -54,8 +54,8 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ setSearchOpen, onSear
         onKeyDown={handleKeyDown}
       />
       <p
-        className="w-full h-full font-semibold text-gray-400 p-2 cursor-pointer"
-        onClick={() => {setSearchOpen(false),onSearch('');}}
+        className="w-full h-full font-semibold text-gray-400 p-2 cursor-pointer transition-transform duration-300 ease-in-out transform hover:scale-110"
+        onClick={() => { setSearchOpen(false), onSearch(''); }}
       >
         x
       </p>

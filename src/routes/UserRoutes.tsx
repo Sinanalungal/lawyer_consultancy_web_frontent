@@ -1,6 +1,8 @@
 import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import UserPrivateRoute from './PrivateRouter/UserPrivateRoute';
+import AvailableLawyerSessions from '../pages/User/LawyerSessions/AvailableLawyerSessions';
+import UserAppointments from '../pages/User/Appointment/UserAppointments';
 
 // Lazy load pages
 const LawyerListing = lazy(() => import('../pages/User/LawyerListing/LawyerListing'));
@@ -21,6 +23,8 @@ function UserRoutes() {
           <Route path="profile" element={<Profile />} />
           <Route path="edit-profile" element={<EditProfilePage />} />
           <Route path="blog" element={<Blog />} />
+          <Route path="available-sessions" element={<AvailableLawyerSessions />} />
+          <Route path="appointments" element={<UserAppointments />} />
         </Route>
       </Routes>
     </Suspense>

@@ -9,6 +9,8 @@ import { fetchDepartmentsAndLanguages } from "../../../services/AddLawyerService
 import LanguageSelector from "../../../components/Filter/FilterComponentLanguage";
 import ExperienceSelector from "../../../components/Filter/FilterComponentExperience";
 import SearchComponent from "./Search";
+import { motion } from "framer-motion";
+
 
 const experienceLevels: string[] = [
   "All",
@@ -205,13 +207,16 @@ const LawyerListing: React.FC = () => {
         )}
       </div>
 
-      <div className="flex relative justify-center">
-        <div
+      <div className="flex relative justify-center transform ">
+        <motion.div
           className={
             openFilter
-              ? "absolute p-10 pb-20 bg-white border-b max-sm:grid-cols-1 grid-cols-2 w-full sm:px-16 grid lg:grid-cols-3 xl:grid-cols-4"
+              ? "absolute p-10 pb-20 bg-white border-b max-sm:grid-cols-1 z-30 grid-cols-2 w-full sm:px-16 grid lg:grid-cols-3 xl:grid-cols-4"
               : "hidden"
           }
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: openFilter ? 1 : 0, y: openFilter ? 0 : -20 }}
+          transition={{ duration: 0.3 }}
         >
           <div className="flex items-start justify-start">
             <DepartmentSelector
@@ -256,7 +261,7 @@ const LawyerListing: React.FC = () => {
               Update
             </button>
           </div>
-        </div>
+        </motion.div>
         <div className="grid pt-16 xl:grid-cols-4 lg:grid-cols-3 grid-cols-1 sm:grid-cols-2 2xl:grid-cols-5 3xl:grid-cols-7 gap-8">
           {lawyers && Array.isArray(lawyers) && lawyers.length > 0 ? (
             lawyers.map((lawyer, index) => (
@@ -271,7 +276,19 @@ const LawyerListing: React.FC = () => {
               </div>
             ))
           ) : (
-            <p className="xl:col-span-4 lg:col-span-3 h-[200px] text-xs text-center flex items-center col-span-1 sm:col-span-2 2xl:col-span-5 3xl:col-span-7">No lawyers available</p>
+            // <p className="flex justify-center items-center min-h-[200px] text-gray-500">No Lawyers available</p>
+<div className="flex flex-auto xl:col-span-4 lg:col-span-3 col-span-1 sm:col-span-2 2xl:col-span-5 3xl:col-span-7 flex-col justify-center min-h-[200px] items-center p-4 md:p-5">
+    <svg className="size-10 text-gray-500 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="22" x2="2" y1="12" y2="12"></line>
+      <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+      <line x1="6" x2="6.01" y1="16" y2="16"></line>
+      <line x1="10" x2="10.01" y1="16" y2="16"></line>
+    </svg>
+    <p className="mt-2 text-sm text-gray-800 dark:text-neutral-300">
+      No data to show
+    </p>
+</div>
+            // <p className="xl:col-span-4 lg:col-span-3 h-[200px] text-xs text-center flex items-center col-span-1 sm:col-span-2 2xl:col-span-5 3xl:col-span-7">No lawyers available</p>
           )}
         </div>
       </div>

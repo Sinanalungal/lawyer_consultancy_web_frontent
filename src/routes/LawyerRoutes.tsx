@@ -23,6 +23,7 @@ function LawyerRoutes() {
         <Route path="appointments" element={<LawyerAppointments />} />
         <Route path="self-blog" element={<BlogManage />} />
         <Route path="blog/add-blog" element={<AddBlog />} />
+        
         </Route>
       </Routes>
     </>

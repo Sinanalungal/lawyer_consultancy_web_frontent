@@ -5,16 +5,6 @@ import { RootState, useAppSelector } from "../../redux/store";
 import { motion } from "framer-motion";
 import { logout } from "../../redux/slice/LoginActions";
 
-// interface Profile {
-//   full_name?: string;
-//   email?: string;
-//   phone_number?: string;
-//   profile_image?: string | null;
-// }
-// interface ProfileContextType {
-//   profile: Profile | undefined;
-//   setProfile: React.Dispatch<React.SetStateAction<Profile | undefined>>;
-// }
 export default function Navbar() {
   const { isAuthenticated } = useSelector((state: RootState) => state.login);
   const { userDetail } = useAppSelector((state:RootState) => state.userData);
@@ -47,7 +37,7 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="flex fixed justify-between px-10 z-40 bg-white 3xl:container max-sm:px-3 py-5 items-center w-full">
+      <div className="flex fixed justify-between px-10 z-40 shadow-sm bg-white 3xl:container max-sm:px-3 py-5 items-center w-full">
         <div className="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +58,7 @@ export default function Navbar() {
             alt=""
           />
           <div className="flex gap-8 max-lg:hidden text-sm items-center pl-8 font-semibold">
-            <div
+            {/* <div
               className="relative group "
               onMouseEnter={() => setActive("Services")}
               onMouseLeave={() => setActive(null)}
@@ -120,11 +110,12 @@ export default function Navbar() {
                   </div>
                 </motion.div>
               )}
-            </div>
+            </div> */}
 
             <Link to={'../../../../user/lawyers'}><p>Lawyers </p></Link>
-            <p>Another </p>
+            <Link to={'../../../../user/appointments'}><p>Appointments</p></Link>
             <Link to={'../../../../user/blog'}><p>Blogs </p></Link>
+            <Link to={'../../../../../chat'}><p>Chat</p></Link>
           </div>
         </div>
         <div className="flex justify-center sm:gap-4 max-sm:gap-4  md:gap-4 items-center">
@@ -338,7 +329,7 @@ export default function Navbar() {
                 className="text-base font-semibold"
                 onClick={toggleSidebar}
               >
-                Another
+                Appoinments
               </Link>
               <div
           

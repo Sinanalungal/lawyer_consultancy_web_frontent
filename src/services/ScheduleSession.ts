@@ -58,3 +58,54 @@ export const cancelSchedule = async (uuid: string) => {
         throw error;
     }
 };
+
+
+export const getAvailableSchedulesForUser = async (date: string, lawyerId: number) => {
+    const axiosInstance = await getAxiosInstance(); 
+    try {
+        const response = await axiosInstance.get('schedule/schedules/', {
+            params: {
+                date,
+                lawyer_id: lawyerId
+            }
+        });
+        console.log(response.data);
+        
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching available schedules:", error);
+        throw error; 
+    }
+};
+
+
+export const bookAppointment = async (schedulingUuid: string, selectedDate: string) => {
+    const axiosInstance = await getAxiosInstance(); 
+    try {
+        const response = await axiosInstance.post('schedule/book-appointment/', {
+            scheduling_uuid: schedulingUuid,
+            scheduling_date: selectedDate,  // Include the selected date in the request payload
+        });
+        console.log("Appointment booked successfully:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error booking appointment:", error);
+        throw error; 
+    }
+};
+
+export const fetchBookedSessions = async (tab: "upcoming" | "finished") => {
+    const axiosInstance = await getAxiosInstance();
+    try {
+        const response = await axiosInstance.get('schedule/appointments/', {
+            params: {
+                type: tab, 
+            },
+        });
+        console.log("Booked sessions retrieved successfully:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching booked sessions:", error);
+        throw error;
+    }
+};

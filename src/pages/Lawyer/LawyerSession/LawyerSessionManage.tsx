@@ -132,7 +132,7 @@ const Schedules: React.FC = () => {
       return hash;
     };
 
-    const colorIndex = Math.abs(hash(schedule.uuid)) % 5; // Use modulus for variety
+    const colorIndex = Math.abs(hash(String(schedule.uuid))) % 5; // Use modulus for variety
     const colors = [
       { background: "bg-blue-100", border: "border-blue-300" },
       { background: "bg-green-100", border: "border-green-300" },

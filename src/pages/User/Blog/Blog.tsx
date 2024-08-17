@@ -128,24 +128,40 @@ const Blog: React.FC = () => {
             title="BLOGS"
             description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
           />
-          <div className="px-6 mx-auto w-full sm:max-w-xl md:max-w-full md:px-24 lg:px-8">
-            <div className="grid gap-5 2xl:grid-cols-4 xl:grid-cols-3 sm:grid-cols-2 sm:mx-auto lg:max-w-full">
-              {blogData.map((blog, index) => (
-                <BlogCard
-                  calling={() => {
-                    setReadingBlog(blog);
-                    setDrawerOpen(true);
-                  }}
-                  key={index}
-                  imageUrl={blog.imageUrl}
-                  date={blog.date}
-                  title={blog.title}
-                  author={blog.author}
-                  authorImage={blog.authorImage}
-                />
-              ))}
-            </div>
-          </div>
+         <div className="px-6 mx-auto w-full sm:max-w-xl md:max-w-full md:px-24 lg:px-8 xl:px-20">
+  {blogData.length > 0 ? (
+    <div className="grid gap-5 2xl:grid-cols-4 xl:grid-cols-3 sm:grid-cols-2 sm:mx-auto lg:max-w-full">
+      {blogData.map((blog, index) => (
+        <BlogCard
+          calling={() => {
+            setReadingBlog(blog);
+            setDrawerOpen(true);
+          }}
+          key={index}
+          imageUrl={blog.imageUrl}
+          date={blog.date}
+          title={blog.title}
+          author={blog.author}
+          authorImage={blog.authorImage}
+        />
+      ))}
+    </div>
+  ) : (
+  <div className="flex flex-auto flex-col justify-center min-h-[200px] items-center p-4 md:p-5">
+    <svg className="size-10 text-gray-500 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="22" x2="2" y1="12" y2="12"></line>
+      <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+      <line x1="6" x2="6.01" y1="16" y2="16"></line>
+      <line x1="10" x2="10.01" y1="16" y2="16"></line>
+    </svg>
+    <p className="mt-2 text-sm text-gray-800 dark:text-neutral-300">
+      No data to show
+    </p>
+</div>
+    // <p className="flex justify-center items-center min-h-[200px] text-gray-500">No blogs available</p>
+  )}
+</div>
+
           <DrawerBottomToTop
             isOpen={isDrawerOpen}
             onClose={() => setDrawerOpen(false)}

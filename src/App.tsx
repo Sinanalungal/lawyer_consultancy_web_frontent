@@ -4,6 +4,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useSelector } from 'react-redux';
 import Modal from './components/Modal/Modal';
 import ExtraDataAccessingForm from './components/Auth/ExtraDataAccessingForm';
+import ChatComponent from './pages/Common/Chat/Chat';
 
 // Lazy load pages
 const LandingPage = lazy(() => import('./pages/Common/LandingPage/LandingPage'));
@@ -45,6 +46,7 @@ function App() {
               <Route path="/otp" element={<OtpPage />} />
               <Route path="/forgotpassword" element={<ForgotPassword />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
+              <Route path="chat" element={<ChatComponent />} />
               {/* <Route path="/date" element={<BookAppointment />} /> */}
               <Route path="/user/*" element={<UserRoutes />} />
               <Route path="/admin/*" element={<AdminRoutes />} />

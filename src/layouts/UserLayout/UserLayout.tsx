@@ -43,36 +43,25 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
     }
   }, [isAuthenticated, dispatch]);
 
-    // const navigate = useNavigate();
-  // const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   const authTokens = localStorage.getItem("authTokens");
-
-  //   if (!isAuthenticated || !authTokens) {
-  //     dispatch(logout());
-  //     navigate("/");
-  //   }
-  // }, [dispatch, isAuthenticated, navigate]);
-  // console.log(profileImage, "hi");
+   
   return (
     <>
-      <div className="min-h-screen mx-auto justify-center 3xl:container">
-        <div className="my-auto">
+      <div className="min-h-screen mx-auto  justify-center 3xl:container">
+        <div className="my-auto  ">
           <div
-            className={`transition-opacity duration-300 ${
+            className={`transition-opacity  duration-300 ${
               isVisible ? "visible" : "invisible"
             }`}
           >
             <Navbar />
           </div>
           {error ? (
-            <div className="w-full h-svh flex justify-center items-center text-xs text-gray-600">{error}</div>
+            <div className="w-full h-svh flex  justify-center items-center text-xs text-gray-600">{error}</div>
           ) : (
             children
           )}
-          <Footer />
         </div>
+          <Footer />
       </div>
     </>
   );
