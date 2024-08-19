@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaMessage } from "react-icons/fa6";
 import { IoCall } from "react-icons/io5";
 import { FaVideo } from "react-icons/fa6";
+import { createOrGetThread } from "../../services/Chat";
 
 interface DrawerProps {
   isOpen: boolean;
@@ -25,6 +26,17 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, lawyer }) => {
       document.body.style.overflow = "auto";
     };
   }, [isOpen]);
+  
+  const onMessageClick = async() =>{
+    if (lawyer?.user_pk){
+      try {
+        await createOrGetThread(lawyer.user_pk)
+        navigate(`../../../../../chat`)
+      }catch(error){
+        console.error('something error',error);
+      }
+    }
+  }
 
   return (
     <div
@@ -64,7 +76,7 @@ const Drawer: React.FC<DrawerProps> = ({ isOpen, onClose, lawyer }) => {
             {lawyer?.experience} YEAR EXPERIENCE
           </p>
           <div className="mt-4 flex space-x-2">
-            <button className="bg-slate-800 text-sm text-white py-4 px-4 rounded-full transition-transform duration-300 ease-in-out transform hover:scale-110">
+            <button onClick={()=>onMessageClick()} className="bg-slate-800 text-sm text-white py-4 px-4 rounded-full transition-transform duration-300 ease-in-out transform hover:scale-110">
               <FaMessage />
             </button>
             <div

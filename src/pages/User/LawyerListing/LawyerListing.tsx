@@ -11,7 +11,6 @@ import ExperienceSelector from "../../../components/Filter/FilterComponentExperi
 import SearchComponent from "./Search";
 import { motion } from "framer-motion";
 
-
 const experienceLevels: string[] = [
   "All",
   "Less than five",
@@ -63,31 +62,25 @@ const LawyerListing: React.FC = () => {
           "userside/lawyers/",
           params as any
         );
-        
+
         // const newLawyers = fetchedLawyers.results.filter(
         //   (lawyer) => !lawyers.some((existing) => existing.pk === lawyer.pk)
         // );
-  
-        setLawyers(fetchedLawyers?.results); 
-  
+
+        setLawyers(fetchedLawyers?.results);
+
         // if (fetchedLawyers.next) {
-          setNext(fetchedLawyers.next);
-        // } 
+        setNext(fetchedLawyers.next);
+        // }
       } catch (error) {
         console.error("Failed to fetch lawyers:", error);
       }
     };
-  
-    fetchLawyers();
-  }, [
-    selectedDepartment,
-    selectedExperience,
-    searchQuery,
-    selectedLanguages,
-  ]);
-  
 
-  useEffect(()=>{
+    fetchLawyers();
+  }, [selectedDepartment, selectedExperience, searchQuery, selectedLanguages]);
+
+  useEffect(() => {
     const fetchDepartmentAndLanguages = async () => {
       try {
         const fetchedData = await fetchDepartmentsAndLanguages();
@@ -99,11 +92,10 @@ const LawyerListing: React.FC = () => {
     };
 
     fetchDepartmentAndLanguages();
-  },[])
+  }, []);
 
-  const handleNextCalling = async() => {
-
-    if (next!=null) {
+  const handleNextCalling = async () => {
+    if (next != null) {
       try {
         const params = {
           department: selectedDepartment || "",
@@ -115,9 +107,9 @@ const LawyerListing: React.FC = () => {
           next,
           params as any
         );
-      
-        setLawyers([...lawyers,...fetchedLawyers?.results]); 
-  
+
+        setLawyers([...lawyers, ...fetchedLawyers?.results]);
+
         // if (fetchedLawyers.next) {
         setNext(fetchedLawyers?.next);
         // }
@@ -141,8 +133,6 @@ const LawyerListing: React.FC = () => {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    
-    
   };
 
   const toggleDrawer = () => {
@@ -277,17 +267,28 @@ const LawyerListing: React.FC = () => {
             ))
           ) : (
             // <p className="flex justify-center items-center min-h-[200px] text-gray-500">No Lawyers available</p>
-<div className="flex flex-auto xl:col-span-4 lg:col-span-3 col-span-1 sm:col-span-2 2xl:col-span-5 3xl:col-span-7 flex-col justify-center min-h-[200px] items-center p-4 md:p-5">
-    <svg className="size-10 text-gray-500 dark:text-neutral-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="22" x2="2" y1="12" y2="12"></line>
-      <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
-      <line x1="6" x2="6.01" y1="16" y2="16"></line>
-      <line x1="10" x2="10.01" y1="16" y2="16"></line>
-    </svg>
-    <p className="mt-2 text-sm text-gray-800 dark:text-neutral-300">
-      No data to show
-    </p>
-</div>
+            <div className="flex flex-auto xl:col-span-4 lg:col-span-3 col-span-1 sm:col-span-2 2xl:col-span-5 3xl:col-span-7 flex-col justify-center min-h-[200px] items-center p-4 md:p-5">
+              <svg
+                className="size-10 text-gray-500 dark:text-neutral-500"
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <line x1="22" x2="2" y1="12" y2="12"></line>
+                <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                <line x1="6" x2="6.01" y1="16" y2="16"></line>
+                <line x1="10" x2="10.01" y1="16" y2="16"></line>
+              </svg>
+              <p className="mt-2 text-sm text-gray-800 dark:text-neutral-300">
+                No data to show
+              </p>
+            </div>
             // <p className="xl:col-span-4 lg:col-span-3 h-[200px] text-xs text-center flex items-center col-span-1 sm:col-span-2 2xl:col-span-5 3xl:col-span-7">No lawyers available</p>
           )}
         </div>

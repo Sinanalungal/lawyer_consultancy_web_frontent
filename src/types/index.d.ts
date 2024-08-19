@@ -93,6 +93,7 @@ interface SchedulesResponse {
 
 interface Lawyer {
   pk:number;
+  user_pk:string ;
   user_full_name: string;
   user_profile_image: string;
   departments: { department_name: string }[];
@@ -112,4 +113,23 @@ interface Departments{
 interface Languages{
   id: number;
   name: string;
+}
+interface Appointment {
+  uuid: string;
+  session_date: string;
+  scheduling: {
+    start_time: string;
+    end_time: string;
+    lawyer_profile: {
+      user: {
+        full_name: string;
+        profile_image: string | null;
+      };
+    };
+  };
+  user_profile: {
+    full_name: string;
+    profile_image: string | null;
+  };
+  booked_at: string;
 }

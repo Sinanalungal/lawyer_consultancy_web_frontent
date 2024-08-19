@@ -2,6 +2,7 @@ import React, { useEffect, useState, memo } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FiSmile, FiPaperclip } from 'react-icons/fi';
+import { fetchThreads } from '../../../services/Chat';
 
 interface Message {
   id: number;
@@ -11,15 +12,20 @@ interface Message {
 
 interface User {
   id: number;
-  name: string;
-  lastMessage: string;
-  avatar: string;
+  other_user: {
+    full_name:string;
+    id:Number;
+    profile_image:string;
+  };
+  last_message: string;
+  profile_image: string;
 }
 
 const ChatComponent: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [users,setUsers]=useState<User[]|null>(null)
 
   const { registered } = useSelector((state: any) => state.register);
   const { isAuthenticated } = useSelector((state: any) => state.login);
@@ -36,11 +42,25 @@ const ChatComponent: React.FC = () => {
     }
   }, [isAuthenticated, registered, navigate]);
 
-  const users: User[] = [
-    { id: 1, name: 'John Doe', lastMessage: 'Hey, how are you?', avatar: 'https://i.pravatar.cc/40?img=1' },
-    { id: 2, name: 'Jane Smith', lastMessage: 'See you tomorrow!', avatar: 'https://i.pravatar.cc/40?img=2' },
-    { id: 3, name: 'Emily Davis', lastMessage: 'Let’s meet at 5 PM', avatar: 'https://i.pravatar.cc/40?img=3' },
-  ];
+  const ThreadFetching = async()=>{
+    try{
+      const result = await fetchThreads()
+      console.log(result,'this is the result');
+      setUsers(result)
+    }catch(error){
+      console.error('something issue with the thread fetching..');
+      
+    }
+  }
+
+  useEffect(()=>{
+    ThreadFetching()
+  },[])
+  // const users: User[] = [
+  //   { id: 1, name: 'John Doe', lastMessage: 'Hey, how are you?', avatar: 'https://i.pravatar.cc/40?img=1' },
+  //   { id: 2, name: 'Jane Smith', lastMessage: 'See you tomorrow!', avatar: 'https://i.pravatar.cc/40?img=2' },
+  //   { id: 3, name: 'Emily Davis', lastMessage: 'Let’s meet at 5 PM', avatar: 'https://i.pravatar.cc/40?img=3' },
+  // ];
 
   const handleSendMessage = () => {
     if (inputText.trim() === '' || !selectedUser) return;
@@ -72,16 +92,16 @@ const ChatComponent: React.FC = () => {
           <h3 className="text-xl font-semibold px-2">Chats</h3>
         </div>
         <ul className="flex-1 overflow-y-auto">
-          {users.map(user => (
+          {users?.map(user => (
             <li
-              key={user.id}
+              key={user?.id}
               className={`flex items-center p-3 px-6 cursor-pointer hover:bg-gray-100 ${selectedUser?.id === user.id ? 'bg-gray-200' : ''}`}
               onClick={() => setSelectedUser(user)}
             >
-              <img src={user.avatar} alt={user.name} className="w-10 h-10 rounded-full mr-3" />
+              <img src={user?.other_user.profile_image ?? 'https://tse1.mm.bing.net/th?q=blank%20pfp%20icon'} alt={user?.other_user.full_name} className="w-10 h-10 rounded-full mr-3" />
               <div className="flex-1">
-                <h4 className="text-sm font-medium">{user.name}</h4>
-                <p className="text-xs text-gray-500 truncate">{user.lastMessage}</p>
+                <h4 className="text-sm font-medium">{user?.other_user.full_name}</h4>
+                <p className="text-xs text-gray-500 truncate">{user?.last_message}</p>
               </div>
             </li>
           ))}
@@ -95,8 +115,8 @@ const ChatComponent: React.FC = () => {
             <div className="flex items-center p-4 border-b border-gray-300 bg-white">
               {selectedUser && (
                 <>
-                  <img src={selectedUser.avatar} alt={selectedUser.name} className="w-10 h-10 rounded-full mr-3" />
-                  <h4 className="text-lg font-semibold">{selectedUser.name}</h4>
+                  <img src={selectedUser?.other_user.profile_image ?? 'https://tse1.mm.bing.net/th?q=blank%20pfp%20icon'} alt={selectedUser?.other_user.full_name} className="w-10 h-10 rounded-full mr-3" />
+                  <h4 className="text-lg font-semibold">{selectedUser?.other_user.full_name}</h4>
                 </>
               )}
             </div>

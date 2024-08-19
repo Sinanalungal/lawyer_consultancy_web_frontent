@@ -1,22 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fetchBookedSessions } from "../../../services/ScheduleSession";
+import { Appointment } from "../../../types";
 
-interface Appointment {
-  uuid: string;
-  session_date: string;
-  scheduling: {
-    start_time: string;
-    end_time: string;
-    lawyer_profile: {
-      user: {
-        full_name: string;
-        profile_image: string | null;
-      };
-    };
-  };
-  booked_at: string;
-}
+
 
 const UserAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
