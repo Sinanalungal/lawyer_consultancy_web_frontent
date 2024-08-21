@@ -1,0 +1,17 @@
+/* Custom styles (in your styles.css or a CSS module) */
+.audio-custom::-webkit-media-controls-panel {
+    background-color: #f9fafb; /* Customize the control panel background */
+  }
+  
+  .audio-custom::-webkit-media-controls-play-button {
+    color: #007bff; /* Change the play button color */
+  }
+  
+  .audio-custom::-webkit-media-controls-timeline {
+    background-color: #e5e7eb; /* Customize the timeline background */
+  }
+  
+  .audio-custom::-webkit-media-controls-volume-slider {
+    background-color: #007bff; /* Change the volume slider color */
+  }
+  

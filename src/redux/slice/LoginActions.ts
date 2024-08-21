@@ -7,7 +7,6 @@ export interface LoginState {
   loader: boolean;
   isAuthenticated: boolean;
   error: string | null;
-  // user: Record<string, any> | null;
   role: string | null;
   dataRequired: boolean;
   value: number | null;

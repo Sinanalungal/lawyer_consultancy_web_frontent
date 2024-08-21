@@ -26,7 +26,7 @@ export const fetchThreads = async () => {
     }
 };
 
-export const fetchThreadMessages = async (threadId:string) => {
+export const fetchThreadMessages = async (threadId:Number) => {
     const axiosInstance = await getAxiosInstance();
     try {
       const response = await axiosInstance.post('chat/messages/thread/', {
