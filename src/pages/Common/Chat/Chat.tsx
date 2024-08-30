@@ -100,7 +100,7 @@ const ChatComponent: React.FC = () => {
 
     const path = "/chat/";
 
-    let endpoint = wsStart + url + `${path}`;
+    let endpoint = wsStart + url + `${path}${value}/`;
 
     const newSocket = new WebSocket(endpoint);
     setSocket(newSocket);
@@ -111,8 +111,15 @@ const ChatComponent: React.FC = () => {
 
     newSocket.onmessage = (e) => {
       const receivedMessage = JSON.parse(e.data);
-      console.log(receivedMessage, "latest received msg");
-      setMessages((prevMessages) => [...prevMessages, receivedMessage]);
+      if (receivedMessage.type == 'chat_message'){
+        const receivedMessage_data = JSON.parse(receivedMessage.data);
+        console.log(receivedMessage_data, "latest received msg");
+        setMessages((prevMessages) => [...prevMessages, receivedMessage_data]);
+      }else if(receivedMessage.type == 'add_thread'){
+        const receivedThread_data = JSON.parse(receivedMessage.data);
+        console.log(receivedThread_data, "latest received thread");
+        setUsers((prevUsers) => [...prevUsers, receivedThread_data]);
+      }
     };
 
     newSocket.onerror = (e) => {
@@ -526,8 +533,9 @@ const ChatComponent: React.FC = () => {
             </div>
           </>
         ) : (
-          <div className="flex items-center justify-center h-full">
-            <ClipLoader size={50} color={"#123abc"} loading={true} />
+          <div className="flex items-center justify-center h-full text-gray-700 text-sm">
+            {/* <ClipLoader size={50} color={"#123abc"} loading={true} /> */}
+            Select an user to view messages
           </div>
         )}
       </div>

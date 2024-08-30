@@ -55,6 +55,7 @@ const LoginForm = () => {
         if (response.meta.requestStatus === 'fulfilled') {
           addToast('success','User Logged in successfully');
         } else if (response.meta.requestStatus === 'rejected') {
+          console.log(error)
           addToast('danger',error?.detail);
         }
       } catch (error) {

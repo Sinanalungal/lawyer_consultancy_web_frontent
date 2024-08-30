@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, FC } from "react";
+import React, { useEffect, useRef, FC } from 'react';
+import { createPortal } from 'react-dom';
 
 interface ModalProps {
   modalOpen: boolean;
@@ -22,8 +23,8 @@ const Modal: FC<ModalProps> = ({ modalOpen, setModalOpen, children }) => {
         return;
       setModalOpen(false);
     };
-    document.addEventListener("click", clickHandler);
-    return () => document.removeEventListener("click", clickHandler);
+    document.addEventListener('click', clickHandler);
+    return () => document.removeEventListener('click', clickHandler);
   }, [modalOpen, setModalOpen]);
 
   useEffect(() => {
@@ -31,8 +32,8 @@ const Modal: FC<ModalProps> = ({ modalOpen, setModalOpen, children }) => {
       if (!modalOpen || keyCode !== 27) return;
       setModalOpen(false);
     };
-    document.addEventListener("keydown", keyHandler);
-    return () => document.removeEventListener("keydown", keyHandler);
+    document.addEventListener('keydown', keyHandler);
+    return () => document.removeEventListener('keydown', keyHandler);
   }, [modalOpen, setModalOpen]);
 
   useEffect(() => {
@@ -46,15 +47,18 @@ const Modal: FC<ModalProps> = ({ modalOpen, setModalOpen, children }) => {
     };
   }, [modalOpen]);
 
-  return (
+  // Return null if the modal is not open
+  if (!modalOpen) return null;
+
+  return createPortal(
     <div
-      className={`fixed inset-0 bg-black flex items-center justify-center px-2 bg-opacity-90 ${!modalOpen && "hidden"}`}
+      className="fixed inset-0 bg-black flex items-center justify-center px-2 bg-opacity-90"
       style={{ zIndex: 9999 }} // Ensure the modal is on top
     >
       <div
         ref={modal}
         className="w-full max-w-xl max-h-screen text-xs rounded overflow-y-scroll shadow-lg border border-gray-100 bg-white px-8 py-12 dark:bg-dark-2 md:px-[70px] md:py-[60px]"
-        style={{ scrollbarWidth: "none" }}
+        style={{ scrollbarWidth: 'none' }}
       >
         <p className="float-end -mt-6 cursor-pointer" onClick={() => setModalOpen(false)}>
           <svg
@@ -74,7 +78,8 @@ const Modal: FC<ModalProps> = ({ modalOpen, setModalOpen, children }) => {
         </p>
         {children}
       </div>
-    </div>
+    </div>,
+    document.getElementById('portal-div') as HTMLElement
   );
 };
 

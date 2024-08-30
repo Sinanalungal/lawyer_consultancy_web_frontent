@@ -7,6 +7,8 @@ import BlogManage from '../pages/Common/BlogManage/BlogManage';
 import AddBlog from '../pages/Common/BlogManage/AddBlog';
 import LawyerAppointments from '../pages/Lawyer/LawyerAppointment/LawyerAppointments';
 import LawyerProfile from '../pages/Lawyer/LawyerProfile/LawyerProfile';
+import LawyerCaseManagement from '../pages/Lawyer/LawyerCasePage/LawyerCaseManage';
+import AvailableCases from '../pages/Lawyer/LawyerCasePage/AvailableCases';
 
 
 
@@ -21,6 +23,8 @@ function LawyerRoutes() {
         <Route path="blog" element={<Blog />} />
         <Route path="sessions" element={<LawyerSessionManage />} />
         <Route path="appointments" element={<LawyerAppointments />} />
+        <Route path="cases" element={<LawyerCaseManagement/>} />
+        <Route path="available-cases" element={<AvailableCases/>} />
         <Route path="self-blog" element={<BlogManage />} />
         <Route path="blog/add-blog" element={<AddBlog />} />
         

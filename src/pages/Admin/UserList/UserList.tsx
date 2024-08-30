@@ -85,17 +85,17 @@ const AdminUser: React.FC = () => {
         <img
           src={user.profile_image}
           alt={user.full_name}
-          className="rounded-full"
-          width="50"
-          height="50"
+          className="rounded-full w-[50px] h-[50px] object-cover"
+          // width="50"
+          // height="50"
         />
       ) : (
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
           alt="Default Profile"
-          className="rounded-full"
-          width="50"
-          height="50"
+          className="rounded-full w-[50px] h-[50px] object-cover"
+          // width="50"
+          // height="50"
         />
       )
     ),

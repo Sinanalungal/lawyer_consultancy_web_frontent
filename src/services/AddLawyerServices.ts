@@ -1,6 +1,6 @@
 import { getAxiosInstance } from "../api/axiosInstance";
 
-export const fetchDepartmentsAndLanguages = async () => {
+export const fetchDepartmentsAndLanguagesAndStates = async () => {
     const axiosInstance = await getAxiosInstance();
     try {
       const response = await axiosInstance.get('/api/departments-languages/');

@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface ToastProps {
   type: 'success' | 'danger' | 'info';
   message: string;
   onClose: () => void;
+  duration?: number; // Duration for auto-close in milliseconds
 }
 
-const Toast: React.FC<ToastProps> = ({ type, message, onClose }) => {
+const Toast: React.FC<ToastProps> = ({ type, message, onClose, duration = 5000 }) => {
   const iconClasses = {
-    success: 'text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200',
-    danger: 'text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200',
-    info: 'text-blue-500 bg-blue-100 dark:bg-blue-800 dark:text-blue-200',
+    success: 'text-white bg-green-600',
+    danger: 'text-white bg-red-600',
+    info: 'text-white bg-blue-600',
   };
 
   const iconPaths = {
@@ -25,24 +27,45 @@ const Toast: React.FC<ToastProps> = ({ type, message, onClose }) => {
     ),
   };
 
+  useEffect(() => {
+    const timer = setTimeout(onClose, duration);
+    return () => clearTimeout(timer);
+  }, [onClose, duration]);
+
   return (
-    <div className="fixed sm:top-4 top-1 px-2 right-0 sm:right-4 z-50">
-      <div className={`flex gap-1 items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800`} role="alert">
-        <div className={`inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg ${iconClasses[type]}`}>
-          <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-            {iconPaths[type]}
-          </svg>
-          <span className="sr-only text-gray-900">{type} icon</span>
+    <AnimatePresence>
+      <motion.div
+        className="fixed sm:top-4 top-1 px-2 right-0 sm:right-4 z-50"
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 100 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className={`flex gap-2 items-center w-full max-w-xs p-4 mb-4 text-white rounded-lg shadow-lg relative ${iconClasses[type]} bg-opacity-90`}>
+          <div className={`inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg ${iconClasses[type]}`}>
+            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+              {iconPaths[type]}
+            </svg>
+            <span className="sr-only">{type} icon</span>
+          </div>
+          <div className="ml-3 text-sm font-medium">{message}</div>
+          <button type="button" className="ml-auto bg-transparent text-white hover:text-gray-200 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-300 dark:hover:text-white" onClick={onClose} aria-label="Close">
+            <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+            </svg>
+            <span className="sr-only">Close</span>
+          </button>
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700">
+            <motion.div
+              className="h-full bg-white"
+              initial={{ width: '100%' }}
+              animate={{ width: '0%' }}
+              transition={{ duration }}
+            />
+          </div>
         </div>
-        <div className="ml-3 text-sm font-normal">{message}</div>
-        <button type="button" className="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" onClick={onClose} aria-label="Close">
-          <span className="sr-only">Close</span>
-          <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-          </svg>
-        </button>
-      </div>
-    </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 

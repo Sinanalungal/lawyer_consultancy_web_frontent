@@ -14,7 +14,9 @@ interface LawyerLayoutProps {
 
 const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
   const [active, setActive] = useState<boolean>(false);
-  const { isAuthenticated,role } = useSelector((state: RootState) => state.login); // Replace RootState with your actual Redux state type
+  const { isAuthenticated, role } = useSelector(
+    (state: RootState) => state.login
+  ); // Replace RootState with your actual Redux state type
   const { userDetail } = useAppSelector((state: RootState) => state.userData);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -116,11 +118,18 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                   className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
                 >
                   <span>
-                 
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-  <path fill-rule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z" clip-rule="evenodd" />
-</svg>
-
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="size-6"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
                   </span>
                   <span className="">Schedule</span>
                 </button>
@@ -136,9 +145,15 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                   className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
                 >
                   <span className="text-2xl">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="size-6">
-  <path d="M4.5 4.5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h8.25a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3H4.5ZM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06Z" />
-</svg>                  </span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="size-6"
+                    >
+                      <path d="M4.5 4.5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h8.25a3 3 0 0 0 3-3v-9a3 3 0 0 0-3-3H4.5ZM19.94 18.75l-2.69-2.69V7.94l2.69-2.69c.944-.945 2.56-.276 2.56 1.06v11.38c0 1.336-1.616 2.005-2.56 1.06Z" />
+                    </svg>{" "}
+                  </span>
                   <span className="">Appointments</span>
                 </button>
                 {selected == "3" && <SvgComponent />}
@@ -177,7 +192,7 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
               <li className="relative">
                 <button
                   onClick={() => {
-                    navigate("../../../../admin/subscription");
+                    navigate("../../../../lawyer/cases");
                   }}
                   className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
                 >
@@ -188,15 +203,15 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                       fill="currentColor"
                       className="size-6"
                     >
-                      <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
                       <path
                         fillRule="evenodd"
-                        d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
+                        d="M7.5 5.25a3 3 0 0 1 3-3h3a3 3 0 0 1 3 3v.205c.933.085 1.857.197 2.774.334 1.454.218 2.476 1.483 2.476 2.917v3.033c0 1.211-.734 2.352-1.936 2.752A24.726 24.726 0 0 1 12 15.75c-2.73 0-5.357-.442-7.814-1.259-1.202-.4-1.936-1.541-1.936-2.752V8.706c0-1.434 1.022-2.7 2.476-2.917A48.814 48.814 0 0 1 7.5 5.455V5.25Zm7.5 0v.09a49.488 49.488 0 0 0-6 0v-.09a1.5 1.5 0 0 1 1.5-1.5h3a1.5 1.5 0 0 1 1.5 1.5Zm-3 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
                         clipRule="evenodd"
                       />
+                      <path d="M3 18.4v-2.796a4.3 4.3 0 0 0 .713.31A26.226 26.226 0 0 0 12 17.25c2.892 0 5.68-.468 8.287-1.335.252-.084.49-.189.713-.311V18.4c0 1.452-1.047 2.728-2.523 2.923-2.12.282-4.282.427-6.477.427a49.19 49.19 0 0 1-6.477-.427C4.047 21.128 3 19.852 3 18.4Z" />
                     </svg>
                   </span>
-                  <span className="">Subscription</span>
+                  <span className="">Case Manage</span>
                 </button>
                 {selected == "5" && <SvgComponent />}
               </li>
@@ -294,9 +309,12 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                   className="absolute z-50 top-[calc(100%_-_.6rem)] md:top-[calc(100%_-_.8rem)] max-[400px]:right-3 right-36 sm:right-3 transform  "
                 >
                   <div className="w-48 bg-white border border-gray-200 shadow-lg rounded-md p-4 space-y-1">
-                    
                     <Link
-                      to={role=='lawyer'?'../../../../../lawyer/self-blog':'../../../../../admin/self-blog'}
+                      to={
+                        role == "lawyer"
+                          ? "../../../../../lawyer/self-blog"
+                          : "../../../../../admin/self-blog"
+                      }
                       className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
                     >
                       Your Blogs
@@ -317,7 +335,7 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                   </div>
                 </motion.div>
               )}
-              
+
               {/* <li className="">
                 <button className="flex h-8 w-8 items-center justify-center rounded-xl border text-gray-600 hover:text-black hover:shadow">
                   <svg

@@ -114,6 +114,10 @@ interface Languages{
   id: number;
   name: string;
 }
+interface States{
+  id: number;
+  name: string;
+}
 interface Appointment {
   uuid: string;
   session_date: string;

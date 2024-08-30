@@ -4,8 +4,8 @@ import Drawer from "../../../components/Drawer/Drawer";
 import DepartmentSelector from "../../../components/Filter/FilterComponentDepartment";
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import { fetchUserSideLawyerList } from "../../../services/fetchLawyers";
-import { Departments, Languages, Lawyer } from "../../../types";
-import { fetchDepartmentsAndLanguages } from "../../../services/AddLawyerServices";
+import { Departments, Languages, Lawyer, States } from "../../../types";
+import { fetchDepartmentsAndLanguagesAndStates } from "../../../services/AddLawyerServices";
 import LanguageSelector from "../../../components/Filter/FilterComponentLanguage";
 import ExperienceSelector from "../../../components/Filter/FilterComponentExperience";
 import SearchComponent from "./Search";
@@ -29,6 +29,7 @@ const ratings: string[] = ["All", "1 ⭐", "2 ⭐", "3 ⭐", "4 ⭐", "5 ⭐"];
 const LawyerListing: React.FC = () => {
   const [departments, setDepartments] = useState<Departments[] | []>([]);
   const [languages, setLanguages] = useState<Languages[] | []>([]);
+  const [states, setStates] = useState<States[] | []>([]);
   const [selectedDepartment, setSelectedDepartment] = useState<number | null>(
     null
   );
@@ -83,9 +84,12 @@ const LawyerListing: React.FC = () => {
   useEffect(() => {
     const fetchDepartmentAndLanguages = async () => {
       try {
-        const fetchedData = await fetchDepartmentsAndLanguages();
+        const fetchedData = await fetchDepartmentsAndLanguagesAndStates();
         setDepartments(fetchedData?.departments);
         setLanguages(fetchedData?.languages);
+        // setStates(fetchedData?.states);
+        // console.log(fetchedData.states);
+        
       } catch (error) {
         console.error("Failed to fetch departments and languages:", error);
       }
