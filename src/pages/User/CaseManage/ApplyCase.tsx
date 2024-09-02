@@ -9,9 +9,14 @@ import {
   submitCase,
   fetchStates,
   deleteCase,
+  getSelectedCasesByCaseId,
+  createAllotedCase,
 } from "../../../services/Case";
 import * as Yup from "yup";
 import CustomInputFullSized from "../../../components/Input/InputFullSize";
+import { useToast } from "../../../components/Toast/ToastManager";
+import Swal from "sweetalert2";
+
 
 const validationSchema = Yup.object({
   case_type: Yup.string()
@@ -37,9 +42,12 @@ const ClientCaseManagement: React.FC = () => {
   const [caseDetails, setCaseDetails] = useState<any>({});
   const [cases, setCases] = useState<any[]>([]);
   const [states, setStates] = useState<any[]>([]);
+  const [selectedLawyers, setSelectedLawyers] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCases, setTotalCases] = useState(0);
+  const { addToast } = useToast();
+
 
   useEffect(() => {
     if (activeTab === "appliedCases") {
@@ -63,7 +71,8 @@ const ClientCaseManagement: React.FC = () => {
   const fetchCasesData = async (page: number) => {
     try {
       const casesData = await fetchCases(page);
-      setCases(casesData.results);      
+      setCases(casesData.results);
+      console.log(casesData.results);
       setTotalCases(casesData.count);
       setTotalPages(Math.ceil(casesData.count / casesData.results.length));
     } catch (error) {
@@ -74,8 +83,12 @@ const ClientCaseManagement: React.FC = () => {
 
   const handleViewDetails = async (caseId: number) => {
     try {
-      const caseDetailsData = await fetchCaseDetails(caseId);
-      setCaseDetails(caseDetailsData);
+      // const caseDetailsData = await fetchCaseDetails(caseId);
+      // setCaseDetails(caseDetailsData);
+      const selectedCasesData = await getSelectedCasesByCaseId(caseId);
+      setSelectedLawyers(selectedCasesData);
+      console.log(selectedCasesData, "selected Laweyrs");
+
       setIsModalOpen(true);
     } catch (error) {
       console.error("Error fetching case details:", error);
@@ -88,29 +101,66 @@ const ClientCaseManagement: React.FC = () => {
   ) => {
     try {
       await submitCase(values);
-      alert("Case submitted successfully!");
+      addToast('success',"Case submitted successfully!");
       resetForm();
       setActiveTab("appliedCases");
-      fetchCasesData(1); // Reset to the first page
+      fetchCasesData(1); 
     } catch (error) {
       console.error("Error submitting case:", error);
-      alert("Failed to submit the case. Please try again.");
+      addToast('danger',"Failed to submit the case. Please try again.");
     }
   };
 
-  const handleDeleteCase = async (caseId: number) => {
-    if (window.confirm("Are you sure you want to delete this case?")) {
-      try {
-        await deleteCase(caseId);
-        alert("Case deleted successfully!");
-        fetchCasesData(currentPage); // Refetch the cases after deletion
-      } catch (error) {
-        console.error("Error deleting case:", error);
-        alert("Failed to delete the case. Please try again.");
-      }
+ 
+const handleDeleteCase = async (caseId: number) => {
+  const result = await Swal.fire({
+    title: "Are you sure?",
+    text: "You won't be able to revert this!",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#3085d6",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Yes, delete it!",
+  });
+
+  if (result.isConfirmed) {
+    try {
+      await deleteCase(caseId);
+      
+      Swal.fire({
+        title: "Deleted!",
+        text: "The case has been deleted.",
+        icon: "success",
+        confirmButtonColor: "#3085d6",
+      });
+
+      fetchCasesData(currentPage);
+    } catch (error) {
+      console.error("Error deleting case:", error);
+
+      Swal.fire({
+        title: "Error!",
+        text: "Failed to delete the case. Please try again.",
+        icon: "error",
+        confirmButtonColor: "#d33",
+      });
+    }
+  }
+};
+
+  const handleAccept = async (caseId: number) => {
+    try {
+      const selectedCasesData = await createAllotedCase({
+        selected_case_id: caseId,
+      });
+      addToast('success',"Case Alloted successfully!");
+      fetchCasesData(currentPage);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error applying case:", error);
+      addToast('danger',"Error applying case");
     }
   };
-  
 
   return (
     <div className="flex min-h-[400px] flex-col">
@@ -152,7 +202,7 @@ const ClientCaseManagement: React.FC = () => {
               Your Applied Cases
             </h2>
             <motion.div
-              className="bg-white p-6 rounded-lg shadow-md border border-gray-200"
+              className="bg-white p-6 rounded-lg overflow-x-scroll shadow-md border border-gray-200"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -173,54 +223,60 @@ const ClientCaseManagement: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-  {cases.length > 0 ? (
-    cases.map((caseItem) => (
-      <tr key={caseItem.id} className="hover:bg-gray-50 text-xs">
-        <td className="py-4 text-center px-4 text-gray-800">
-          {caseItem.case_type}
-        </td>
-        <td className="py-4 px-4 text-center">
-          <span
-            className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${
-              caseItem.status === "Accepted"
-                ? "bg-green-100 text-green-800"
-                : "bg-yellow-100 text-yellow-800"
-            }`}
-          >
-            {caseItem.status}
-          </span>
-        </td>
-        <td className="py-4 px-4 text-center text-gray-600">
-          {caseItem.reference_until}
-        </td>
-        <td className="py-4 px-4 text-center space-x-4">
-          <button
-            onClick={() => handleViewDetails(caseItem.id)}
-            className="text-blue-600 hover:underline"
-          >
-            View Details
-          </button>
-          <button
-            onClick={() => handleDeleteCase(caseItem.id)}
-            className="text-red-600 hover:underline"
-          >
-            Delete
-          </button>
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan={4} className="py-4 px-4 text-center text-gray-600">
-        No cases available.
-      </td>
-    </tr>
-  )}
-</tbody>
+                  {cases.length > 0 ? (
+                    cases.map((caseItem) => (
+                      <tr
+                        key={caseItem.id}
+                        className="hover:bg-gray-50 text-xs"
+                      >
+                        <td className="py-4 text-center px-4 text-gray-800">
+                          {caseItem.case_type}
+                        </td>
+                        <td className="py-4 px-4 text-center">
+                          <span
+                            className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${
+                              caseItem.status === "Accepted"
+                                ? "bg-green-100 text-green-800"
+                                : "bg-yellow-100 text-yellow-800"
+                            }`}
+                          >
+                            {caseItem.status}
+                          </span>
+                        </td>
+                        <td className="py-4 px-4 text-center text-gray-600">
+                          {caseItem.reference_until}
+                        </td>
+                        <td className="py-4 px-4 text-center space-x-4">
+                          <button
+                            onClick={() => handleViewDetails(caseItem.id)}
+                            className="text-blue-600 hover:underline"
+                          >
+                            View Details
+                          </button>
+                          <button
+                            onClick={() => handleDeleteCase(caseItem.id)}
+                            className="text-red-600 hover:underline"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="py-4 px-4 text-center text-gray-600"
+                      >
+                        No cases available.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
 
               {/* Pagination Controls */}
-              <div className="flex justify-end gap-3 text-xs items-center mt-4">
+              <div className="flex justify-end gap-3  text-[10px] items-center mt-4">
                 <button
                   className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
                   onClick={() =>
@@ -230,8 +286,8 @@ const ClientCaseManagement: React.FC = () => {
                 >
                   Previous
                 </button>
-                <span className="text-gray-600">
-                  {currentPage} of {totalPages}
+                <span>
+                  Page {currentPage} of {totalPages}
                 </span>
                 <button
                   className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
@@ -321,9 +377,9 @@ const ClientCaseManagement: React.FC = () => {
                           id="state"
                           name="state"
                           className={`
-      block mt-1 w-full py-4 text-xs border rounded-lg shadow-sm text-gray-700
-      ${errors.state && touched.state ? "border-red-600" : "border-gray-200"}
-    `}
+     block mt-1 w-full py-4 text-xs border rounded-lg shadow-sm text-gray-700
+     ${errors.state && touched.state ? "border-red-600" : "border-gray-200"}
+   `}
                         >
                           <option value="" label="Select a state" />
                           {states.map((state) => (
@@ -355,7 +411,7 @@ const ClientCaseManagement: React.FC = () => {
 
                     <button
                       type="submit"
-                      className="w-full bg-blue-600 text-white py-3 rounded-lg"
+                      className="w-full bg-slate-600 text-white text-xs py-3 rounded-lg"
                     >
                       Submit Case
                     </button>
@@ -365,30 +421,101 @@ const ClientCaseManagement: React.FC = () => {
             </motion.div>
           </section>
         )}
-      </main>
 
-      <Modal
-        modalOpen={isModalOpen}
-        setModalOpen={() => setIsModalOpen(false)}
-        key="Case Details"
-      >
-        <div className="p-4 space-y-4">
-          <h3 className="text-xl font-semibold text-gray-800">
-            Case Type: {caseDetails.case_type}
-          </h3>
-          <p className="text-gray-600">
-            Description: {caseDetails.description}
-          </p>
-          <p className="text-gray-600">Status: {caseDetails.status}</p>
-          <p className="text-gray-600">
-            Date Applied: {caseDetails.date_applied}
-          </p>
-          <p className="text-gray-600">Budget: ${caseDetails.budget}</p>
-          <p className="text-gray-600">
-            Reference Until: {caseDetails.reference_until}
-          </p>
-        </div>
-      </Modal>
+        {/* Modal for Case Details */}
+        {isModalOpen && (
+          <Modal
+            modalOpen={isModalOpen}
+            setModalOpen={() => setIsModalOpen(false)}
+          >
+            <h2 className="text-lg font-semibold mb-4 text-gray-800 text-center">
+              Selected Lawyers
+            </h2>
+            {/* <div className="mb-4">
+              <p className="font-medium text-gray-700">Case Type:</p>
+              <p className="text-gray-600">{caseDetails.case_type}</p>
+            </div>
+            <div className="mb-4">
+              <p className="font-medium text-gray-700">Description:</p>
+              <p className="text-gray-600">{caseDetails.description}</p>
+            </div>
+            <div className="mb-4">
+              <p className="font-medium text-gray-700">Reference Until:</p>
+              <p className="text-gray-600">{caseDetails.reference_until}</p>
+            </div>
+            <div className="mb-4">
+              <p className="font-medium text-gray-700">Budget:</p>
+              <p className="text-gray-600">${caseDetails.budget}</p>
+            </div> */}
+            <div className="mb-4">
+              {/* <p className="font-medium text-gray-700">Selected Lawyers:</p> */}
+              {selectedLawyers.length > 0 ? (
+                <ul className="space-y-4 text-gray-700">
+                  {selectedLawyers.map((obj) => (
+                    <li key={obj.lawyer.user}>
+                      <div className="relative sm:flex items-center sm:space-x-4 p-4 bg-white shadow-lg rounded-lg border">
+                        <img
+                          src={`${
+                            obj.lawyer.user.profile_image ??
+                            "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
+                          }`}
+                          alt=""
+                          className="w-16 h-16 rounded object-cover"
+                        />
+                        <div className="flex max-sm:py-2 flex-col justify-between flex-grow">
+                          <h2 className="text-sm font-semibold">
+                            {obj?.lawyer?.user?.full_name}
+                          </h2>
+                          <p className="text-xs my-1 text-gray-500">
+                            <span className="font-semibold">State:</span>{" "}
+                            {obj?.lawyer?.state}
+                          </p>
+                          <div className="text-xs">
+                            <span className="font-semibold">Languages:</span>{" "}
+                            {obj?.lawyer?.languages.map(
+                              (language: any, index: number) => (
+                                <span
+                                  key={index}
+                                  className="inline-block bg-gray-100 px-2 py-1 text-[10px] rounded-full mr-2"
+                                >
+                                  {language.name}
+                                </span>
+                              )
+                            )}
+                          </div>
+                          <div className="text-xs mt-1">
+                            <span className="font-semibold">Department:</span>{" "}
+                            {obj?.lawyer?.departments.map(
+                              (department: any, index: number) => (
+                                <span
+                                  key={index}
+                                  className="inline-block bg-gray-100 px-2 text-[10px] py-1 rounded-full mr-2"
+                                >
+                                  {department.department_name}
+                                </span>
+                              )
+                            )}
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleAccept(obj.id)}
+                          className="absolute max-[400px]:px-2 max-[400px]:text-[10px] top-4 right-4 px-4 py-2 bg-slate-500 text-white rounded-lg shadow hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-300"
+                        >
+                          Accept
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-gray-600">
+                  No lawyers have selected this case.
+                </p>
+              )}
+            </div>
+          </Modal>
+        )}
+      </main>
     </div>
   );
 };

@@ -58,7 +58,7 @@ export default function Navbar() {
             alt=""
           />
           <div className="flex gap-8 max-lg:hidden text-sm items-center pl-8 font-semibold">
-            {/* <div
+            <div
               className="relative group "
               onMouseEnter={() => setActive("Services")}
               onMouseLeave={() => setActive(null)}
@@ -67,7 +67,7 @@ export default function Navbar() {
                 className="flex items-center gap-1 cursor-pointer"
                 transition={{ duration: 0.3 }}
               >
-                Services{" "}
+                Cases{" "}
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -90,27 +90,27 @@ export default function Navbar() {
                 >
                   <div className="w-48 bg-white border border-gray-200 shadow-lg rounded-md p-4 space-y-1">
                     <Link
-                      to="/"
+                      to="../../../../../../user/ongoing-cases"
                       className="block p-1 rounded-md text-sm font-semibold hover:bg-gray-100"
                     >
-                      Service 1
+                      Ongoing Cases
                     </Link>
                     <Link
-                      to="/"
+                      to="../../../../../../user/post-cases"
                       className="block p-1 rounded-md text-sm font-semibold hover:bg-gray-100"
                     >
-                      Service 2
+                      Apply New Case
                     </Link>
-                    <Link
+                    {/* <Link
                       to="/"
                       className="block p-1 rounded-md text-sm font-semibold hover:bg-gray-100"
                     >
                       Service 3
-                    </Link>
+                    </Link> */}
                   </div>
                 </motion.div>
               )}
-            </div> */}
+            </div>
 
             <Link to={'../../../../user/lawyers'}><p>Lawyers </p></Link>
             <Link to={'../../../../user/appointments'}><p>Appointments</p></Link>

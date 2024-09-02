@@ -25,7 +25,7 @@ const InterviewScheduler: React.FC = () => {
   const [availableTimes, setAvailableTimes] = useState<any[]>([]);
   const [lawyerId, setLawyerId] = useState<number |null>(null);
   const [selectedSession, setSelectedSession] = useState<any | null>(null);
-  const [modalOpen, setModalOpen] = useState(false); // state for modal visibility
+  const [modalOpen, setModalOpen] = useState(false); 
   
 
   const navigate=useNavigate()

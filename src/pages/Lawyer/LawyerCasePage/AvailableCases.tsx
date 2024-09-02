@@ -2,22 +2,28 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import CustomInputFullSized from "../../../components/Input/InputFullSize";
-import { fetchCasesForLawyer, fetchStates } from "../../../services/Case";
+import { createSelectedCase, fetchCasesForLawyer, fetchStates } from "../../../services/Case";
+import Modal from "../../../components/Modal/Modal"; // Ensure you have a Modal component
+import { useToast } from "../../../components/Toast/ToastManager";
 
 const AvailableCases: React.FC = () => {
   const [cases, setCases] = useState<any[]>([]);
   const [states, setStates] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedState, setSelectedState] = useState("");
-  const [status, setStatus] = useState(""); 
+  const [status, setStatus] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [caseDetails, setCaseDetails] = useState<any>(null);
+  const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
+  const { addToast } = useToast();
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         const statesData = await fetchStates();
         setStates(statesData);
+        
         const fetchData = async () => {
           const { results, totalPages } = await fetchCasesForLawyer(currentPage, searchTerm, selectedState, status);
           setCases(results);
@@ -40,6 +46,25 @@ const AvailableCases: React.FC = () => {
     }
   };
 
+  const handleViewDetails = (caseItem: any) => {
+    setCaseDetails(caseItem);
+    setIsModalOpen(true);
+  };
+
+  const handleAttendCase = async () => {
+    if (selectedCaseId) {
+      try {
+        const selectedCaseData = { case_model: selectedCaseId };
+        await createSelectedCase(selectedCaseData);
+        addToast('success',"Case attended successfully!");
+        setIsModalOpen(false); // Close the modal after successful submission
+      } catch (error:any) {
+        console.error("Error attending case:",  error.response?.data.detail as string || error.message as string);
+        addToast('danger',error.response?.data.detail as string || error.message as string);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen p-6 lg:px-12 lg:py-8">
       <PageTitle
@@ -47,14 +72,14 @@ const AvailableCases: React.FC = () => {
         description="Manage and review cases assigned to you."
       />
 
-      <section className="mb-8 ">
+      <section className="mb-8">
         <motion.div
           className="bg-white text-xs p-6 rounded-lg shadow-md border border-gray-200"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="mb-6 grid-cols-1 sm:grid-cols-2 grid lg:grid-cols-3 gap-2   items-center">
+          <div className="mb-6 grid-cols-1 sm:grid-cols-2 grid lg:grid-cols-3 gap-2 items-center">
             <CustomInputFullSized
               label="Search by Case Name"
               inputType="text"
@@ -64,7 +89,7 @@ const AvailableCases: React.FC = () => {
               placeholder="Enter case name..."
             />
 
-            <div className="text-xs ">
+            <div className="text-xs">
               <label htmlFor="state" className="block text-gray-700 mb-1">Filter by State</label>
               <select
                 id="state"
@@ -81,7 +106,7 @@ const AvailableCases: React.FC = () => {
               </select>
             </div>
 
-            <div className="text-xs ">
+            <div className="text-xs">
               <label htmlFor="status" className="block text-gray-700 mb-1">Filter by Status</label>
               <select
                 id="status"
@@ -100,7 +125,7 @@ const AvailableCases: React.FC = () => {
 
       <section>
         <motion.div
-          className="bg-white p-6 rounded-lg shadow-md border border-gray-200"
+          className="bg-white p-6 rounded-lg shadow-md border overflow-x-scroll border-gray-200"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -112,6 +137,7 @@ const AvailableCases: React.FC = () => {
                 <th className="py-3 px-4 text-center text-gray-600 font-medium">Status</th>
                 <th className="py-3 px-4 text-center text-gray-600 font-medium">Reference Until</th>
                 <th className="py-3 px-4 text-center text-gray-600 font-medium">State</th>
+                <th className="py-3 px-4 text-center text-gray-600 font-medium">User Mail</th>
                 <th className="py-3 px-4 text-center text-gray-600 font-medium"></th>
               </tr>
             </thead>
@@ -133,9 +159,14 @@ const AvailableCases: React.FC = () => {
                     </td>
                     <td className="py-4 px-4 text-center text-gray-600">{caseItem.reference_until}</td>
                     <td className="py-4 px-4 text-center text-gray-600">{caseItem.state_name}</td>
+                    <td className="py-4 px-4 text-center text-gray-600">{caseItem.user_email}</td>
                     <td className="py-4 px-4 text-center">
                       <button
                         className="text-blue-600 hover:underline"
+                        onClick={() => {
+                          handleViewDetails(caseItem);
+                          setSelectedCaseId(caseItem.id);
+                        }}
                       >
                         View Details
                       </button>
@@ -144,7 +175,7 @@ const AvailableCases: React.FC = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} className="py-4 px-4 text-xs text-center text-gray-600">
+                  <td colSpan={6} className="py-4 px-4 text-xs text-center text-gray-600">
                     No cases available.
                   </td>
                 </tr>
@@ -157,7 +188,7 @@ const AvailableCases: React.FC = () => {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage <= 1}
-              className="px-4 py-2 text-xs rounded-full mx-1  text-white bg-slate-600  disabled:bg-gray-300"
+              className="px-4 py-2 text-xs rounded-full mx-1 text-white bg-slate-600 disabled:bg-gray-300"
             >
               Previous
             </button>
@@ -174,6 +205,32 @@ const AvailableCases: React.FC = () => {
           </div>
         </motion.div>
       </section>
+
+      <Modal
+        modalOpen={isModalOpen}
+        setModalOpen={() => setIsModalOpen(false)}
+        key="Case Details"
+      >
+        <div className="p-4 space-y-4">
+          <h3 className="text-xl font-semibold text-gray-800">
+            Case Type: {caseDetails?.case_type}
+          </h3>
+          <p className="text-gray-600">
+            Description: {caseDetails?.description}
+          </p>
+          <p className="text-gray-600">Status: {caseDetails?.status}</p>
+          <p className="text-gray-600">Reference Until: {caseDetails?.reference_until}</p>
+          <p className="text-gray-600">State: {caseDetails?.state_name}</p>
+          <p className="text-gray-600">User Mail: {caseDetails?.user_email}</p>
+
+          <button
+            onClick={handleAttendCase}
+            className="w-full py-2 px-4 text-sm font-medium text-white bg-green-600 rounded-md shadow-sm hover:bg-green-700"
+          >
+            Attend Case
+          </button>
+        </div>
+      </Modal>
     </div>
   );
 };

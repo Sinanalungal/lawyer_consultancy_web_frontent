@@ -1,42 +1,89 @@
 import React, { useState, useEffect } from "react";
 import PageTitle from "../../../components/PageTitle/PageTitle";
-import { fetchCasesForLawyer } from "../../../services/Case"; // Update with the correct path
+import {
+  CaseFinishedApi,
+  getUserAllotedCases,
+} from "../../../services/Case"; // Update with the correct path
 import { Link } from "react-router-dom";
+import SearchForm from "../../../components/Search/Search";
+import Swal from "sweetalert2";
 
+const CaseCard: React.FC<any> = ({ caseItem, handleCaseFinished }) => {
+  const [showFull, setShowFull] = useState<boolean>(false);
 
-interface CaseCardProps {
-    caseItem: {
-      case_type: string;
-      status: string;
-      reference_until: string;
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     };
-  }
-  
-  const CaseCard: React.FC<CaseCardProps> = ({ caseItem }) => {
-    return (
-      <div className="bg-white shadow w-full rounded-lg p-4 mb-4 border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-800">{caseItem.case_type}</h3>
-        <p className="text-gray-600">Status: {caseItem.status}</p>
-        <p className="text-gray-600">Reference Until: {caseItem.reference_until}</p>
-      </div>
-    );
+    return new Date(dateString).toLocaleDateString(undefined, options);
   };
-  
 
+  return (
+    <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200 transition-transform transform hover:scale-105 duration-200 ease-in-out">
+      <div className="flex justify-between max-sm:flex-col gap-1 items-center mb-2">
+        <h3 className="text-md font-semibold truncate text-gray-800">
+          {caseItem.selected_case.case_model.case_type.toUpperCase()}
+        </h3>
+
+        <div className="flex gap-1">
+          <span
+            className={`${
+              caseItem.status === "Ongoing"
+                ? "bg-green-100 text-green-600"
+                : "bg-red-100 text-red-600"
+            } text-xs px-3 py-1 rounded-full font-medium`}
+          >
+            {caseItem.status}
+          </span>
+          <button
+            onClick={() => handleCaseFinished(caseItem.id)}
+            className="text-white rounded bg-slate-800 px-2 text-xs hover:underline"
+          >
+            Finished
+          </button>
+        </div>
+      </div>
+
+      <p
+        className={`text-xs text-gray-500 cursor-pointer ${
+          !showFull && "truncate"
+        }`}
+        onClick={() => setShowFull(!showFull)}
+      >
+        Description: {caseItem.selected_case.case_model.description}
+      </p>
+      <strong><i><p className="text-xs text-gray-500">
+        User Email: {caseItem.selected_case.case_model.user_email}
+      </p></i></strong>
+      <strong><i><p className="text-xs text-gray-500">
+        User Phone: {caseItem.selected_case.case_model.user_phone}
+      </p></i></strong>
+      <p className="text-xs text-gray-500">
+        Budget: {caseItem.selected_case.case_model.budget}
+      </p>
+      <p className="text-xs text-gray-500 mb-4">
+        Applied on: {formatDate(caseItem.created_at)}
+      </p>
+    </div>
+  );
+};
 
 const LawyerCaseManagement: React.FC = () => {
   const [cases, setCases] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("Ongoing");
 
   useEffect(() => {
     const fetchCases = async () => {
       try {
-        const casesData = await fetchCasesForLawyer(currentPage, searchTerm, selectedState, status);
+        const casesData = await getUserAllotedCases(currentPage, searchTerm, status);
         setCases(casesData.results);
+        console.log(casesData.results);
+        
         setTotalPages(casesData.totalPages);
       } catch (error) {
         console.error("Error fetching cases:", error);
@@ -45,7 +92,30 @@ const LawyerCaseManagement: React.FC = () => {
     };
 
     fetchCases();
-  }, [currentPage, searchTerm, selectedState, status]);
+  }, [currentPage, searchTerm, status]);
+
+  const handleCaseFinished = async (caseId: number) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, finish it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await CaseFinishedApi(caseId);
+        Swal.fire("Finished!", "Your case has been marked as finished.", "success");
+        setCases((prevCases) => prevCases.filter((caseItem) => caseItem.id !== caseId));
+      } catch (error) {
+        console.error("Error finishing case:", error);
+        Swal.fire("Failed", "Failed to finish the case. Please try again.", "error");
+      }
+    }
+  };
 
   return (
     <>
@@ -54,19 +124,33 @@ const LawyerCaseManagement: React.FC = () => {
         description="Manage and review cases assigned to you."
       />
       <div className="w-full -mt-8 flex items-center flex-wrap max-[400px]:justify-center max-[400px]:gap-2 justify-end sm:px-10">
-        <Link to={'../available-cases'}><div  className="bg-slate-900 text-white text-[10px] rounded-md font-medium py-3 px-3">Available Cases</div></Link>
+        <Link to={"../available-cases"}>
+          <div className="bg-slate-900 text-white text-[10px] rounded-md font-medium py-3 px-3">
+            Available Cases
+          </div>
+        </Link>
+      </div>
+      <div className="sm:px-10 flex items-center justify-end gap-1">
+        <SearchForm search={searchTerm} setSearch={setSearchTerm} />
+        <select
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+          className=" px-1 py-2 border border-gray-300 text-xs rounded-xl"
+        >
+          <option value="Ongoing">Ongoing</option>
+          <option value="Completed">Completed</option>
+        </select>
       </div>
       <div className="p-6 ">
         {cases.length > 0 ? (
-          <div className="grid grid-cols-1   gap-2">
+          <div className="grid grid-cols-1 gap-2">
             {cases.map((caseItem) => (
-              <CaseCard key={caseItem.id} caseItem={caseItem} />
+              <CaseCard key={caseItem.id} caseItem={caseItem} handleCaseFinished={handleCaseFinished} />
             ))}
           </div>
         ) : (
           <p className="text-center text-gray-600">No cases available.</p>
         )}
-        {/* Pagination Controls */}
         <div className="flex justify-end gap-3 text-xs items-center mt-4">
           <button
             className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
@@ -80,7 +164,9 @@ const LawyerCaseManagement: React.FC = () => {
           </span>
           <button
             className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
-            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+            onClick={() =>
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+            }
             disabled={currentPage === totalPages}
           >
             Next

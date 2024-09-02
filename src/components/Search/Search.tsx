@@ -14,7 +14,7 @@ const SearchForm: React.FC<SearchFormProps> = ({ search, setSearch }) => {
   return (
     <div className="flex justify-end my-2">
       <div className="w-full max-w-lg rounded-xl text-xs leading-6">
-        <div className="relative mx-auto flex w-full px-2 items-center justify-between rounded-xl border">
+        <div className="relative mx-auto flex w-full px-2 items-center justify-start rounded-xl border">
           <label htmlFor="search-input" className="sr-only">
             Search
           </label>

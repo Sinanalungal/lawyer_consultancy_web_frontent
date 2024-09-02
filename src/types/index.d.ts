@@ -137,3 +137,8 @@ interface Appointment {
   };
   booked_at: string;
 }
+interface SelectedCaseData {
+  lawyer?: number;     
+  case_model: number; 
+  is_selected?: boolean;
+}
