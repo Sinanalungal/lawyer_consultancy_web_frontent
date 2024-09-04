@@ -117,7 +117,7 @@ const CaseList: React.FC = () => {
   ];
 
   return (
-    <AdminLayout selected="3">
+    <AdminLayout selected="5">
       <AdminPageTitle
         title="All Cases"
         description="View and manage all allotted cases."

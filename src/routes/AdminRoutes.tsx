@@ -9,6 +9,9 @@ import AdminProfile from '../pages/Admin/AdminProfile/AdminProfile';
 import AddBlog from '../pages/Common/BlogManage/AddBlog';
 import AddLawyer from '../pages/Admin/LawyerList/AddLawyer';
 import CaseList from '../pages/Admin/ListedCases/CaseList';
+import ScheduleList from '../pages/Admin/ScheduleList/ScheduleList';
+import BlogManage from '../pages/Common/BlogManage/BlogManage';
+import AdminLayout from '../layouts/AdminLayout/AdminLayout';
 
 
 
@@ -26,6 +29,8 @@ function AdminRoutes() {
         <Route path="profile" element={<AdminProfile/>} />
         <Route path="blog/add-blog" element={<AddBlog/>} />
         <Route path="case-list" element={<CaseList/>} />
+        <Route path="self-blog" element={<AdminLayout selected='4'><BlogManage /></AdminLayout>} />
+        <Route path="schedule-list" element={<ScheduleList/>} />
         </Route>
       </Routes>
     </>

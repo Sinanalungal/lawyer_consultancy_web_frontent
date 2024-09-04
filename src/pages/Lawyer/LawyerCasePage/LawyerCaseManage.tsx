@@ -3,10 +3,10 @@ import PageTitle from "../../../components/PageTitle/PageTitle";
 import {
   CaseFinishedApi,
   getUserAllotedCases,
-} from "../../../services/Case"; // Update with the correct path
+} from "../../../services/Case";
 import { Link } from "react-router-dom";
 import SearchForm from "../../../components/Search/Search";
-import Swal from "sweetalert2";
+import ConfirmationModal from "../../../components/Modal/AlertModal";
 
 const CaseCard: React.FC<any> = ({ caseItem, handleCaseFinished }) => {
   const [showFull, setShowFull] = useState<boolean>(false);
@@ -76,14 +76,14 @@ const LawyerCaseManagement: React.FC = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [status, setStatus] = useState("Ongoing");
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchCases = async () => {
       try {
         const casesData = await getUserAllotedCases(currentPage, searchTerm, status);
         setCases(casesData.results);
-        console.log(casesData.results);
-        
         setTotalPages(casesData.totalPages);
       } catch (error) {
         console.error("Error fetching cases:", error);
@@ -94,25 +94,20 @@ const LawyerCaseManagement: React.FC = () => {
     fetchCases();
   }, [currentPage, searchTerm, status]);
 
-  const handleCaseFinished = async (caseId: number) => {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, finish it!",
-    });
+  const handleCaseFinished = (caseId: number) => {
+    setSelectedCaseId(caseId);
+    setShowConfirmationModal(true);
+  };
 
-    if (result.isConfirmed) {
+  const confirmFinishCase = async () => {
+    if (selectedCaseId !== null) {
       try {
-        await CaseFinishedApi(caseId);
-        Swal.fire("Finished!", "Your case has been marked as finished.", "success");
-        setCases((prevCases) => prevCases.filter((caseItem) => caseItem.id !== caseId));
+        await CaseFinishedApi(selectedCaseId);
+        setCases((prevCases) => prevCases.filter((caseItem) => caseItem.id !== selectedCaseId));
+        setShowConfirmationModal(false);
       } catch (error) {
         console.error("Error finishing case:", error);
-        Swal.fire("Failed", "Failed to finish the case. Please try again.", "error");
+        setShowConfirmationModal(false);
       }
     }
   };
@@ -173,6 +168,18 @@ const LawyerCaseManagement: React.FC = () => {
           </button>
         </div>
       </div>
+      
+      {showConfirmationModal && (
+        <ConfirmationModal
+          isOpen={showConfirmationModal}
+          title="Are you sure you want to finish this case?"
+          description="You won't be able to revert this action."
+          // confirmText="Yes, finish it!"
+          // cancelText="Cancel"
+          onConfirm={confirmFinishCase}
+          onCancel={() => setShowConfirmationModal(false)}
+        />
+      )}
     </>
   );
 };

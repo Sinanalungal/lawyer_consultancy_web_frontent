@@ -5,6 +5,7 @@ import ItemTable from "../../../components/Table/ItemTable";
 import { useNavigate } from "react-router-dom";
 import { fetchBlogs, updateBlogIsListed } from "../../../services/Blogs";
 import { Blog, BlogResponse } from "../../../types";
+import ConfirmationModal from "../../../components/Modal/AlertModal";
 
 const AdminBlog: React.FC = () => {
   const [search, setSearch] = useState<string>("");
@@ -14,12 +15,14 @@ const AdminBlog: React.FC = () => {
   const [prevPage, setPrevPage] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [blocked, setBlocked] = useState<boolean>(false);
-  const [currentUrl,setCurrentUrl]=useState<string|null>(`${process.env.VITE_BASE_URL}/blogsession/blogs/`);
+  const [currentUrl, setCurrentUrl] = useState<string | null>(`${process.env.VITE_BASE_URL}/blogsession/blogs/`);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      if(currentUrl){
+      if (currentUrl) {
         try {
           const data: BlogResponse = await fetchBlogs(
             currentUrl,
@@ -41,33 +44,43 @@ const AdminBlog: React.FC = () => {
 
   const handleNextPage = () => {
     if (nextPage) {
-      setCurrentUrl(nextPage)
+      setCurrentUrl(nextPage);
       setPageNum((prev) => prev + 1);
     }
   };
 
   const handlePreviousPage = () => {
     if (prevPage) {
-      setCurrentUrl(prevPage)
+      setCurrentUrl(prevPage);
       setPageNum((prev) => prev - 1);
     }
   };
 
-  const handleToggleIsListed = async (
-    blogId: number,
-    currentIsListed: boolean
-  ) => {
-    try {
-      const updatedBlog = await updateBlogIsListed(blogId, !currentIsListed);
-      setBlogs((prevBlogs) =>
-        prevBlogs.map((blog) =>
-          blog.id === blogId
-            ? { ...blog, is_listed: updatedBlog.is_listed }
-            : blog
-        )
-      );
-    } catch (error) {
-      console.error("Failed to update blog:", error);
+  const handleToggleIsListed = (blog: Blog) => {
+    setSelectedBlog(blog);
+    setIsModalOpen(true);
+  };
+
+  const confirmToggleIsListed = async () => {
+    if (selectedBlog) {
+      try {
+        const updatedBlog = await updateBlogIsListed(
+          selectedBlog.id,
+          !selectedBlog.is_listed
+        );
+        setBlogs((prevBlogs) =>
+          prevBlogs.map((blog) =>
+            blog.id === selectedBlog.id
+              ? { ...blog, is_listed: updatedBlog.is_listed }
+              : blog
+          )
+        );
+      } catch (error) {
+        console.error("Failed to update blog:", error);
+      } finally {
+        setIsModalOpen(false);
+        setSelectedBlog(null);
+      }
     }
   };
 
@@ -94,7 +107,7 @@ const AdminBlog: React.FC = () => {
     actions: (
       <button
         className={`px-3 py-2 ${blog.is_listed ? "bg-red-500" : "bg-green-500"} text-white`}
-        onClick={() => handleToggleIsListed(blog.id, blog.is_listed ?? false)}
+        onClick={() => handleToggleIsListed(blog)}
       >
         {blog.is_listed ? "Block" : "Unblock"}
       </button>
@@ -105,16 +118,8 @@ const AdminBlog: React.FC = () => {
     <AdminLayout selected="4">
       <AdminPageTitle
         title="Blogs"
-        description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,"
+        description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"
       />
-      {/* <div className="w-full flex justify-end text-white text-xs">
-        <p
-          onClick={() => navigate("../../../../../admin/blog/add-blog")}
-          className="bg-slate-800 px-3 py-2 cursor-pointer rounded-sm mb-4"
-        >
-          Add Blog
-        </p>
-      </div> */}
       <ItemTable
         columns={columns}
         data={data}
@@ -127,6 +132,16 @@ const AdminBlog: React.FC = () => {
         total={totalCount}
         blocked={blocked}
         setBlocked={setBlocked}
+      />
+
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        title={selectedBlog?.is_listed ? "Block Blog" : "Unblock Blog"}
+        description={`Are you sure you want to ${
+          selectedBlog?.is_listed ? "block" : "unblock"
+        } this blog?`}
+        onConfirm={confirmToggleIsListed}
+        onCancel={() => setIsModalOpen(false)}
       />
     </AdminLayout>
   );

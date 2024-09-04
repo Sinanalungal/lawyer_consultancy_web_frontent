@@ -43,10 +43,7 @@ const ItemTable: React.FC<TableProps> = ({
     { label: 'Blocked', action: () => setBlocked?.(true) },
   ],
 }) => {
-  // const options = [
-  //   { label: 'Unblocked', action: () => setBlocked?.(false) },
-  //   { label: 'Blocked', action: () => setBlocked?.(true) },
-  // ];
+
 
   return (
     <div className="flex flex-col  h-full pb-16 ">

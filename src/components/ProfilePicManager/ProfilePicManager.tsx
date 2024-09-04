@@ -76,7 +76,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
     return new Blob(byteArrays, { type: mimeString });
   };
   return (
-    <div className="sm:px-32 px-12 max-w-8xl relative mx-auto flex-wrap sm:flex mb-10 flex gap-4">
+    <div className="sm:px-28  max-w-8xl relative mx-auto flex-wrap sm:flex mb-10 flex gap-4">
       <div className="bg-slate-300 w-[70px] max-sm:w-[50px] max-sm:h-[50px] h-[70px] rounded-full">
         {profileImage ? (
           <img

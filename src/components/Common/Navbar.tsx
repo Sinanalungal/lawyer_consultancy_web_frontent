@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { RootState, useAppSelector } from "../../redux/store";
@@ -7,11 +7,11 @@ import { logout } from "../../redux/slice/LoginActions";
 
 export default function Navbar() {
   const { isAuthenticated } = useSelector((state: RootState) => state.login);
-  const { userDetail } = useAppSelector((state:RootState) => state.userData);
+  const { userDetail } = useAppSelector((state: RootState) => state.userData);
   const [active, setActive] = useState<string | null>(null);
   const [isHoveringMenu, setIsHoveringMenu] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -112,10 +112,18 @@ export default function Navbar() {
               )}
             </div>
 
-            <Link to={'../../../../user/lawyers'}><p>Lawyers </p></Link>
-            <Link to={'../../../../user/appointments'}><p>Appointments</p></Link>
-            <Link to={'../../../../user/blog'}><p>Blogs </p></Link>
-            <Link to={'../../../../../chat'}><p>Chat</p></Link>
+            <Link to={"../../../../user/lawyers"}>
+              <p>Lawyers </p>
+            </Link>
+            <Link to={"../../../../user/appointments"}>
+              <p>Appointments</p>
+            </Link>
+            <Link to={"../../../../user/blog"}>
+              <p>Blogs </p>
+            </Link>
+            <Link to={"../../../../../chat"}>
+              <p>Chat</p>
+            </Link>
           </div>
         </div>
         <div className="flex justify-center sm:gap-4 max-sm:gap-4  md:gap-4 items-center">
@@ -168,58 +176,82 @@ export default function Navbar() {
           ) : (
             // profile section
             <div
-            className="relative group "
-            onMouseEnter={() => setActive("Profile")}
-            onMouseLeave={() => setActive(null)}
-          >
-            <motion.p
-              className="flex items-center gap-1 cursor-pointer"
-              transition={{ duration: 0.3 }}
+              className="relative group "
+              onMouseEnter={() => setActive("Profile")}
+              onMouseLeave={() => setActive(null)}
             >
-              <div className="w-[43px] h-[43px] rounded-full flex items-center  justify-center  font-semibold bg-pink-800 overflow-hidden text-white">
-              
-              {(userDetail?.profile_image)?<img src={userDetail?.profile_image} className="object-cover  rounded-full w-[43px] h-[43px]" alt="Profile" />:<p className="text-xl">{userDetail?.full_name && userDetail.full_name.length > 0 ? userDetail.full_name[0] : ''}
-              </p>}
-              </div>
-            </motion.p>
-            {active === "Profile" && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                transition={transition}
-                className="absolute  top-[calc(100%_+_.0rem)] py-2 right-0 transform  "
+              <motion.p
+                className="flex items-center gap-1 cursor-pointer"
+                transition={{ duration: 0.3 }}
               >
-                <div className="w-48 bg-white border border-gray-200 shadow-lg rounded-md p-4 space-y-1">
-                  <div className="w-full flex flex-col items-center py-4">
-                  <div className="w-[70px]  h-[70px] overflow-hidden justify-center items-center flex rounded-full font-semibold bg-pink-800 text-white">
-                  {(userDetail?.profile_image)?<img src={userDetail?.profile_image} className="object-contain  rounded-full w-[70px]  h-[70px]" alt="Profile" />:<p className="text-3xl">{userDetail?.full_name && userDetail.full_name.length > 0 ? userDetail.full_name[0] : ''}
-              </p>}
-                  </div>
-                  <div className="text-center w-full mt-2 font-bold text-sm truncate">{userDetail?.full_name?.toUpperCase()}</div>
-                  </div>
-                  <Link
-                    to="/"
-                    className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
-                  >
-                    Service 1
-                  </Link>
-                  <Link
-                    to="../../../../user/profile"
-                    className="block p-1 rounded-mdr text-xs text-gray-700 font-medium hover:bg-gray-100"
-                  >
-                    Profile
-                  </Link>
-                  <hr />
-                  <div
-                    onClick={()=>dispatch(logout())}
-                    className="block p-1 rounded-md cursor-pointer text-xs text-gray-700  font-medium hover:bg-gray-100"
-                  >
-                    Sign out
-                  </div>
+                <div className="w-[43px] h-[43px] rounded-full flex items-center  justify-center  font-semibold bg-pink-800 overflow-hidden text-white">
+                  {userDetail?.profile_image ? (
+                    <img
+                      src={userDetail?.profile_image}
+                      className="object-cover  rounded-full w-[43px] h-[43px]"
+                      alt="Profile"
+                    />
+                  ) : (
+                    <p className="text-xl">
+                      {userDetail?.full_name && userDetail.full_name.length > 0
+                        ? userDetail.full_name[0]
+                        : ""}
+                    </p>
+                  )}
                 </div>
-              </motion.div>
-            )}
-          </div>
+              </motion.p>
+              {active === "Profile" && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.85, y: 10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={transition}
+                  className="absolute  top-[calc(100%_+_.0rem)] py-2 right-0 transform  "
+                >
+                  <div className="w-48 bg-white border border-gray-200 shadow-lg rounded-md p-4 space-y-1">
+                    <div className="w-full flex flex-col items-center py-4">
+                      <div className="w-[70px]  h-[70px] overflow-hidden justify-center items-center flex rounded-full font-semibold bg-pink-800 text-white">
+                        {userDetail?.profile_image ? (
+                          <img
+                            src={userDetail?.profile_image}
+                            className="object-cover  rounded-full w-[70px]  h-[70px]"
+                            alt="Profile"
+                          />
+                        ) : (
+                          <p className="text-3xl">
+                            {userDetail?.full_name &&
+                            userDetail.full_name.length > 0
+                              ? userDetail.full_name[0]
+                              : ""}
+                          </p>
+                        )}
+                      </div>
+                      <div className="text-center w-full mt-2 font-bold text-sm truncate">
+                        {userDetail?.full_name?.toUpperCase()}
+                      </div>
+                    </div>
+                    <Link
+                      to="/"
+                      className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
+                    >
+                      Service 1
+                    </Link>
+                    <Link
+                      to="../../../../user/profile"
+                      className="block p-1 rounded-mdr text-xs text-gray-700 font-medium hover:bg-gray-100"
+                    >
+                      Profile
+                    </Link>
+                    <hr />
+                    <div
+                      onClick={() => dispatch(logout())}
+                      className="block p-1 rounded-md cursor-pointer text-xs text-gray-700  font-medium hover:bg-gray-100"
+                    >
+                      Sign out
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </div>
           )}
         </div>
       </div>
@@ -252,7 +284,6 @@ export default function Navbar() {
               </button>
             </div>
             <div className="flex flex-col p-5 space-y-6 ">
-              
               <div className="relative group">
                 <button
                   onClick={() => setIsHoveringMenu(!isHoveringMenu)}
@@ -332,25 +363,31 @@ export default function Navbar() {
                 Appoinments
               </Link>
               <div
-          
                 className="text-base sm:hidden font-semibold"
                 onClick={toggleSidebar}
               >
                 Search
               </div>
               <hr />
-              {isAuthenticated ?(<div
-                className="text-base sm:hidden cursor-pointer font-semibold"
-                onClick={()=>{dispatch(logout());toggleSidebar()}}
-              >
-                Sign out
-              </div>):(<Link
-                to="/login"
-                className="text-base sm:hidden cursor-pointer font-semibold"
-                onClick={toggleSidebar}
-              >
-                Login
-              </Link>)}
+              {isAuthenticated ? (
+                <div
+                  className="text-base sm:hidden cursor-pointer font-semibold"
+                  onClick={() => {
+                    dispatch(logout());
+                    toggleSidebar();
+                  }}
+                >
+                  Sign out
+                </div>
+              ) : (
+                <Link
+                  to="/login"
+                  className="text-base sm:hidden cursor-pointer font-semibold"
+                  onClick={toggleSidebar}
+                >
+                  Login
+                </Link>
+              )}
             </div>
           </div>
         </div>

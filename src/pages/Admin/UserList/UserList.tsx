@@ -5,6 +5,7 @@ import ItemTable from "../../../components/Table/ItemTable";
 import { useNavigate } from "react-router-dom";
 import { fetchUsers, updateUserVerification } from "../../../services/fetchUserData";
 import { User, UserResponse } from "../../../types";
+import ConfirmationModal from "../../../components/Modal/AlertModal";
 
 const AdminUser: React.FC = () => {
   const [search, setSearch] = useState<string>("");
@@ -15,21 +16,31 @@ const AdminUser: React.FC = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [blocked, setBlocked] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<string | null>(`${process.env.VITE_BASE_URL}/api/filter-user/?page=${pageNum}`);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
-  const handleToggleVerification = async (userId: number, currentIsVerified: boolean) => {
-    try {
-      const updatedUser = await updateUserVerification(userId, !currentIsVerified);
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.pk === userId
-            ? { ...user, is_verified: updatedUser.is_verified }
-            : user
-        )
-      );
-    } catch (error) {
-      console.error("Failed to update user:", error);
+  const handleToggleVerification = async () => {
+    if (selectedUser) {
+      try {
+        const updatedUser = await updateUserVerification(selectedUser.pk, !selectedUser.is_verified);
+        setUsers((prevUsers) =>
+          prevUsers.map((user) =>
+            user.pk === selectedUser.pk
+              ? { ...user, is_verified: updatedUser.is_verified }
+              : user
+          )
+        );
+        setIsModalOpen(false);
+      } catch (error) {
+        console.error("Failed to update user:", error);
+      }
     }
+  };
+
+  const openModal = (user: User) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
   };
 
   useEffect(() => {
@@ -86,16 +97,12 @@ const AdminUser: React.FC = () => {
           src={user.profile_image}
           alt={user.full_name}
           className="rounded-full w-[50px] h-[50px] object-cover"
-          // width="50"
-          // height="50"
         />
       ) : (
         <img
           src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
           alt="Default Profile"
           className="rounded-full w-[50px] h-[50px] object-cover"
-          // width="50"
-          // height="50"
         />
       )
     ),
@@ -106,7 +113,7 @@ const AdminUser: React.FC = () => {
     actions: (
       <button
         className={`px-3 py-2 ${user.is_verified ? "bg-red-500" : "bg-green-500"} text-white`}
-        onClick={() => handleToggleVerification(user.pk, user.is_verified)}
+        onClick={() => openModal(user)} // Open the modal instead of directly toggling
       >
         {user.is_verified ? "Block" : "Unblock"}
       </button>
@@ -114,7 +121,7 @@ const AdminUser: React.FC = () => {
   }));
 
   return (
-    <AdminLayout selected="4">
+    <AdminLayout selected="3">
       <AdminPageTitle
         title="Users"
         description="Manage user verification statuses and view user details."
@@ -131,6 +138,14 @@ const AdminUser: React.FC = () => {
         total={totalCount}
         blocked={blocked}
         setBlocked={setBlocked}
+      />
+      
+      <ConfirmationModal
+        isOpen={isModalOpen}
+        title="Confirm Action"
+        onCancel={() => setIsModalOpen(false)}
+        onConfirm={handleToggleVerification}
+        description={`Are you sure you want to ${selectedUser?.is_verified ? "block" : "unblock"} ${selectedUser?.full_name}?`}
       />
     </AdminLayout>
   );

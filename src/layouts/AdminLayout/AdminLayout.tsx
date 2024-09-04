@@ -224,6 +224,31 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                 </button></Link>
                 {selected == "5" && <SvgComponent />}
               </li>
+              <li className="relative">
+                <Link to={"../../../../admin/schedule-list"}><button
+                  // onClick={() => {
+                  //   navigate("../../../../admin/subscription");
+                  // }}
+                  className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
+                >
+                  <span>
+                  <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="size-6"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                  </span>
+                  <span className="">Schedules</span>
+                </button></Link>
+                {selected == "6" && <SvgComponent />}
+              </li>
             </ul>
             {/* </ul> */}
             {/* User profile section */}
@@ -320,10 +345,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                   <div className="w-48 bg-white border border-gray-200 shadow-lg rounded-md p-4 space-y-1">
                     
                     <Link
-                      to="/"
+                      to={"../../../../../admin/self-blog"}
                       className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
                     >
-                      Service 1
+                      Your Blogs
                     </Link>
                     <Link
                       to="../../../../admin/profile"

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import Swal from "sweetalert2";
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import { CaseFinishedApi, getUserAllotedCases } from "../../../services/Case";
 import SearchForm from "../../../components/Search/Search";
+import ConfirmationModal from "../../../components/Modal/AlertModal";
 
 const OngoingCases: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"appliedCases" | "applyCase">(
@@ -15,6 +15,8 @@ const OngoingCases: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedState, setSelectedState] = useState("");
   const [status, setStatus] = useState("Ongoing");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchCases = async () => {
@@ -25,8 +27,6 @@ const OngoingCases: React.FC = () => {
           status
         );
         setCases(casesData.results);
-        console.log(casesData.results);
-
         setTotalPages(casesData.totalPages);
       } catch (error) {
         console.error("Error fetching cases:", error);
@@ -39,25 +39,24 @@ const OngoingCases: React.FC = () => {
     }
   }, [currentPage, searchTerm, selectedState, status, activeTab]);
 
-  const CaseFinished = async (caseId: number) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you really want to mark this case as finished?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes, finish it!",
-      cancelButtonText: "No, keep it ongoing",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await CaseFinishedApi(caseId);
-          Swal.fire("Finished!", "The case has been marked as finished.", "success");
-        } catch (error) {
-          console.error("Error in applying finish:", error);
-          Swal.fire("Error!", "Failed to apply case finished. Please try again.", "error");
-        }
+  const handleCaseFinished = async () => {
+    if (selectedCaseId !== null) {
+      try {
+        await CaseFinishedApi(selectedCaseId);
+        setCases((prevCases) =>
+          prevCases.filter((caseItem) => caseItem.id !== selectedCaseId)
+        );
+      } catch (error) {
+        console.error("Error finishing case:", error);
+      } finally {
+        setModalOpen(false);
       }
-    });
+    }
+  };
+
+  const openModal = (caseId: number) => {
+    setSelectedCaseId(caseId);
+    setModalOpen(true);
   };
 
   return (
@@ -135,7 +134,7 @@ const OngoingCases: React.FC = () => {
                         </td>
                         <td className="py-4 px-4 text-center space-x-4">
                           <button
-                            onClick={() => CaseFinished(caseItem.id)}
+                            onClick={() => openModal(caseItem.id)}
                             className="text-white rounded bg-slate-800 p-2 hover:underline"
                           >
                             Finished
@@ -146,7 +145,7 @@ const OngoingCases: React.FC = () => {
                   ) : (
                     <tr>
                       <td
-                        colSpan={4}
+                        colSpan={5}
                         className="text-center py-4 text-gray-600"
                       >
                         No cases available.
@@ -182,6 +181,14 @@ const OngoingCases: React.FC = () => {
             </motion.div>
           </section>
         )}
+
+        <ConfirmationModal
+          isOpen={modalOpen}
+          title="Mark Case as Finished?"
+          description="Do you really want to mark this case as finished?"
+          onConfirm={handleCaseFinished}
+          onCancel={() => setModalOpen(false)}
+        />
       </main>
     </div>
   );

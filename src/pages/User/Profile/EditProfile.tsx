@@ -19,12 +19,14 @@ const EditProfilePage: React.FC = () => {
           title="EDIT PROFILE"
           description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
         />
+        <div className="max-sm:px-10">
         <UserProfilePicture
           profileImage={userDetail?.profile_image ?? ""}
           fullName={userDetail?.full_name ?? ""}
           // onUploadClick={handleUploadClick}
           // onDeleteClick={handleDeleteClick}
         />
+        </div>
         <div className="px-10 max-w-8xl mx-auto  sm:flex  ">
           <EditProfileTabs
             options={tabs}

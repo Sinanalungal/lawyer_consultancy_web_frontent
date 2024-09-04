@@ -109,3 +109,32 @@ export const fetchBookedSessions = async (tab: "upcoming" | "finished") => {
         throw error;
     }
 };
+
+export const getSchedulesForAdminSide = async (pageNum: number, search: string, isListed: string | null) => {
+    const axiosInstance = await getAxiosInstance();
+    const params: any = {
+      page: pageNum,
+      search,
+    };
+  
+    if (isListed !== null) {
+      params.is_listed = isListed;
+    }
+  
+    const response = await axiosInstance.get('/schedule/all-scheduling/', { params });
+    return response.data;
+  };
+  
+  export const updateSchedulingStatusAdmin = async (id: number, isListed: boolean) => {
+    const axiosInstance = await getAxiosInstance();
+    try {
+      const response = await axiosInstance.patch(`/schedule/schedule/update/${id}/`, {
+        is_listed: isListed,
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error updating scheduling status:", error);
+      throw error;
+    }
+  };
+  
