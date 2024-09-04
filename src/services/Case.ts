@@ -161,3 +161,29 @@ export const CaseFinishedApi = async (caseId: number) => {
     throw error;
   }
 };
+
+
+export const getAllCases = async (
+  page: number = 1,
+  searchTerm: string = '',
+  status: string = 'Ongoing'
+) => {
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.get('/case-manage/alloted-cases/', {
+      params: {
+        page,
+        search: searchTerm,
+        status: status,
+      },
+    });
+
+    return {
+      results: response.data.results,
+      totalPages: Math.ceil(response.data.count / 2),  
+    };
+  } catch (error: any) {
+    console.error('Error fetching allotted cases:', error.response?.data || error.message);
+    return { results: [], totalPages: 0 };
+  }
+};

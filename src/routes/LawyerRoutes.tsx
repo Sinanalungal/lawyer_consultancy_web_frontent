@@ -10,6 +10,7 @@ import LawyerProfile from '../pages/Lawyer/LawyerProfile/LawyerProfile';
 import LawyerCaseManagement from '../pages/Lawyer/LawyerCasePage/LawyerCaseManage';
 import AvailableCases from '../pages/Lawyer/LawyerCasePage/AvailableCases';
 import LawyerWalletPage from '../pages/Lawyer/Wallet/Wallet';
+import LawyerDashboard from '../pages/Lawyer/Dashboard/LawyerDashboard';
 
 
 
@@ -18,7 +19,7 @@ function LawyerRoutes() {
     <>
       <Routes>
         <Route path='*' element={<LawyerPrivateRoute/>}>
-        <Route path='' element={<LawyerLanding />} />
+        <Route path='' element={<LawyerDashboard />} />
         <Route path="profile" element={<LawyerProfile/>} />
         {/* <Route path="edit-profile" element={<EditProfilePage />} /> */}
         <Route path="blog" element={<Blog />} />
@@ -29,7 +30,6 @@ function LawyerRoutes() {
         <Route path="self-blog" element={<BlogManage />} />
         <Route path="blog/add-blog" element={<AddBlog />} />
         <Route path="wallet" element={<LawyerWalletPage />} />
-        
         </Route>
       </Routes>
     </>

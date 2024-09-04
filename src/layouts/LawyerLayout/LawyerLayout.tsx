@@ -408,7 +408,7 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
         <div className="h-full  overflow-x-hidden overflow-y-scoll no-scrollbar max-[400px]:p-1 p-2">
           <main
             id="dashboard-main"
-            className="min-screen overflow-auto  px-2"
+            className="min-screen overflow-auto  px-2 py-6"
             style={{ scrollbarWidth: "none" }}
           >
             {children}

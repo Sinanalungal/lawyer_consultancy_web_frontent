@@ -58,7 +58,7 @@ const WalletPage: React.FC = () => {
     };
 
     fetchData();
-  }, [handleAddFunds]);
+  }, []);
  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

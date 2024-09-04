@@ -16,7 +16,6 @@ const ResetPassword = lazy(() => import('./pages/Common/ResetPassword/ResetPassw
 // const BookAppointment = lazy(() => import('./pages/User/BookingAppointment/BookingAppointment'));
 const Dashboard = lazy(() => import('./pages/Admin/Dashboard/Dashboard'));
 
-// Lazy load routes
 const UserRoutes = lazy(() => import('./routes/UserRoutes'));
 const AdminRoutes = lazy(() => import('./routes/AdminRoutes'));
 const LawyerRoute = lazy(() => import('./routes/LawyerRoutes'));

@@ -24,6 +24,7 @@ interface TableProps {
   total: number;
   blocked?: boolean;
   setBlocked?: React.Dispatch<React.SetStateAction<boolean>>;
+  options?: { label: string; action: () => void }[];
 }
 
 const ItemTable: React.FC<TableProps> = ({
@@ -37,16 +38,20 @@ const ItemTable: React.FC<TableProps> = ({
   total,
   blocked,
   setBlocked,
-}) => {
-  const options = [
+  options= [
     { label: 'Unblocked', action: () => setBlocked?.(false) },
     { label: 'Blocked', action: () => setBlocked?.(true) },
-  ];
+  ],
+}) => {
+  // const options = [
+  //   { label: 'Unblocked', action: () => setBlocked?.(false) },
+  //   { label: 'Blocked', action: () => setBlocked?.(true) },
+  // ];
 
   return (
     <div className="flex flex-col  h-full pb-16 ">
       <div className="flex items-center justify-between max-sm:flex-col max-sm:items-end">
-      {options && <SelectionBox buttonLabel={blocked?'Blocked':'Unblocked'} options={options} />}
+      {options && <SelectionBox buttonLabel={blocked?options[1].label:options[0].label} options={options} />}
       <SearchForm search={search} setSearch={setSearch}/>
       </div>
       <div className="overflow-x-auto no-scrollbar">

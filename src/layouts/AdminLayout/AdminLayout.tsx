@@ -93,10 +93,10 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
             <ul className="space-y-4 mt-10">
               {/* Transaction Button */}
               <li className="relative">
-                <button
-                  onClick={() => {
-                    navigate("../../../../admin");
-                  }}
+              <Link to={"../../../../admin"}><button
+                  // onClick={() => {
+                  //   navigate("../../../../admin");
+                  // }}
                   className="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-8 py-4 font-semibold focus:outline-none"
                 >
                   <span>
@@ -114,16 +114,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                     </svg>
                   </span>
                   <span className="">Dashboard</span>
-                </button>
+                </button></Link>
                 {selected == "1" && <SvgComponent />}
               </li>
 
               {/* Send Money Button */}
               <li className="relative">
-                <button
-                  onClick={() => {
-                    navigate("../../../../admin/lawyers");
-                  }}
+              <Link to={"../../../../admin/lawyers"}><button
+                  // onClick={() => {
+                  //   navigate("../../../../admin/lawyers");
+                  // }}
                   className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
                 >
                   <span>
@@ -141,16 +141,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                     </svg>
                   </span>
                   <span className="">Lawyers</span>
-                </button>
+                </button></Link>
                 {selected == "2" && <SvgComponent />}
               </li>
 
               {/* Payments Button */}
               <li className="relative">
-                <button
-                  onClick={() => {
-                    navigate("../../../../admin/users");
-                  }}
+              <Link to={"../../../../admin/users"}><button
+                  // onClick={() => {
+                  //   navigate("../../../../admin/users");
+                  // }}
                   className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
                 >
                   <span className="text-2xl">
@@ -164,16 +164,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                     </svg>
                   </span>
                   <span className="">Users</span>
-                </button>
+                </button></Link>
                 {selected == "3" && <SvgComponent />}
               </li>
 
               {/* Cards Button */}
               <li className="relative">
-                <button
-                  onClick={() => {
-                    navigate("../../../../admin/blog");
-                  }}
+                <Link to={"../../../../admin/blog"}><button
+                  // onClick={() => {
+                  //   navigate("../../../../admin/blog");
+                  // }}
                   className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
                 >
                   <span>
@@ -193,16 +193,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                     </svg>
                   </span>
                   <span className="">Blog</span>
-                </button>
+                </button></Link>
                 {selected == "4" && <SvgComponent />}
               </li>
 
               {/* Settings Button */}
               <li className="relative">
-                <button
-                  onClick={() => {
-                    navigate("../../../../admin/subscription");
-                  }}
+                <Link to={"../../../../admin/case-list"}><button
+                  // onClick={() => {
+                  //   navigate("../../../../admin/subscription");
+                  // }}
                   className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
                 >
                   <span>
@@ -220,8 +220,8 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                       />
                     </svg>
                   </span>
-                  <span className="">Subscription</span>
-                </button>
+                  <span className="">Cases</span>
+                </button></Link>
                 {selected == "5" && <SvgComponent />}
               </li>
             </ul>
