@@ -10,7 +10,7 @@ const ClientPostCase = lazy(() => import('../pages/User/CaseManage/ApplyCase'));
 const OngoingCases = lazy(() => import('../pages/User/CaseManage/OngoingCases'));
 const WalletPage = lazy(() => import('../pages/Lawyer/Wallet/Wallet'));
 const LawyerListing = lazy(() => import('../pages/User/LawyerListing/LawyerListing'));
-const BookAppointment = lazy(() => import('../pages/User/BookingAppointment/BookingAppointment'));
+// const BookAppointment = lazy(() => import('../pages/User/BookingAppointment/BookingAppointment'));
 const Profile = lazy(() => import('../pages/User/Profile/Profile'));
 const Blog = lazy(() => import('../pages/User/Blog/Blog'));
 const EditProfilePage = lazy(() => import('../pages/User/Profile/EditProfile'));
@@ -36,7 +36,7 @@ function UserRoutes() {
         <Route path="*" element={<UserPrivateRoute />}>
           <Route path="" element={<LandingPage />} />
           <Route path="lawyers" element={<LawyerListing />} />
-          <Route path="booking" element={<BookAppointment />} />
+          {/* <Route path="booking" element={<BookAppointment />} /> */}
           <Route path="profile" element={<Profile />} />
           <Route path="edit-profile" element={<EditProfilePage />} />
           <Route path="blog" element={<Blog />} />

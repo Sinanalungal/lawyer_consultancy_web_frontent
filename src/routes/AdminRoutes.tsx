@@ -16,6 +16,7 @@ const CaseList = lazy(() => import('../pages/Admin/ListedCases/CaseList'));
 const ScheduleList = lazy(() => import('../pages/Admin/ScheduleList/ScheduleList'));
 const BlogManage = lazy(() => import('../pages/Common/BlogManage/BlogManage'));
 const AdminLayout = lazy(() => import('../layouts/AdminLayout/AdminLayout'));
+const SalesReportTable = lazy(() => import('../pages/Admin/SalesReport/SalesReport'));
 
 function AdminRoutes() {
   const spinnerStyle = {
@@ -47,6 +48,7 @@ function AdminRoutes() {
             <Route path="case-list" element={<CaseList />} />
             <Route path="self-blog" element={<AdminLayout selected="4"><BlogManage /></AdminLayout>} />
             <Route path="schedule-list" element={<ScheduleList />} />
+            <Route path="sales-report" element={<SalesReportTable />} />
           </Route>
         </Routes>
       </Suspense>

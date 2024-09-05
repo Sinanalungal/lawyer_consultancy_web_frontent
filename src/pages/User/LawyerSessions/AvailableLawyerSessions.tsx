@@ -12,7 +12,7 @@ import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { motion, AnimatePresence } from "framer-motion";
 import Lottie from 'lottie-react';
 import { bookAppointment, getAvailableSchedulesForUser } from "../../../services/ScheduleSession";
-import successAnimation from '../../../../public/Payment-success.json';
+import successAnimation from '/Payment-success.json?url';
 import Modal from "../../../components/Modal/Modal";
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
