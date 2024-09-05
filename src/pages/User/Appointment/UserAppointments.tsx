@@ -2,19 +2,25 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { fetchBookedSessions } from "../../../services/ScheduleSession";
 import { Appointment } from "../../../types";
+import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 
 
 
 const UserAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [activeTab, setActiveTab] = useState<"upcoming" | "finished">("upcoming");
+  const {setLoader}=useLoader()
+
 
   const fetchAppointments = async (tab: "upcoming" | "finished") => {
+    setLoader(true);
     try {
       const fetchedAppointments: Appointment[] = await fetchBookedSessions(tab);
       setAppointments(fetchedAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
+    }finally{
+      setLoader(false);
     }
   };
 

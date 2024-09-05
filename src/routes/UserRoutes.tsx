@@ -1,13 +1,14 @@
 import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import UserPrivateRoute from './PrivateRouter/UserPrivateRoute';
-import AvailableLawyerSessions from '../pages/User/LawyerSessions/AvailableLawyerSessions';
-import UserAppointments from '../pages/User/Appointment/UserAppointments';
-import ClientPostCase from '../pages/User/CaseManage/ApplyCase';
-import OngoingCases from '../pages/User/CaseManage/OngoingCases';
-import WalletPage from '../pages/Lawyer/Wallet/Wallet';
+import { RingLoader } from 'react-spinners';
 
 // Lazy load pages
+const AvailableLawyerSessions = lazy(() => import('../pages/User/LawyerSessions/AvailableLawyerSessions'));
+const UserAppointments = lazy(() => import('../pages/User/Appointment/UserAppointments'));
+const ClientPostCase = lazy(() => import('../pages/User/CaseManage/ApplyCase'));
+const OngoingCases = lazy(() => import('../pages/User/CaseManage/OngoingCases'));
+const WalletPage = lazy(() => import('../pages/Lawyer/Wallet/Wallet'));
 const LawyerListing = lazy(() => import('../pages/User/LawyerListing/LawyerListing'));
 const BookAppointment = lazy(() => import('../pages/User/BookingAppointment/BookingAppointment'));
 const Profile = lazy(() => import('../pages/User/Profile/Profile'));
@@ -16,11 +17,24 @@ const EditProfilePage = lazy(() => import('../pages/User/Profile/EditProfile'));
 const LandingPage = lazy(() => import('../pages/Common/LandingPage/LandingPage'));
 
 function UserRoutes() {
+  const spinnerStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+  };
+
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div style={spinnerStyle}>
+          <RingLoader color="#36d7b7" />
+        </div>
+      }
+    >
       <Routes>
         <Route path="*" element={<UserPrivateRoute />}>
-          <Route path='' element={<LandingPage />} />
+          <Route path="" element={<LandingPage />} />
           <Route path="lawyers" element={<LawyerListing />} />
           <Route path="booking" element={<BookAppointment />} />
           <Route path="profile" element={<Profile />} />
@@ -30,7 +44,7 @@ function UserRoutes() {
           <Route path="appointments" element={<UserAppointments />} />
           <Route path="post-cases" element={<ClientPostCase />} />
           <Route path="ongoing-cases" element={<OngoingCases />} />
-          <Route path="wallet" element={<WalletPage/>} />
+          <Route path="wallet" element={<WalletPage />} />
         </Route>
       </Routes>
     </Suspense>

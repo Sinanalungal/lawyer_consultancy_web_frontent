@@ -97,6 +97,9 @@ const loginSlice = createSlice({
   name: 'login',
   initialState,
   reducers: {
+    loaderManage(state, action: PayloadAction<boolean>) {
+      state.loader = action.payload;  
+    }, 
     loginStart(state) {
       state.loader = true;
       state.isAuthenticated = false;
@@ -175,7 +178,7 @@ const loginSlice = createSlice({
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout, modaloff } = loginSlice.actions;
+export const {loaderManage, loginStart, loginSuccess, loginFailure, logout, modaloff } = loginSlice.actions;
 export default loginSlice.reducer;
 
 

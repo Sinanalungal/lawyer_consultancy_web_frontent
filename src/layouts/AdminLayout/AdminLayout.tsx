@@ -1,10 +1,8 @@
-// src/components/AdminLayout.tsx
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { RootState, useAppDispatch, useAppSelector } from "../../redux/store"; // Assuming RootState is your Redux state type
+import { Link } from "react-router-dom";
+import { RootState, useAppDispatch, useAppSelector } from "../../redux/store";
 import { logout } from "../../redux/slice/LoginActions";
-import { IoSearch } from "react-icons/io5";
 import { fetchUserAsync } from "../../redux/slice/UserDataFetch";
 import { motion } from "framer-motion";
 
@@ -15,9 +13,8 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
   const [active, setActive] = useState<boolean>(false);
-  const { isAuthenticated } = useSelector((state: RootState) => state.login); // Replace RootState with your actual Redux state type
+  const { isAuthenticated } = useSelector((state: RootState) => state.login);
   const { userDetail } = useAppSelector((state: RootState) => state.userData);
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -33,19 +30,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
     restDelta: 0.001,
     restSpeed: 0.001,
   };
-  //   useEffect(() => {
-  //     const authTokens = localStorage.getItem('authTokens');
-
-  //     if (!isAuthenticated || !authTokens) {
-  //       dispatch(logout());
-  //       navigate('/login');
-  //     }
-
-  //   }, [dispatch, isAuthenticated, navigate]);
 
   return (
     <div className="bg-white  flex h-screen">
-      {/* Sidebar */}
       <aside className="fixed  z-50 ">
         <input type="checkbox" className="peer hidden" id="sidebar-open" />
         <label
@@ -71,8 +58,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
           aria-label="Sidebar Navigation"
           className="peer-checked:w-64 left-0 z-10 flex h-screen w-0 flex-col overflow-hidden bg-slate-900 text-white transition-all md:h-screen md:w-64 lg:w-72"
         >
-          {/* Sidebar content */}
-          {/* Replace with your sidebar content */}
           <div className="bg-slate-900 mt-4 max-md:py-4 pl-10 md:mt-6">
             <span className="">
               <img
@@ -80,178 +65,151 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                 className="h-10 bg-white rounded-xl"
                 alt=""
               />
-              {/* <span className="mr-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 align-bottom text-2xl font-bold">U</span>
-              <span className="text-xl">rbane</span> */}
             </span>
           </div>
           <div
             className="w-full h-full  flex overflow-y-scroll overflow-x-hidden flex-col justify-between "
             style={{ scrollbarWidth: "none" }}
           >
-            {/* <ul className="mt-6 space-y-1 "> */}
-
             <ul className="space-y-4 mt-10">
-              {/* Transaction Button */}
               <li className="relative">
-              <Link to={"../../../../admin"}><button
-                  // onClick={() => {
-                  //   navigate("../../../../admin");
-                  // }}
-                  className="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-8 py-4 font-semibold focus:outline-none"
-                >
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="size-6"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M2.25 2.25a.75.75 0 0 0 0 1.5H3v10.5a3 3 0 0 0 3 3h1.21l-1.172 3.513a.75.75 0 0 0 1.424.474l.329-.987h8.418l.33.987a.75.75 0 0 0 1.422-.474l-1.17-3.513H18a3 3 0 0 0 3-3V3.75h.75a.75.75 0 0 0 0-1.5H2.25Zm6.54 15h6.42l.5 1.5H8.29l.5-1.5Zm8.085-8.995a.75.75 0 1 0-.75-1.299 12.81 12.81 0 0 0-3.558 3.05L11.03 8.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l2.47-2.47 1.617 1.618a.75.75 0 0 0 1.146-.102 11.312 11.312 0 0 1 3.612-3.321Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                  <span className="">Dashboard</span>
-                </button></Link>
+                <Link to={"../../../../admin"}>
+                  <button className="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-8 py-4 font-semibold focus:outline-none">
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M2.25 2.25a.75.75 0 0 0 0 1.5H3v10.5a3 3 0 0 0 3 3h1.21l-1.172 3.513a.75.75 0 0 0 1.424.474l.329-.987h8.418l.33.987a.75.75 0 0 0 1.422-.474l-1.17-3.513H18a3 3 0 0 0 3-3V3.75h.75a.75.75 0 0 0 0-1.5H2.25Zm6.54 15h6.42l.5 1.5H8.29l.5-1.5Zm8.085-8.995a.75.75 0 1 0-.75-1.299 12.81 12.81 0 0 0-3.558 3.05L11.03 8.47a.75.75 0 0 0-1.06 0l-3 3a.75.75 0 1 0 1.06 1.06l2.47-2.47 1.617 1.618a.75.75 0 0 0 1.146-.102 11.312 11.312 0 0 1 3.612-3.321Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                    <span className="">Dashboard</span>
+                  </button>
+                </Link>
                 {selected == "1" && <SvgComponent />}
               </li>
 
-              {/* Send Money Button */}
               <li className="relative">
-              <Link to={"../../../../admin/lawyers"}><button
-                  // onClick={() => {
-                  //   navigate("../../../../admin/lawyers");
-                  // }}
-                  className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
-                >
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="size-6"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M12 2.25a.75.75 0 0 1 .75.75v.756a49.106 49.106 0 0 1 9.152 1 .75.75 0 0 1-.152 1.485h-1.918l2.474 10.124a.75.75 0 0 1-.375.84A6.723 6.723 0 0 1 18.75 18a6.723 6.723 0 0 1-3.181-.795.75.75 0 0 1-.375-.84l2.474-10.124H12.75v13.28c1.293.076 2.534.343 3.697.776a.75.75 0 0 1-.262 1.453h-8.37a.75.75 0 0 1-.262-1.453c1.162-.433 2.404-.7 3.697-.775V6.24H6.332l2.474 10.124a.75.75 0 0 1-.375.84A6.723 6.723 0 0 1 5.25 18a6.723 6.723 0 0 1-3.181-.795.75.75 0 0 1-.375-.84L4.168 6.241H2.25a.75.75 0 0 1-.152-1.485 49.105 49.105 0 0 1 9.152-1V3a.75.75 0 0 1 .75-.75Zm4.878 13.543 1.872-7.662 1.872 7.662h-3.744Zm-9.756 0L5.25 8.131l-1.872 7.662h3.744Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                  <span className="">Lawyers</span>
-                </button></Link>
+                <Link to={"../../../../admin/lawyers"}>
+                  <button className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none">
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M12 2.25a.75.75 0 0 1 .75.75v.756a49.106 49.106 0 0 1 9.152 1 .75.75 0 0 1-.152 1.485h-1.918l2.474 10.124a.75.75 0 0 1-.375.84A6.723 6.723 0 0 1 18.75 18a6.723 6.723 0 0 1-3.181-.795.75.75 0 0 1-.375-.84l2.474-10.124H12.75v13.28c1.293.076 2.534.343 3.697.776a.75.75 0 0 1-.262 1.453h-8.37a.75.75 0 0 1-.262-1.453c1.162-.433 2.404-.7 3.697-.775V6.24H6.332l2.474 10.124a.75.75 0 0 1-.375.84A6.723 6.723 0 0 1 5.25 18a6.723 6.723 0 0 1-3.181-.795.75.75 0 0 1-.375-.84L4.168 6.241H2.25a.75.75 0 0 1-.152-1.485 49.105 49.105 0 0 1 9.152-1V3a.75.75 0 0 1 .75-.75Zm4.878 13.543 1.872-7.662 1.872 7.662h-3.744Zm-9.756 0L5.25 8.131l-1.872 7.662h3.744Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                    <span className="">Lawyers</span>
+                  </button>
+                </Link>
                 {selected == "2" && <SvgComponent />}
               </li>
 
-              {/* Payments Button */}
               <li className="relative">
-              <Link to={"../../../../admin/users"}><button
-                  // onClick={() => {
-                  //   navigate("../../../../admin/users");
-                  // }}
-                  className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
-                >
-                  <span className="text-2xl">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="size-6"
-                    >
-                      <path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
-                    </svg>
-                  </span>
-                  <span className="">Users</span>
-                </button></Link>
+                <Link to={"../../../../admin/users"}>
+                  <button className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none">
+                    <span className="text-2xl">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="size-6"
+                      >
+                        <path d="M4.5 6.375a4.125 4.125 0 1 1 8.25 0 4.125 4.125 0 0 1-8.25 0ZM14.25 8.625a3.375 3.375 0 1 1 6.75 0 3.375 3.375 0 0 1-6.75 0ZM1.5 19.125a7.125 7.125 0 0 1 14.25 0v.003l-.001.119a.75.75 0 0 1-.363.63 13.067 13.067 0 0 1-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 0 1-.364-.63l-.001-.122ZM17.25 19.128l-.001.144a2.25 2.25 0 0 1-.233.96 10.088 10.088 0 0 0 5.06-1.01.75.75 0 0 0 .42-.643 4.875 4.875 0 0 0-6.957-4.611 8.586 8.586 0 0 1 1.71 5.157v.003Z" />
+                      </svg>
+                    </span>
+                    <span className="">Users</span>
+                  </button>
+                </Link>
                 {selected == "3" && <SvgComponent />}
               </li>
 
               {/* Cards Button */}
               <li className="relative">
-                <Link to={"../../../../admin/blog"}><button
-                  // onClick={() => {
-                  //   navigate("../../../../admin/blog");
-                  // }}
-                  className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
-                >
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="size-6"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M17.663 3.118c.225.015.45.032.673.05C19.876 3.298 21 4.604 21 6.109v9.642a3 3 0 0 1-3 3V16.5c0-5.922-4.576-10.775-10.384-11.217.324-1.132 1.3-2.01 2.548-2.114.224-.019.448-.036.673-.051A3 3 0 0 1 13.5 1.5H15a3 3 0 0 1 2.663 1.618ZM12 4.5A1.5 1.5 0 0 1 13.5 3H15a1.5 1.5 0 0 1 1.5 1.5H12Z"
-                        clipRule="evenodd"
-                      />
-                      <path d="M3 8.625c0-1.036.84-1.875 1.875-1.875h.375A3.75 3.75 0 0 1 9 10.5v1.875c0 1.036.84 1.875 1.875 1.875h1.875A3.75 3.75 0 0 1 16.5 18v2.625c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625v-12Z" />
-                      <path d="M10.5 10.5a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963 5.23 5.23 0 0 0-3.434-1.279h-1.875a.375.375 0 0 1-.375-.375V10.5Z" />
-                    </svg>
-                  </span>
-                  <span className="">Blog</span>
-                </button></Link>
+                <Link to={"../../../../admin/blog"}>
+                  <button className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none">
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M17.663 3.118c.225.015.45.032.673.05C19.876 3.298 21 4.604 21 6.109v9.642a3 3 0 0 1-3 3V16.5c0-5.922-4.576-10.775-10.384-11.217.324-1.132 1.3-2.01 2.548-2.114.224-.019.448-.036.673-.051A3 3 0 0 1 13.5 1.5H15a3 3 0 0 1 2.663 1.618ZM12 4.5A1.5 1.5 0 0 1 13.5 3H15a1.5 1.5 0 0 1 1.5 1.5H12Z"
+                          clipRule="evenodd"
+                        />
+                        <path d="M3 8.625c0-1.036.84-1.875 1.875-1.875h.375A3.75 3.75 0 0 1 9 10.5v1.875c0 1.036.84 1.875 1.875 1.875h1.875A3.75 3.75 0 0 1 16.5 18v2.625c0 1.035-.84 1.875-1.875 1.875h-9.75A1.875 1.875 0 0 1 3 20.625v-12Z" />
+                        <path d="M10.5 10.5a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963 5.23 5.23 0 0 0-3.434-1.279h-1.875a.375.375 0 0 1-.375-.375V10.5Z" />
+                      </svg>
+                    </span>
+                    <span className="">Blog</span>
+                  </button>
+                </Link>
                 {selected == "4" && <SvgComponent />}
               </li>
 
-              {/* Settings Button */}
               <li className="relative">
-                <Link to={"../../../../admin/case-list"}><button
-                  // onClick={() => {
-                  //   navigate("../../../../admin/subscription");
-                  // }}
-                  className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
-                >
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="size-6"
-                    >
-                      <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
-                      <path
-                        fillRule="evenodd"
-                        d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                  <span className="">Cases</span>
-                </button></Link>
+                <Link to={"../../../../admin/case-list"}>
+                  <button className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none">
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="size-6"
+                      >
+                        <path d="M4.5 3.75a3 3 0 0 0-3 3v.75h21v-.75a3 3 0 0 0-3-3h-15Z" />
+                        <path
+                          fillRule="evenodd"
+                          d="M22.5 9.75h-21v7.5a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-7.5Zm-18 3.75a.75.75 0 0 1 .75-.75h6a.75.75 0 0 1 0 1.5h-6a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                    <span className="">Cases</span>
+                  </button>
+                </Link>
                 {selected == "5" && <SvgComponent />}
               </li>
               <li className="relative">
-                <Link to={"../../../../admin/schedule-list"}><button
-                  // onClick={() => {
-                  //   navigate("../../../../admin/subscription");
-                  // }}
-                  className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none"
-                >
-                  <span>
-                  <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="size-6"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </span>
-                  <span className="">Schedules</span>
-                </button></Link>
+                <Link to={"../../../../admin/schedule-list"}>
+                  <button className="focus:bg-slate-600 hover:bg-slate-600 font-semibold flex w-full space-x-2 rounded-md px-8 py-4 text-gray-300 focus:outline-none">
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="size-6"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25ZM12.75 6a.75.75 0 0 0-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 0 0 0-1.5h-3.75V6Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                    <span className="">Schedules</span>
+                  </button>
+                </Link>
                 {selected == "6" && <SvgComponent />}
               </li>
             </ul>
-            {/* </ul> */}
-            {/* User profile section */}
+
             <div className="my-5  ml-8 flex cursor-pointer">
               <div>
                 {userDetail?.profile_image ? (
@@ -276,14 +234,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
           </div>
         </nav>
       </aside>
-      {/* /Sidebar */}
 
-      {/* Main content */}
       <div className="flex md:pl-60 lg:pl-72  h-full w-full flex-col">
-        {/* Navbar */}
         <header className="relative flex flex-col items-center bg-white px-4 py-4 shadow sm:flex-row md:h-20">
-          {/* Navbar content */}
-          {/* Replace with your navbar content */}
           <div className="flex w-full flex-col justify-between overflow-hidden transition-all sm:max-h-full sm:flex-row sm:items-center">
             <div className="relative ml-10 flex items-center justify-between rounded-md sm:ml-auto">
               <svg
@@ -343,7 +296,6 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                   className="absolute top-[calc(100%_-_.6rem)] md:top-[calc(100%_-_.8rem)] max-[400px]:right-3 right-36 sm:right-3 transform  "
                 >
                   <div className="w-48 bg-white border border-gray-200 shadow-lg rounded-md p-4 space-y-1">
-                    
                     <Link
                       to={"../../../../../admin/self-blog"}
                       className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
@@ -366,25 +318,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
                   </div>
                 </motion.div>
               )}
-              
-              {/* <li className="">
-                <button className="flex h-8 w-8 items-center justify-center rounded-xl border text-gray-600 hover:text-black hover:shadow">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
-                </button>
-              </li> */}
+
               <li className="">
                 <button className="flex h-8 w-8 items-center justify-center rounded-xl border text-gray-600 hover:text-black hover:shadow">
                   <svg
@@ -411,9 +345,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children, selected }) => {
             </ul>
           </div>
         </header>
-        {/* /Navbar */}
 
-        {/* Main content */}
         <div className="h-full  overflow-x-hidden overflow-y-scoll no-scrollbar max-[400px]:p-1 p-2">
           <main
             id="dashboard-main"

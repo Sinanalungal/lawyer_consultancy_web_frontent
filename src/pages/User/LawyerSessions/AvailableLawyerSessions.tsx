@@ -15,6 +15,7 @@ import { bookAppointment, getAvailableSchedulesForUser } from "../../../services
 import successAnimation from '../../../../public/Payment-success.json';
 import Modal from "../../../components/Modal/Modal";
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 
 interface AvailableLawyerSessionsProps {}
 
@@ -26,7 +27,7 @@ const InterviewScheduler: React.FC = () => {
   const [lawyerId, setLawyerId] = useState<number |null>(null);
   const [selectedSession, setSelectedSession] = useState<any | null>(null);
   const [modalOpen, setModalOpen] = useState(false); 
-  
+  const {setLoader} = useLoader()
 
   const navigate=useNavigate()
   const location = useLocation();
@@ -54,6 +55,7 @@ const InterviewScheduler: React.FC = () => {
   useEffect(() => {
     const fetchAvailableSchedules = async () => {
       if (selectedDate && lawyerId) {
+        setLoader(true);
         try {
           const dateStr = format(selectedDate, "yyyy-MM-dd");
           const schedules = await getAvailableSchedulesForUser(dateStr, lawyerId);
@@ -64,6 +66,8 @@ const InterviewScheduler: React.FC = () => {
         } catch (error) {
           console.error("Error fetching available schedules:", error);
           setAvailableTimes([]);
+        }finally{
+          setLoader(false);
         }
       }
     };

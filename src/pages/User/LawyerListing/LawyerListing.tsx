@@ -10,6 +10,7 @@ import LanguageSelector from "../../../components/Filter/FilterComponentLanguage
 import ExperienceSelector from "../../../components/Filter/FilterComponentExperience";
 import SearchComponent from "./Search";
 import { motion } from "framer-motion";
+import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 
 const experienceLevels: string[] = [
   "All",
@@ -49,9 +50,13 @@ const LawyerListing: React.FC = () => {
 
   // const [currentPage, setCurrentPage] = useState<string>(); // For pagination
   const [next, setNext] = useState<string | null>(null); // Total number of pages
+const { setLoader } = useLoader();
+
+
   console.log(searchQuery);
   useEffect(() => {
     const fetchLawyers = async () => {
+    setLoader(true);
       try {
         const params = {
           department: selectedDepartment || "",
@@ -75,6 +80,9 @@ const LawyerListing: React.FC = () => {
         // }
       } catch (error) {
         console.error("Failed to fetch lawyers:", error);
+        
+      }finally{
+        setLoader(false);
       }
     };
 

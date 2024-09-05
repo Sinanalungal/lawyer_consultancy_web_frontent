@@ -4,6 +4,7 @@ import PageTitle from "../../../components/PageTitle/PageTitle";
 import { CaseFinishedApi, getUserAllotedCases } from "../../../services/Case";
 import SearchForm from "../../../components/Search/Search";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
+import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 
 const OngoingCases: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"appliedCases" | "applyCase">(
@@ -17,9 +18,12 @@ const OngoingCases: React.FC = () => {
   const [status, setStatus] = useState("Ongoing");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
+  const {setLoader} = useLoader()
+
 
   useEffect(() => {
     const fetchCases = async () => {
+      setLoader(true);
       try {
         const casesData = await getUserAllotedCases(
           currentPage,
@@ -31,6 +35,8 @@ const OngoingCases: React.FC = () => {
       } catch (error) {
         console.error("Error fetching cases:", error);
         setCases([]);
+      }finally{
+        setLoader(false);
       }
     };
 

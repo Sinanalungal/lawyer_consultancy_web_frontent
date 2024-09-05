@@ -16,7 +16,9 @@ import * as Yup from "yup";
 import CustomInputFullSized from "../../../components/Input/InputFullSize";
 import { useToast } from "../../../components/Toast/ToastManager";
 import Swal from "sweetalert2";
-
+import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
+import { PulseLoader } from "react-spinners";
+import ConfirmationModal from "../../../components/Modal/AlertModal";
 
 const validationSchema = Yup.object({
   case_type: Yup.string()
@@ -46,8 +48,12 @@ const ClientCaseManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalCases, setTotalCases] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [caseToDelete, setCaseToDelete] = useState<number | null>(null);
+  const [caseToAccept, setCaseToAccept] = useState<number | null>(null);
   const { addToast } = useToast();
-
+  const { setLoader } = useLoader();
 
   useEffect(() => {
     if (activeTab === "appliedCases") {
@@ -57,11 +63,14 @@ const ClientCaseManagement: React.FC = () => {
 
   useEffect(() => {
     const fetchStatesData = async () => {
+      setLoader(true);
       try {
         const statesData = await fetchStates();
         setStates(statesData);
       } catch (error) {
         console.error("Error fetching states:", error);
+      } finally {
+        setLoader(false);
       }
     };
 
@@ -69,6 +78,7 @@ const ClientCaseManagement: React.FC = () => {
   }, []);
 
   const fetchCasesData = async (page: number) => {
+    setLoader(true);
     try {
       const casesData = await fetchCases(page);
       setCases(casesData.results);
@@ -78,13 +88,13 @@ const ClientCaseManagement: React.FC = () => {
     } catch (error) {
       console.error("Error fetching cases:", error);
       setCases([]);
+    } finally {
+      setLoader(false);
     }
   };
 
   const handleViewDetails = async (caseId: number) => {
     try {
-      // const caseDetailsData = await fetchCaseDetails(caseId);
-      // setCaseDetails(caseDetailsData);
       const selectedCasesData = await getSelectedCasesByCaseId(caseId);
       setSelectedLawyers(selectedCasesData);
       console.log(selectedCasesData, "selected Laweyrs");
@@ -99,66 +109,60 @@ const ClientCaseManagement: React.FC = () => {
     values: any,
     { resetForm }: { resetForm: () => void }
   ) => {
+    setIsSubmitting(true);
     try {
       await submitCase(values);
-      addToast('success',"Case submitted successfully!");
+      addToast("success", "Case submitted successfully!");
       resetForm();
       setActiveTab("appliedCases");
-      fetchCasesData(1); 
+      fetchCasesData(1);
     } catch (error) {
       console.error("Error submitting case:", error);
-      addToast('danger',"Failed to submit the case. Please try again.");
+      addToast("danger", "Failed to submit the case. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
- 
-const handleDeleteCase = async (caseId: number) => {
-  const result = await Swal.fire({
-    title: "Are you sure?",
-    text: "You won't be able to revert this!",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#3085d6",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Yes, delete it!",
-  });
+  const openConfirmationModalForDelete = (caseId: number) => {
+    setCaseToDelete(caseId);
+    setIsConfirmationModalOpen(true);
+  };
 
-  if (result.isConfirmed) {
+  const handleDeleteCase = async () => {
+    if (caseToDelete === null) return;
+
     try {
-      await deleteCase(caseId);
-      
-      Swal.fire({
-        title: "Deleted!",
-        text: "The case has been deleted.",
-        icon: "success",
-        confirmButtonColor: "#3085d6",
-      });
-
+      await deleteCase(caseToDelete);
+      addToast("success", "Case deleted successfully!");
       fetchCasesData(currentPage);
     } catch (error) {
       console.error("Error deleting case:", error);
-
-      Swal.fire({
-        title: "Error!",
-        text: "Failed to delete the case. Please try again.",
-        icon: "error",
-        confirmButtonColor: "#d33",
-      });
+      addToast("danger", "Failed to delete the case. Please try again.");
+    } finally {
+      setIsConfirmationModalOpen(false);
+      setCaseToDelete(null);
     }
-  }
-};
+  };
 
-  const handleAccept = async (caseId: number) => {
+  const openConfirmationModalForAccept = (caseId: number) => {
+    setCaseToAccept(caseId);
+    setIsConfirmationModalOpen(true);
+  };
+
+  const handleAcceptCase = async () => {
+    if (caseToAccept === null) return;
+
     try {
-      const selectedCasesData = await createAllotedCase({
-        selected_case_id: caseId,
-      });
-      addToast('success',"Case Alloted successfully!");
+      await createAllotedCase({ selected_case_id: caseToAccept });
+      addToast("success", "Case allocated successfully!");
       fetchCasesData(currentPage);
-      setIsModalOpen(false);
     } catch (error) {
-      console.error("Error applying case:", error);
-      addToast('danger',"Error applying case");
+      console.error("Error allocating case:", error);
+      addToast("danger", "Error allocating case.");
+    } finally {
+      setIsConfirmationModalOpen(false);
+      setCaseToAccept(null);
     }
   };
 
@@ -254,7 +258,9 @@ const handleDeleteCase = async (caseId: number) => {
                             View Details
                           </button>
                           <button
-                            onClick={() => handleDeleteCase(caseItem.id)}
+                            onClick={() =>
+                              openConfirmationModalForDelete(caseItem.id)
+                            }
                             className="text-red-600 hover:underline"
                           >
                             Delete
@@ -413,7 +419,11 @@ const handleDeleteCase = async (caseId: number) => {
                       type="submit"
                       className="w-full bg-slate-600 text-white text-xs py-3 rounded-lg"
                     >
-                      Submit Case
+                      {isSubmitting ? (
+                        <PulseLoader color="#ffffff" />
+                      ) : (
+                        "Submit Case"
+                      )}
                     </button>
                   </Form>
                 )}
@@ -431,24 +441,8 @@ const handleDeleteCase = async (caseId: number) => {
             <h2 className="text-lg font-semibold mb-4 text-gray-800 text-center">
               Selected Lawyers
             </h2>
-            {/* <div className="mb-4">
-              <p className="font-medium text-gray-700">Case Type:</p>
-              <p className="text-gray-600">{caseDetails.case_type}</p>
-            </div>
+
             <div className="mb-4">
-              <p className="font-medium text-gray-700">Description:</p>
-              <p className="text-gray-600">{caseDetails.description}</p>
-            </div>
-            <div className="mb-4">
-              <p className="font-medium text-gray-700">Reference Until:</p>
-              <p className="text-gray-600">{caseDetails.reference_until}</p>
-            </div>
-            <div className="mb-4">
-              <p className="font-medium text-gray-700">Budget:</p>
-              <p className="text-gray-600">${caseDetails.budget}</p>
-            </div> */}
-            <div className="mb-4">
-              {/* <p className="font-medium text-gray-700">Selected Lawyers:</p> */}
               {selectedLawyers.length > 0 ? (
                 <ul className="space-y-4 text-gray-700">
                   {selectedLawyers.map((obj) => (
@@ -498,7 +492,7 @@ const handleDeleteCase = async (caseId: number) => {
                           </div>
                         </div>
                         <button
-                          onClick={() => handleAccept(obj.id)}
+                          onClick={() => openConfirmationModalForAccept(obj.id)}
                           className="absolute max-[400px]:px-2 max-[400px]:text-[10px] top-4 right-4 px-4 py-2 bg-slate-500 text-white rounded-lg shadow hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-300"
                         >
                           Accept
@@ -515,6 +509,19 @@ const handleDeleteCase = async (caseId: number) => {
             </div>
           </Modal>
         )}
+        <ConfirmationModal
+          isOpen={isConfirmationModalOpen}
+          onConfirm={
+            caseToDelete !== null ? handleDeleteCase : handleAcceptCase
+          }
+          onCancel={() => setIsConfirmationModalOpen(false)}
+          title={caseToDelete !== null ? "Delete Case" : "Accept Case"}
+          description={
+            caseToDelete !== null
+              ? "Are you sure you want to delete this case?"
+              : "Are you sure you want to accept this case?"
+          }
+        />
       </main>
     </div>
   );
