@@ -2,17 +2,17 @@ import { getAxiosInstance } from "../api/axiosInstance";
 import { SelectedCaseData } from "../types";
 
 // Fetch cases
-export const fetchCases = async (page = 1) => {
-    const axiosInstance = await getAxiosInstance();
-    try {
-      const response = await axiosInstance.get(`/case-manage/cases/?page=${page}`);
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching cases:', error);
-      throw error;
-    }
-  };
-  
+export const fetchCases = async (page = 1, filter: "all" | "selected" | "unselected" = "all") => {
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.get(`/case-manage/cases/?page=${page}&selected=${filter}`);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching cases:', error);
+    throw error;
+  }
+};
+
 
 // Fetch case details
 export const fetchCaseDetails = async (caseId: number) => {

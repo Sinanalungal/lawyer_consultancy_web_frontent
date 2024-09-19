@@ -4,6 +4,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useSelector } from 'react-redux';
 import { RingLoader } from 'react-spinners';
 
+
 // Lazy load components and pages
 const Modal = lazy(() => import('./components/Modal/Modal'));
 const ExtraDataAccessingForm = lazy(() => import('./components/Auth/ExtraDataAccessingForm'));

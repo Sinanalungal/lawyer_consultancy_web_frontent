@@ -5,37 +5,54 @@ import { CaseFinishedApi, getUserAllotedCases } from "../../../services/Case";
 import SearchForm from "../../../components/Search/Search";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
 import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
+import Modal from "../../../components/Modal/Modal";
+
+// Define case type
+interface Case {
+  id: number;
+  status: string;
+  selected_case: {
+    case_model: {
+      case_type: string;
+      reference_until: string;
+      budget: number;
+      description: string;
+    };
+    lawyer: {
+      user: {
+        full_name: string;
+      };
+      experience: number;
+    };
+  };
+}
 
 const OngoingCases: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"appliedCases" | "applyCase">(
     "appliedCases"
   );
-  const [cases, setCases] = useState<any[]>([]);
+  const [cases, setCases] = useState<Case[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedState, setSelectedState] = useState("");
-  const [status, setStatus] = useState("Ongoing");
+  const [selectedCase, setSelectedCase] = useState<Case | null>(null);
+  const [status, setStatus] = useState<"Ongoing" | "Completed">("Ongoing");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
-  const {setLoader} = useLoader()
-
+  const [viewDetailsModal, setViewDetailsModal] = useState(false);
+  const { setLoader } = useLoader();
 
   useEffect(() => {
     const fetchCases = async () => {
       setLoader(true);
       try {
-        const casesData = await getUserAllotedCases(
-          currentPage,
-          searchTerm,
-          status
-        );
+        const casesData = await getUserAllotedCases(currentPage, searchTerm, status);
         setCases(casesData.results);
         setTotalPages(casesData.totalPages);
       } catch (error) {
         console.error("Error fetching cases:", error);
         setCases([]);
-      }finally{
+      } finally {
         setLoader(false);
       }
     };
@@ -43,7 +60,7 @@ const OngoingCases: React.FC = () => {
     if (activeTab === "appliedCases") {
       fetchCases();
     }
-  }, [currentPage, searchTerm, selectedState, status, activeTab]);
+  }, [currentPage, searchTerm, status, activeTab, setLoader]);
 
   const handleCaseFinished = async () => {
     if (selectedCaseId !== null) {
@@ -79,14 +96,15 @@ const OngoingCases: React.FC = () => {
               <SearchForm search={searchTerm} setSearch={setSearchTerm} />
 
               <select
-                className="border border-gray-300 rounded px-1 text-xs py-2 text-gray-700"
+                className="border border-gray-300 rounded-2xl px-2 text-xs py-3 text-gray-700"
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                onChange={(e) => setStatus(e.target.value as "Ongoing" | "Completed")}
               >
                 <option value="Ongoing">Ongoing</option>
                 <option value="Completed">Completed</option>
               </select>
             </div>
+
             <motion.div
               className="bg-white p-6 rounded-lg overflow-x-scroll shadow-md border border-gray-200"
               initial={{ opacity: 0, y: 20 }}
@@ -96,28 +114,18 @@ const OngoingCases: React.FC = () => {
               <table className="w-full border table-auto border-collapse bg-white">
                 <thead>
                   <tr className="bg-gray-50 border-b-2 text-sm">
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium">
-                      Case Type
-                    </th>
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium">
-                      Status
-                    </th>
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium">
-                      Reference Until
-                    </th>
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium">
-                      Lawyer
-                    </th>
+                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Case Type</th>
+                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Status</th>
+                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Reference Until</th>
+                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Lawyer</th>
+                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Details</th>
                     <th className="py-3 px-4 text-center text-gray-600 font-medium"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {cases.length > 0 ? (
                     cases.map((caseItem) => (
-                      <tr
-                        key={caseItem.id}
-                        className="hover:bg-gray-50 text-xs"
-                      >
+                      <tr key={caseItem.id} className="hover:bg-gray-50 text-xs">
                         <td className="py-4 text-center px-4 text-gray-800">
                           {caseItem.selected_case.case_model.case_type}
                         </td>
@@ -125,8 +133,8 @@ const OngoingCases: React.FC = () => {
                           <span
                             className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${
                               caseItem.status === "Ongoing"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-red-100 text-red-800"
+                                ? "bg-yellow-100 text-yellow-900"
+                                : "bg-green-100 text-green-800"
                             }`}
                           >
                             {caseItem.status}
@@ -138,22 +146,28 @@ const OngoingCases: React.FC = () => {
                         <td className="py-4 px-4 text-center text-gray-600">
                           {caseItem.selected_case.lawyer.user.full_name}
                         </td>
-                        <td className="py-4 px-4 text-center space-x-4">
+                        <td
+                          onClick={() => {
+                            setSelectedCase(caseItem);
+                            setViewDetailsModal(true);
+                          }}
+                          className="py-4 px-4 text-center text-blue-800 cursor-pointer"
+                        >
+                          View Details
+                        </td>
+                        {status=='Ongoing'&&<td className="py-4 px-4 text-center space-x-4">
                           <button
                             onClick={() => openModal(caseItem.id)}
                             className="text-white rounded bg-slate-800 p-2 hover:underline"
                           >
-                            Finished
+                            Finish
                           </button>
-                        </td>
+                        </td>}
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td
-                        colSpan={5}
-                        className="text-center py-4 text-gray-600"
-                      >
+                      <td colSpan={6} className="text-center py-4 text-gray-600">
                         No cases available.
                       </td>
                     </tr>
@@ -164,9 +178,7 @@ const OngoingCases: React.FC = () => {
               <div className="flex justify-end gap-3 text-xs items-center mt-4">
                 <button
                   className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
                 >
                   Previous
@@ -176,9 +188,7 @@ const OngoingCases: React.FC = () => {
                 </span>
                 <button
                   className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                  }
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
                 >
                   Next
@@ -188,6 +198,24 @@ const OngoingCases: React.FC = () => {
           </section>
         )}
 
+        {/* Modal for Case Details */}
+        <Modal modalOpen={viewDetailsModal} setModalOpen={() => setViewDetailsModal(false)}>
+          {selectedCase && (
+            <div className="p-4 space-y-4">
+              <h3 className="text-xl font-semibold text-gray-800">
+                Case Type: {selectedCase.selected_case.case_model.case_type}
+              </h3>
+              <p className="text-gray-600">Description: {selectedCase.selected_case.case_model.description}</p>
+              <p className="text-gray-600">Budget: ₹{selectedCase.selected_case.case_model.budget}</p>
+              <p className="text-gray-600">Status: {selectedCase.status}</p>
+              <h4 className="text-lg font-semibold text-gray-800 mt-4">Lawyer Details:</h4>
+              <p className="text-gray-600">Name: {selectedCase.selected_case.lawyer.user.full_name}</p>
+              <p className="text-gray-600">Experience: {selectedCase.selected_case.lawyer.experience} years</p>
+            </div>
+          )}
+        </Modal>
+
+        {/* Confirmation Modal for Marking Case as Finished */}
         <ConfirmationModal
           isOpen={modalOpen}
           title="Mark Case as Finished?"

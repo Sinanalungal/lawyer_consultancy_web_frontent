@@ -5,6 +5,8 @@ import { RootState, useAppDispatch, useAppSelector } from "../../redux/store";
 import { logout } from "../../redux/slice/LoginActions";
 import { fetchUserAsync } from "../../redux/slice/UserDataFetch";
 import { motion } from "framer-motion";
+import { IoIosChatboxes } from "react-icons/io";
+
 
 interface LawyerLayoutProps {
   children: React.ReactNode;
@@ -16,7 +18,7 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
   const { isAuthenticated, role } = useSelector(
     (state: RootState) => state.login
   );
-  const { userDetail } = useAppSelector((state: RootState) => state.userData);
+  const { userDetail,error } = useAppSelector((state: RootState) => state.userData);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -94,7 +96,6 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                     <span className="">Dashboard</span>
                   </button>
                 </Link>
-                {selected == "1" && <SvgComponent />}
               </li>
 
               <li className="relative">
@@ -117,7 +118,6 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                     <span className="">Schedule</span>
                   </button>
                 </Link>
-                {selected == "2" && <SvgComponent />}
               </li>
 
               <li className="relative">
@@ -136,7 +136,6 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                     <span className="">Appointments</span>
                   </button>
                 </Link>
-                {selected == "3" && <SvgComponent />}
               </li>
 
               <li className="relative">
@@ -161,7 +160,6 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                     <span className="">Blog</span>
                   </button>
                 </Link>
-                {selected == "4" && <SvgComponent />}
               </li>
 
               <li className="relative">
@@ -185,7 +183,6 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                     <span className="">Case Manage</span>
                   </button>
                 </Link>
-                {selected == "5" && <SvgComponent />}
               </li>
               <li className="relative">
                 <Link to={"../../../../lawyer/wallet"}>
@@ -203,7 +200,17 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                     <span className="">Wallet</span>
                   </button>
                 </Link>
-                {selected == "5" && <SvgComponent />}
+              </li>
+              <li className="relative">
+                <Link to={"../../../../chat"}>
+                  <button className="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-8 py-4 font-semibold focus:outline-none">
+                    <span>
+                      <IoIosChatboxes size={26}/>
+                    </span>
+                    <span className="">Chat</span>
+                  </button>
+                </Link>
+                
               </li>
             </ul>
 
@@ -224,7 +231,7 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                 )}
               </div>
               <div className="ml-3">
-                <p className="font-medium text-sm">Admin</p>
+                <p className="font-medium text-sm">Lawyer</p>
                 <p className="text-xs text-gray-300">{userDetail.full_name}</p>
               </div>
             </div>
@@ -285,6 +292,7 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
                   </motion.p>
                 </button>
               </li>
+              
               {active && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.85, y: 10 }}
@@ -353,7 +361,14 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
             className="min-screen overflow-auto  px-2 py-6"
             style={{ scrollbarWidth: "none" }}
           >
-            {children}
+            {error ? (
+            <div className="flex justify-center items-center min-h-screen text-xs text-gray-600">
+              {error}
+            </div>
+          ) : (
+            children
+          )}
+           
           </main>
         </div>
       </div>

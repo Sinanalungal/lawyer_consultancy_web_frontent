@@ -13,7 +13,7 @@ const LawyerListingCard: React.FC<LawyerProps> = ({ lawyer }) => (
   animate={{ opacity: 1, scale: 1 }}
   transition={{ duration: 0.3 }} 
   className="w-[230px] relative  rounded-md shadow bg-white p-2 cursor-pointer ">
-<p className="absolute top-44 right-2 bg-gray-800 rounded-l-full rounded-t-full p-2 font-medium text-xs text-gray-400">⭐4</p>
+{/* <p className="absolute top-44 right-2 bg-gray-800 rounded-l-full rounded-t-full p-2 font-medium text-xs text-gray-400">⭐4</p> */}
     {lawyer.user_profile_image?(<img
       src={lawyer?.user_profile_image}
       alt="Profile Image"

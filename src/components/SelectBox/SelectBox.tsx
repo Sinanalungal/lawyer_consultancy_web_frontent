@@ -8,7 +8,7 @@ interface MenuOption {
 }
 
 interface SelectionBoxProps {
-  buttonLabel: string;
+  buttonLabel: string | boolean;
   options: MenuOption[];
 }
 

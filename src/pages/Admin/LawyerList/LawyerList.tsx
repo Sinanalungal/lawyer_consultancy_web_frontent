@@ -25,17 +25,33 @@ const AdminUser: React.FC = () => {
     setIsModalOpen(true); // Open the modal
   };
 
+  const fetchData = async () => {
+    if (currentPage) {
+      try {
+        const data: UserResponse = await fetchLawyer(currentPage, search, blocked);
+        setLawyers(data.results);
+        setNextPage(data.next);
+        setPrevPage(data.previous);
+        setTotalCount(data.count);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+  };
+
   const handleConfirmVerification = async () => {
     if (selectedUser) {
       try {
         const updatedUser = await updateLawyerVerification(selectedUser.pk, !selectedUser.is_verified);
-        setLawyers((prevLawyers) =>
-          prevLawyers.map((user) =>
-            user.pk === selectedUser.pk
-              ? { ...user, is_verified: updatedUser.is_verified }
-              : user
-          )
-        );
+        // setLawyers((prevLawyers) =>
+        //   prevLawyers.map((user) =>
+        //     user.pk === selectedUser.pk
+        //       ? { ...user, is_verified: updatedUser.is_verified }
+        //       : user
+        //   )
+        // );
+        fetchData(); // Fetch updated data
+        
       } catch (error) {
         console.error("Failed to update user:", error);
       } finally {
@@ -50,20 +66,8 @@ const AdminUser: React.FC = () => {
     setSelectedUser(null); // Reset the selected user
   };
 
+  
   useEffect(() => {
-    const fetchData = async () => {
-      if (currentPage) {
-        try {
-          const data: UserResponse = await fetchLawyer(currentPage, search, blocked);
-          setLawyers(data.results);
-          setNextPage(data.next);
-          setPrevPage(data.previous);
-          setTotalCount(data.count);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      }
-    };
 
     fetchData();
   }, [currentPage, search, blocked]);

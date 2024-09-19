@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
 import ItemTable from "../../../components/Table/ItemTable";
-import { fetchBlogs, updateBlogIsListed } from "../../../services/Blogs";
+import { BlogDeleting, fetchBlogs, updateBlogIsListed } from "../../../services/Blogs";
 import { useNavigate } from "react-router-dom";
 import { Blog, BlogResponse } from "../../../types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { LoginState } from "../../../redux/slice/LoginActions";
+import { useToast } from "../../../components/Toast/ToastManager";
 
 
 const BlogManage: React.FC = () => {
@@ -19,27 +20,29 @@ const BlogManage: React.FC = () => {
     const [blocked, setBlocked] = useState<boolean>(false);
     const [currentUrl,setCurrentUrl]=useState<string|null>(`${process.env.VITE_BASE_URL}/blogsession/blogs/`);
     const navigate = useNavigate();
+    const { addToast } = useToast();
     const { role } = useSelector((state: RootState) => state.login as LoginState)
+console.log(role);
 
   
+  const fetchData = async () => {
+    if(currentUrl){
+      try {
+        const data: BlogResponse = await fetchBlogs(
+          currentUrl,
+          search,
+          blocked
+        );
+        setBlogs(data.results);
+        setNextPage(data.next);
+        setPrevPage(data.previous);
+        setTotalCount(data.count);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+  };
     useEffect(() => {
-      const fetchData = async () => {
-        if(currentUrl){
-          try {
-            const data: BlogResponse = await fetchBlogs(
-              currentUrl,
-              search,
-              blocked
-            );
-            setBlogs(data.results);
-            setNextPage(data.next);
-            setPrevPage(data.previous);
-            setTotalCount(data.count);
-          } catch (error) {
-            console.error("Error fetching data:", error);
-          }
-        }
-      };
   
       fetchData();
     }, [currentUrl, search, blocked]);
@@ -57,30 +60,42 @@ const BlogManage: React.FC = () => {
         setPageNum((prev) => prev - 1);
       }
     };
-  
-    const handleToggleIsListed = async (
-      blogId: number,
-      currentIsListed: boolean
-    ) => {
-      try {
-        const updatedBlog = await updateBlogIsListed(blogId, !currentIsListed);
-        setBlogs((prevBlogs) =>
-          prevBlogs.map((blog) =>
-            blog.id === blogId
-              ? { ...blog, is_listed: updatedBlog.is_listed }
-              : blog
-          )
-        );
-      } catch (error) {
-        console.error("Failed to update blog:", error);
+
+    const handleBlogDeletion = async (blog_id: number) => {
+      try{
+        const response = await BlogDeleting(blog_id)
+        console.log(response)
+        addToast('success','Blog deleted successfully')
+        fetchData()
+      }catch (error) {
+        addToast('danger','something went wrong')
       }
-    };
+    }
+  
+    // const handleToggleIsListed = async (
+    //   blogId: number,
+    //   currentIsListed: boolean
+    // ) => {
+    //   try {
+    //     const updatedBlog = await updateBlogIsListed(blogId, !currentIsListed);
+    //     setBlogs((prevBlogs) =>
+    //       prevBlogs.map((blog) =>
+    //         blog.id === blogId
+    //           ? { ...blog, is_listed: updatedBlog.is_listed }
+    //           : blog
+    //       )
+    //     );
+    //   } catch (error) {
+    //     console.error("Failed to update blog:", error);
+    //   }
+    // };
   
     const columns = [
       { key: "id", label: "ID" },
       { key: "blog", label: "Blog" },
-      { key: "user", label: "User Name" },
+      // { key: "user", label: "User Name" },
       { key: "report", label: "Report Count" },
+      {key:'blocked',label: "Blocked" },
       { key: "published_at", label: "Published At" },
       { key: "actions", label: "Actions" },
     ];
@@ -93,16 +108,26 @@ const BlogManage: React.FC = () => {
           <p className="truncate">{blog.title}</p>
         </div>
       ),
-      user: blog.user.full_name,
+      // user: blog.user.full_name,
       report: blog.report_count ?? 0,
       published_at: new Date(blog.created_at).toLocaleDateString(),
+      blocked:blog.is_listed?"Not Blocked": "Blocked",
       actions: (
-        <button
-          className={`px-3 py-2 ${blog.is_listed ? "bg-red-500" : "bg-green-500"} text-white`}
-          onClick={() => handleToggleIsListed(blog.id, blog.is_listed ?? false)}
+        <div className="gap-1 flex">
+         <button
+          className={`px-3  py-2 bg-slate-700 text-white`}
+          onClick={() =>{role =='admin'? navigate(`../../../../../../admin/blog/add-blog/?blog=${blog.id}`):navigate(`../../../../../../lawyer/blog/add-blog/?blog=${blog.id}`)}}
         >
-          {blog.is_listed ? "Block" : "Unblock"}
+          Edit
         </button>
+        <button
+          className={`px-3  py-2 bg-red-500 text-white`}
+          onClick={() => handleBlogDeletion(blog.id)}
+        >
+          Delete
+        </button>
+       
+        </div>
       ),
     }));
   
@@ -134,6 +159,9 @@ const BlogManage: React.FC = () => {
         total={totalCount}
         blocked={blocked}
         setBlocked={setBlocked}
+        options={[{ label: 'Listed', action: () => setBlocked?.(true) },{ label: 'Unlisted', action: () => setBlocked?.(false) }]
+
+      }
       />
     </>
   );

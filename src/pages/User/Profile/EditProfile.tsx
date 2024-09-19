@@ -14,7 +14,7 @@ const EditProfilePage: React.FC = () => {
 
   return (
     // <UserLayout>
-      <div className="mb-16 max-w-7xl mx-auto">
+      <div className="pb-16 max-w-7xl mx-auto">
         <PageTitle
           title="EDIT PROFILE"
           description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"

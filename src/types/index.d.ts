@@ -14,7 +14,8 @@ interface Blog {
     report_count?: number;
     is_liked?: boolean;
     is_saved?: boolean; 
-    is_listed?: boolean; 
+    is_reported?: boolean;
+    status?: string; 
     content?:string;
 }
 
@@ -28,6 +29,7 @@ interface ReadingBlog {
   saves: number;
   is_saved?: boolean;
   is_liked?: boolean;
+  is_reported?:boolean;
   author: string;
   authorImage?: string;
   content?:string

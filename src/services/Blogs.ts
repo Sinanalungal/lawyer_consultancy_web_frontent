@@ -2,13 +2,13 @@ import { getAxiosInstance } from "../api/axiosInstance";
 import { UpdatePasswordParams } from "../types";
 
 
-export const fetchBlogs = async (url: string, search: string, blocked: boolean) => {
+export const fetchBlogs = async (url: string, search: string, status: string) => {
   const axiosInstance = await getAxiosInstance();
   try {
     const response = await axiosInstance.get(url, {
       params: {
         search: search,
-        blocked: blocked.toString(), 
+        status: status
       },
     });
     console.log(response.data);
@@ -35,12 +35,12 @@ export const fetchBlogsUser = async (url: string, search?: string) => {
   }
 };
 
-export const updateBlogIsListed = async (blogId: number, isListed: boolean) => {
+export const updateBlogIsListed = async (blogId: number, status: string) => {
   const axiosInstance = await getAxiosInstance();
   try {
     const response = await axiosInstance.patch(`blogsession/blogs/update_is_listed/`, {
       blog_id: blogId,
-      is_listed: isListed,
+      status: status,
     });
     console.log(response.data);
     return response.data;
@@ -123,6 +123,75 @@ export const updatePassword = async (params: UpdatePasswordParams) => {
     return response.data;
   } catch (error) {
     console.error("Error updating password:", error);
+    throw error;
+  }
+};
+
+export const updateComment = async (commentId: number, updatedContent: string) => {
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.patch(`blogsession/comments/edit/${commentId}/`, {
+      content: updatedContent,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating comment:", error);
+    throw error;
+  }
+};
+
+export const reportBlog = async (blogId: number, note: string) => {
+  const axiosInstance = await getAxiosInstance(); 
+  try {
+    const response = await axiosInstance.post(`blogsession/blogs/report/${blogId}/`, {
+      note: note,
+    });
+    return response.data; 
+  } catch (error) {
+    console.error("Error reporting blog:", error);
+    throw error;
+  }
+};
+
+
+export const deleteComment = async (commentId: number) => {
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.delete(`blogsession/comments/delete/${commentId}/`);
+    console.log("Comment deleted successfully");
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+    throw error;
+  }
+};
+
+export const BlogDetailGetting = async (blog_id: string) => {
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.get(`blogsession/blog-update/${blog_id}/`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const BlogUpdating = async (blog_id: number,formData:FormData) => {
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.patch(`blogsession/blog-update/${blog_id}/`,formData);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const BlogDeleting = async (blog_id: number) => {
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.delete(`blogsession/blog-update/${blog_id}/`);
+    return response.data;
+  } catch (error) {
     throw error;
   }
 };

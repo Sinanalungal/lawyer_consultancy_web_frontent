@@ -12,13 +12,13 @@ const SearchForm: React.FC<SearchFormProps> = ({ search, setSearch }) => {
   };
 
   return (
-    <div className="flex justify-end my-2">
-      <div className="w-full max-w-lg rounded-xl text-xs leading-6">
+    <div className="flex justify-end my-2 ">
+      <div className="w-full max-w-lg rounded-xl bg-white text-xs leading-6">
         <div className="relative mx-auto flex w-full px-2 items-center justify-start rounded-xl border">
           <label htmlFor="search-input" className="sr-only">
             Search
           </label>
-          <FiSearch size={16} className="text-gray-700 " />
+          <FiSearch size={16} className="text-gray-700 "  />
           <input
             id="search-input"
             type="text"

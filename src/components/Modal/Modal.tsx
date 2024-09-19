@@ -52,8 +52,8 @@ const Modal: FC<ModalProps> = ({ modalOpen, setModalOpen, children }) => {
 
   return createPortal(
     <div
-      className="fixed inset-0 bg-black flex items-center justify-center px-2 bg-opacity-90"
-      style={{ zIndex: 9999 }} // Ensure the modal is on top
+      className="fixed  inset-0 bg-black z-50 flex items-center justify-center px-2 bg-opacity-90"
+      style={{ zIndex: 99 }} // Ensure the modal is on top
     >
       <div
         ref={modal}

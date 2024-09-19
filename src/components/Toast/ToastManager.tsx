@@ -23,7 +23,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   const addToast = useCallback((type: ToastType['type'], message: string) => {
     const id = Date.now();
     setToasts((prevToasts) => [...prevToasts, { id, type, message }]);
-    setTimeout(() => removeToast(id), 3000); // Auto-remove after 3 seconds
+    setTimeout(() => removeToast(id), 3000); 
   }, []);
 
   const removeToast = useCallback((id: number) => {
@@ -31,9 +31,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({ children }) => {
   }, []);
 
   return (
-    <ToastContext.Provider value={{ addToast }}>
+    <ToastContext.Provider value={{ addToast }} >
       {children}
-      <div className="fixed bottom-0 right-0 p-4">
+      <div className="fixed bottom-0 right-0 p-4 z-50">
         {toasts.map((toast) => (
           <Toast key={toast.id} type={toast.type} message={toast.message} onClose={() => removeToast(toast.id)} />
         ))}

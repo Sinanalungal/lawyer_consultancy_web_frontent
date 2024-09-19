@@ -10,13 +10,13 @@ const ProfileSection: React.FC = () => {
   return (
     <section className="relative pt-20">
       <div className="w-full absolute bg-[#d9e3ed] top-0 left-0 z-0 h-40 object-cover" />
-      <div className="w-full max-w-7xl mx-auto px-6 md:px-8">
+      <div className="w-full max-w-7xl mx-auto px-6 md:px-8 bg-white">
         <div className="flex items-center justify-center sm:justify-start relative z-10 mb-5">
           {userDetail?.profile_image ? (
             <img
               src={userDetail?.profile_image}
               alt="user-avatar-image"
-              className="border-4 border-solid w-[140px] bg-slate-100 h-[140px] border-white rounded-full"
+              className="border-4 object-cover border-solid w-[140px] bg-slate-100 h-[140px] border-white rounded-full"
             />
           ) : (
             <div className="bg-pink-800 w-[140px] border-white border-4 h-[140px]  text-white text-6xl font-medium flex items-center justify-center rounded-full">
@@ -76,7 +76,7 @@ const ProfileSection: React.FC = () => {
                 Edit Profile
               </button>
             </Link>
-            <button className="sm:py-3.5 py-3 px-5 rounded-full bg-indigo-50 text-slate-800 font-semibold text-base leading-7 shadow-sm transition-all duration-500 hover:bg-indigo-100">
+            {/* <button className="sm:py-3.5 py-3 px-5 rounded-full bg-indigo-50 text-slate-800 font-semibold text-base leading-7 shadow-sm transition-all duration-500 hover:bg-indigo-100">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
@@ -90,7 +90,7 @@ const ProfileSection: React.FC = () => {
                   clipRule="evenodd"
                 />
               </svg>
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

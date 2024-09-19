@@ -5,11 +5,16 @@ import DrawerBottomToTop from "../../../components/Animation/DrawerBottomToTop";
 import CommentSection from "../../../components/Comments/Comments";
 import {
   fetchBlogsUser,
+  reportBlog,
   updateBlogLike,
   updateBlogSave,
 } from "../../../services/Blogs";
 import type { Blog, BlogResponse, ReadingBlog } from "../../../types";
 import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
+import { SlOptions } from "react-icons/sl";
+import Modal from "../../../components/Modal/Modal";
+import ConfirmationModal from "../../../components/Modal/AlertModal";
+import { useToast } from "../../../components/Toast/ToastManager";
 
 const Blog: React.FC = () => {
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -19,30 +24,32 @@ const Blog: React.FC = () => {
   const [nextPage, setNextPage] = useState<string | null>(null);
   const [prevPage, setPrevPage] = useState<string | null>(null);
   const [fetchedBlogIds, setFetchedBlogIds] = useState<Set<number>>(new Set());
-  const {setLoader}=useLoader()
-
-
+  const [isReportModalOpen, setReportModalOpen] = useState<boolean>(false);
+  const [isConfirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
+  const [reportNote, setReportNote] = useState<string>("");
+  const { setLoader } = useLoader();
+  const { addToast } = useToast();
+  const fetchData = async () => {
+    setLoader(true);
+    const url = `${process.env.VITE_BASE_URL}/blogsession/blogs/users/`;
+    try {
+      const data: BlogResponse = await fetchBlogsUser(url, search);
+      const newBlogs = data.results.filter(
+        (blog) => !fetchedBlogIds.has(blog.id)
+      );
+      setFetchedBlogIds(
+        (prevIds) => new Set([...prevIds, ...newBlogs.map((blog) => blog.id)])
+      );
+      setBlogs(newBlogs);
+      setNextPage(data.next);
+      setPrevPage(data.previous);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoader(false);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      setLoader(true)
-      const url = `${process.env.VITE_BASE_URL}/blogsession/blogs/users/`;
-      try {
-        const data: BlogResponse = await fetchBlogsUser(url, search);
-        const newBlogs = data.results.filter(
-          (blog) => !fetchedBlogIds.has(blog.id)
-        );
-        setFetchedBlogIds(
-          (prevIds) => new Set([...prevIds, ...newBlogs.map((blog) => blog.id)])
-        );
-        setBlogs(newBlogs);
-        setNextPage(data.next);
-        setPrevPage(data.previous);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }finally{
-        setLoader(false)
-      }
-    };
 
     fetchData();
   }, [search]);
@@ -65,6 +72,24 @@ const Blog: React.FC = () => {
       }
     }
   };
+  const handleReport = async () => {
+    if (readingBlog && readingBlog.id !== null && reportNote.trim()) {
+      try {
+        await reportBlog(readingBlog.id, reportNote);
+        fetchData()
+        addToast('success',"Blog reported successfully.");
+      } catch (error:any) {
+        console.error("Error reporting blog:", error);
+        addToast('danger',error.response.data as string)
+      } finally {
+        setReportNote(""); 
+        setReportModalOpen(false); 
+      }
+    } else {
+      console.log("Please provide a note to report.");
+    }
+  };
+  
 
   const handleLike = async (blogId: number) => {
     try {
@@ -143,6 +168,7 @@ const Blog: React.FC = () => {
     saves: blog?.saved_count,
     is_saved: blog.is_saved,
     is_liked: blog.is_liked,
+    is_reported:blog.is_reported,
     author:
       blog?.user?.full_name?.charAt(0).toUpperCase() +
       blog?.user?.full_name?.slice(1),
@@ -150,6 +176,7 @@ const Blog: React.FC = () => {
       blog?.user?.profile ??
       "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png",
   }));
+console.log(readingBlog,'this is the reading blog');
 
   return (
     <>
@@ -161,7 +188,8 @@ const Blog: React.FC = () => {
         <div className="px-6 mx-auto w-full sm:max-w-xl md:max-w-full md:px-24 lg:px-8 xl:px-20">
           {blogData.length > 0 ? (
             <div className="grid gap-5 2xl:grid-cols-4 xl:grid-cols-3 sm:grid-cols-2 sm:mx-auto lg:max-w-full">
-              {blogData.map((blog, index) => (
+              {blogData.map((blog, index) => (<>
+                
                 <BlogCard
                   calling={() => {
                     setReadingBlog(blog);
@@ -174,6 +202,7 @@ const Blog: React.FC = () => {
                   author={blog.author}
                   authorImage={blog.authorImage}
                 />
+                </>
               ))}
             </div>
           ) : (
@@ -186,9 +215,9 @@ const Blog: React.FC = () => {
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                stroke-width="1"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="1"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <line x1="22" x2="2" y1="12" y2="12"></line>
                 <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
@@ -279,6 +308,29 @@ const Blog: React.FC = () => {
                   {formatCount(readingBlog?.saves ?? 0)}
                 </span>
               </p>
+              <p
+                onClick={() => readingBlog?.id && setReportModalOpen(!isReportModalOpen)}
+                className={`relative p-2 border rounded-full border-gray-400 inline-flex items-center ${
+                  readingBlog?.is_reported ? "bg-black" : "bg-white"
+                } cursor-pointer`}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className={`size-4 ${
+                    readingBlog?.is_reported ? "text-white" : "text-black"
+                  }`}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3 3v1.5M3 21v-6m0 0 2.77-.693a9 9 0 0 1 6.208.682l.108.054a9 9 0 0 0 6.086.71l3.114-.732a48.524 48.524 0 0 1-.005-10.499l-3.11.732a9 9 0 0 1-6.085-.711l-.108-.054a9 9 0 0 0-6.208-.682L3 4.5M3 15V4.5"
+                  />
+                </svg>
+              </p>
             </div>
           </div>
           <div className="rounded-xl mt-6 h-[500px]">
@@ -310,6 +362,33 @@ const Blog: React.FC = () => {
             ></div>
           )}
           {readingBlog?.id && <CommentSection id={readingBlog?.id} />}
+          <Modal modalOpen={isReportModalOpen} setModalOpen={()=>setReportModalOpen(false)}  children={
+            <>
+             <h2 className="text-xl font-bold">Report Blog</h2>
+          <textarea
+            value={reportNote}
+            onChange={(e) => setReportNote(e.target.value)}
+            className="w-full mt-2 p-2 border rounded"
+            placeholder="Enter your note..."
+            rows={4}
+          />
+          <div className="mt-4 flex justify-end gap-2">
+            <button
+              onClick={()=>{setConfirmationModalOpen(true);setReportModalOpen(false);}}
+              className="px-4 py-2 bg-red-500 text-white rounded-md"
+            >
+              Report
+            </button>
+            <button
+              onClick={() => setReportModalOpen(false)}
+              className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md"
+            >
+              Cancel
+            </button>
+          </div>
+            </>
+          }></Modal>
+          <ConfirmationModal isOpen={isConfirmationModalOpen} description="Are you sure to report this blog" onCancel={()=>{setConfirmationModalOpen(false);setReportModalOpen(true)}} onConfirm={()=>{handleReport();setConfirmationModalOpen(false)}} title="Report Blog" ></ConfirmationModal>
         </DrawerBottomToTop>
       </section>
       {nextPage && (

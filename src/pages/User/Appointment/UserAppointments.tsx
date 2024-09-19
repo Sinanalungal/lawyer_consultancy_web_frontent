@@ -42,7 +42,7 @@ const UserAppointments: React.FC = () => {
           </h2>
 
           <div className="mb-8 flex justify-center">
-            <nav className="flex space-x-2 border rounded-full p-1 bg-gray-100">
+            <nav className="flex space-x-2 border rounded-full p-1 bg-white">
               <button
                 onClick={() => setActiveTab("upcoming")}
                 className={`px-4 py-2 max-sm:text-xs font-medium text-sm rounded-full transition ${

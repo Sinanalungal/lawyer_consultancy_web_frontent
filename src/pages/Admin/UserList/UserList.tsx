@@ -20,17 +20,37 @@ const AdminUser: React.FC = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
+
+  const fetchData = async () => {
+    if (currentPage) {
+      try {
+        const data: UserResponse = await fetchUsers(
+          currentPage,
+          search,
+          blocked
+        );
+        setUsers(data.results);
+        setNextPage(data.next);
+        setPrevPage(data.previous);
+        setTotalCount(data.count);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+  };
+
   const handleToggleVerification = async () => {
     if (selectedUser) {
       try {
         const updatedUser = await updateUserVerification(selectedUser.pk, !selectedUser.is_verified);
-        setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.pk === selectedUser.pk
-              ? { ...user, is_verified: updatedUser.is_verified }
-              : user
-          )
-        );
+        // setUsers((prevUsers) =>
+        //   prevUsers.map((user) =>
+        //     user.pk === selectedUser.pk
+        //       ? { ...user, is_verified: updatedUser.is_verified }
+        //       : user
+        //   )
+        // );
+        fetchData()
         setIsModalOpen(false);
       } catch (error) {
         console.error("Failed to update user:", error);
@@ -44,23 +64,7 @@ const AdminUser: React.FC = () => {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (currentPage) {
-        try {
-          const data: UserResponse = await fetchUsers(
-            currentPage,
-            search,
-            blocked
-          );
-          setUsers(data.results);
-          setNextPage(data.next);
-          setPrevPage(data.previous);
-          setTotalCount(data.count);
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      }
-    };
+    
 
     fetchData();
   }, [pageNum, search, currentPage, blocked]);

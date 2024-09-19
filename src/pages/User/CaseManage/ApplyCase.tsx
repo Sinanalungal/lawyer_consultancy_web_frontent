@@ -15,7 +15,6 @@ import {
 import * as Yup from "yup";
 import CustomInputFullSized from "../../../components/Input/InputFullSize";
 import { useToast } from "../../../components/Toast/ToastManager";
-import Swal from "sweetalert2";
 import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 import { PulseLoader } from "react-spinners";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
@@ -52,12 +51,16 @@ const ClientCaseManagement: React.FC = () => {
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [caseToDelete, setCaseToDelete] = useState<number | null>(null);
   const [caseToAccept, setCaseToAccept] = useState<number | null>(null);
+  const [selectedFilter, setSelectedFilter] = useState<
+    "all" | "selected" | "unselected"
+  >("all");
+
   const { addToast } = useToast();
   const { setLoader } = useLoader();
 
   useEffect(() => {
     if (activeTab === "appliedCases") {
-      fetchCasesData(currentPage);
+      fetchCasesData(currentPage, selectedFilter);
     }
   }, [activeTab, currentPage]);
 
@@ -77,12 +80,14 @@ const ClientCaseManagement: React.FC = () => {
     fetchStatesData();
   }, []);
 
-  const fetchCasesData = async (page: number) => {
+  const fetchCasesData = async (
+    page: number,
+    filter: "all" | "selected" | "unselected"
+  ) => {
     setLoader(true);
     try {
-      const casesData = await fetchCases(page);
+      const casesData = await fetchCases(page, filter);
       setCases(casesData.results);
-      console.log(casesData.results);
       setTotalCases(casesData.count);
       setTotalPages(Math.ceil(casesData.count / casesData.results.length));
     } catch (error) {
@@ -115,7 +120,7 @@ const ClientCaseManagement: React.FC = () => {
       addToast("success", "Case submitted successfully!");
       resetForm();
       setActiveTab("appliedCases");
-      fetchCasesData(1);
+      fetchCasesData(1, selectedFilter);
     } catch (error) {
       console.error("Error submitting case:", error);
       addToast("danger", "Failed to submit the case. Please try again.");
@@ -135,7 +140,7 @@ const ClientCaseManagement: React.FC = () => {
     try {
       await deleteCase(caseToDelete);
       addToast("success", "Case deleted successfully!");
-      fetchCasesData(currentPage);
+      fetchCasesData(currentPage, selectedFilter);
     } catch (error) {
       console.error("Error deleting case:", error);
       addToast("danger", "Failed to delete the case. Please try again.");
@@ -143,6 +148,11 @@ const ClientCaseManagement: React.FC = () => {
       setIsConfirmationModalOpen(false);
       setCaseToDelete(null);
     }
+  };
+  const handleFilterChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const filter = event.target.value as "all" | "selected" | "unselected";
+    setSelectedFilter(filter);
+    fetchCasesData(1, filter);
   };
 
   const openConfirmationModalForAccept = (caseId: number) => {
@@ -156,7 +166,7 @@ const ClientCaseManagement: React.FC = () => {
     try {
       await createAllotedCase({ selected_case_id: caseToAccept });
       addToast("success", "Case allocated successfully!");
-      fetchCasesData(currentPage);
+      fetchCasesData(currentPage, selectedFilter);
     } catch (error) {
       console.error("Error allocating case:", error);
       addToast("danger", "Error allocating case.");
@@ -176,7 +186,7 @@ const ClientCaseManagement: React.FC = () => {
 
         {/* Tab Navigation */}
         <div className="mb-8 flex justify-center">
-          <nav className="flex space-x-2 border rounded-full p-1 bg-gray-100">
+          <nav className="flex space-x-2 border rounded-full p-1 bg-white">
             <button
               className={`px-4 py-2 max-sm:text-xs font-medium text-sm rounded-full transition ${
                 activeTab === "appliedCases"
@@ -205,6 +215,17 @@ const ClientCaseManagement: React.FC = () => {
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 p-5 text-center">
               Your Applied Cases
             </h2>
+            <div className="flex justify-end text-xs py-2">
+              <select
+                className="p-1 bg-transparent border border-gray-300  rounded-lg"
+                value={selectedFilter}
+                onChange={handleFilterChange}
+              >
+                <option value="all">All Cases</option>
+                <option value="selected">Selected Cases</option>
+                <option value="unselected">Unselected Cases</option>
+              </select>
+            </div>
             <motion.div
               className="bg-white p-6 rounded-lg overflow-x-scroll shadow-md border border-gray-200"
               initial={{ opacity: 0, y: 20 }}
@@ -241,7 +262,9 @@ const ClientCaseManagement: React.FC = () => {
                             className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${
                               caseItem.status === "Accepted"
                                 ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
+                                : caseItem.status === "Pending"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-red-100 text-red-800"
                             }`}
                           >
                             {caseItem.status}
@@ -251,12 +274,16 @@ const ClientCaseManagement: React.FC = () => {
                           {caseItem.reference_until}
                         </td>
                         <td className="py-4 px-4 text-center space-x-4">
-                          <button
-                            onClick={() => handleViewDetails(caseItem.id)}
-                            className="text-blue-600 hover:underline"
-                          >
-                            View Details
-                          </button>
+                          {caseItem.status == "Outdated" ? (
+                            <button className="text-gray-500">No Data</button>
+                          ) : (
+                            <button
+                              onClick={() => handleViewDetails(caseItem.id)}
+                              className="text-blue-600 hover:underline"
+                            >
+                              View Details
+                            </button>
+                          )}
                           <button
                             onClick={() =>
                               openConfirmationModalForDelete(caseItem.id)
@@ -492,7 +519,10 @@ const ClientCaseManagement: React.FC = () => {
                           </div>
                         </div>
                         <button
-                          onClick={() => openConfirmationModalForAccept(obj.id)}
+                          onClick={() => {
+                            openConfirmationModalForAccept(obj.id);
+                            setIsModalOpen(false);
+                          }}
                           className="absolute max-[400px]:px-2 max-[400px]:text-[10px] top-4 right-4 px-4 py-2 bg-slate-500 text-white rounded-lg shadow hover:bg-slate-600 focus:outline-none focus:ring-2 focus:ring-slate-300"
                         >
                           Accept

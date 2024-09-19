@@ -74,19 +74,21 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
       <div className="min-h-screen mx-auto justify-center 3xl:container">
         <div className="my-auto">
           <div
-            className={`transition-opacity duration-300 ${
+            className={`transition-opacity duration-300  ${
               isVisible ? 'visible' : 'invisible'
             }`}
           >
             <Navbar />
           </div>
-          {error ? (
+         <div className='bg-gray-50'>
+         {error ? (
             <div className="w-full h-svh flex justify-center items-center text-xs text-gray-600">
               {error}
             </div>
           ) : (
             children
           )}
+         </div>
         </div>
         <Footer />
       </div>

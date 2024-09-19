@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
 import ImageCrop from "../../../components/ImageCrop/ImageCrop";
@@ -14,26 +14,64 @@ import CustomButton from "../../../components/Button/Button";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { LoginState } from "../../../redux/slice/LoginActions";
+import { useLocation } from "react-router-dom";
+import { BlogDetailGetting, BlogUpdating } from "../../../services/Blogs";
 
 interface FormValues {
   title: string;
   description: string;
 }
 
+interface BlogData {
+  id: number;
+  title: string;
+  description: string;
+  content: string;
+  image?: string;
+}
+
 const AddBlog: React.FC = () => {
   const [content, setContent] = useState<string>("");
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [blogData, setBlogData] = useState<BlogData | null>(null);
   const editor = useRef(null);
   const { addToast } = useToast();
-  const { role } = useSelector((state: RootState) => state.login as LoginState)
+  const { role } = useSelector((state: RootState) => state.login as LoginState);
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const blog_id = queryParams.get("blog");
+
+  const fetchBlog = async (blog_id: string) => {
+    const response = await BlogDetailGetting(blog_id);
+    setBlogData(response);
+    if (response) {
+      setIsEditing(true);
+      setContent(response.content);
+      formik.setValues({
+        title: response.title,
+        description: response.description,
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (blog_id) {
+      fetchBlog(blog_id);
+    }
+  }, [blog_id]);
+
+  console.log(blogData);
 
   const config = useMemo(
     () => ({
-      readonly: false, 
-      placeholder: "Start typing...", 
+      readonly: false,
+      placeholder: "Start typing...",
     }),
     []
   );
+
   const validationSchema = Yup.object({
     title: Yup.string()
       .min(10, "Title must be at least 10 characters")
@@ -65,7 +103,7 @@ const AddBlog: React.FC = () => {
         preprocessedValues[key] = values[key].replace(/\s+/g, " ").trim();
       });
 
-      if (croppedImageUrl) {
+      if (croppedImageUrl && !isEditing) {
         console.log(croppedImageUrl);
 
         const blob = await dataURItoBlob(croppedImageUrl);
@@ -113,6 +151,47 @@ const AddBlog: React.FC = () => {
           addToast("danger", "Add a proper content/image");
         }
       }
+
+      if (isEditing) {
+        // console.log(croppedImageUrl);
+        const formData = new FormData();
+        formData.append("title", preprocessedValues.title);
+        formData.append("description", preprocessedValues.description);
+        formData.append("content", content);
+        if (croppedImageUrl) {
+          const blob = await dataURItoBlob(croppedImageUrl);
+          if (blob) {
+            formData.append("image", blob, "image.png");
+          }
+        }
+
+        if (
+          content.length > 50 &&
+          blogData
+          // &&
+          // croppedImageUrl &&
+          // croppedImageUrl.length > 0
+        ) {
+          try {
+            const response = await BlogUpdating(blogData?.id, formData);
+            if (response) {
+              addToast("success", "Blog Updated successfully");
+              setCroppedImageUrl("");
+              setContent("");
+              setBlogData(null);
+              formik.resetForm();
+              console.log(response.data, "this is the response data");
+              setCroppedImageUrl(null);
+            } else {
+              addToast("danger", "Somehting Wrong");
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        } else {
+          addToast("danger", "Add a proper content");
+        }
+      }
     },
   });
 
@@ -129,7 +208,6 @@ const AddBlog: React.FC = () => {
 
     const mimeString = header.split(":")[1].split(";")[0];
 
-    // Convert base64 to raw binary data
     const byteCharacters = atob(base64Data);
     const byteArrays = [];
     for (let offset = 0; offset < byteCharacters.length; offset += 512) {
@@ -147,140 +225,168 @@ const AddBlog: React.FC = () => {
 
   return (
     <>
-    {role=='admin'?<AdminLayout selected="4">
-      <AdminPageTitle
-        title="Add Blog"
-        description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,"
-      />
-
-      <div className="max-w-md mx-auto space-y-2">
-        <form onSubmit={formik.handleSubmit}>
-          <ImageCrop
-            croppedImageUrl={croppedImageUrl}
-            setCroppedImageUrl={setCroppedImageUrl}
-          />
-          <CustomInput
-            inputType="text"
-            placeholder="Blog Title"
-            name="title"
-            id="title"
-            label="Blog Title"
-            error={
-              formik.touched.title && formik.errors.title
-                ? formik.errors.title
-                : ""
-            }
-            value={formik.values.title}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
+      {role == "admin" ? (
+        <AdminLayout selected="4">
+          <AdminPageTitle
+            title={isEditing ? "Update Blog" : "Add Blog"}
+            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,"
           />
 
-          <CustomInput
-            inputType="text"
-            placeholder="Description"
-            name="description"
-            id="description"
-            label="Blog Description"
-            error={
-              formik.touched.description && formik.errors.description
-                ? formik.errors.description
-                : ""
-            }
-            value={formik.values.description}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
+          <div className="max-w-md mx-auto space-y-2">
+            <form onSubmit={formik.handleSubmit}>
+              {isEditing && !croppedImageUrl && blogData && blogData.image && (
+                <div className="mb-2">
+                  <h1 className="text-xs flex justify-center text-gray-800">
+                    Previous Image
+                  </h1>
+                  <ImageCrop
+                    croppedImageUrl={blogData.image}
+                    setCroppedImageUrl={() => {}}
+                  />
+                </div>
+              )}
+              <ImageCrop
+                croppedImageUrl={croppedImageUrl}
+                setCroppedImageUrl={setCroppedImageUrl}
+              />
+              <CustomInput
+                inputType="text"
+                placeholder="Blog Title"
+                name="title"
+                id="title"
+                label="Blog Title"
+                error={
+                  formik.touched.title && formik.errors.title
+                    ? formik.errors.title
+                    : ""
+                }
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
 
-          <div className="">
-            <label className="block text-xs font-medium leading-6 text-gray-900">
-              Content
-            </label>
-            <JoditEditor
-              ref={editor}
-              value={content}
-              config={config}
-              onBlur={(newContent) => setContent(newContent)}
-              onChange={(newContent) => {
-                setContent(newContent);
-              }}
-            />
+              <CustomInput
+                inputType="text"
+                placeholder="Description"
+                name="description"
+                id="description"
+                label="Blog Description"
+                error={
+                  formik.touched.description && formik.errors.description
+                    ? formik.errors.description
+                    : ""
+                }
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+
+              <div className="">
+                <label className="block text-xs font-medium leading-6 text-gray-900">
+                  Content
+                </label>
+                <JoditEditor
+                  ref={editor}
+                  value={content}
+                  config={config}
+                  onBlur={(newContent) => setContent(newContent)}
+                  onChange={(newContent) => {
+                    setContent(newContent);
+                  }}
+                />
+              </div>
+              <div className="w-full pb-28 gap-2 flex justify-center max-w-md mx-auto pt-2">
+                <CustomButton
+                  text={isEditing ? "Update" : "Add"}
+                  type="submit"
+                  className="bg-[#131314] py-3 w-full text-white   hover:bg-slate-900"
+                />
+              </div>
+            </form>
           </div>
-          <div className="w-full pb-28 gap-2 flex justify-center max-w-md mx-auto pt-2">
-            <CustomButton
-              text="Save"
-              type="submit"
-              className="bg-[#131314] py-3 w-full text-white   hover:bg-slate-900"
-            />
-          </div>
-        </form>
-      </div>
-    </AdminLayout>:(<>
-      <AdminPageTitle
-        title="Add Blog"
-        description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,"
-      />
-
-      <div className="max-w-md mx-auto space-y-2">
-        <form onSubmit={formik.handleSubmit}>
-          <ImageCrop
-            croppedImageUrl={croppedImageUrl}
-            setCroppedImageUrl={setCroppedImageUrl}
-          />
-          <CustomInput
-            inputType="text"
-            placeholder="Blog Title"
-            name="title"
-            id="title"
-            label="Blog Title"
-            error={
-              formik.touched.title && formik.errors.title
-                ? formik.errors.title
-                : ""
-            }
-            value={formik.values.title}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
+        </AdminLayout>
+      ) : (
+        <>
+          <AdminPageTitle
+            title={isEditing ? "Update Blog" : "Add Blog"}
+            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,"
           />
 
-          <CustomInput
-            inputType="text"
-            placeholder="Description"
-            name="description"
-            id="description"
-            label="Blog Description"
-            error={
-              formik.touched.description && formik.errors.description
-                ? formik.errors.description
-                : ""
-            }
-            value={formik.values.description}
-            onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-          />
+          <div className="max-w-md mx-auto space-y-2">
+            <form onSubmit={formik.handleSubmit}>
+              {isEditing && !croppedImageUrl && blogData && blogData.image && (
+                <div className="mb-2">
+                  <h1 className="text-xs flex justify-center text-gray-800">
+                    Previous Image
+                  </h1>
+                  <ImageCrop
+                    croppedImageUrl={blogData.image}
+                    setCroppedImageUrl={() => {}}
+                  />
+                </div>
+              )}
+              <ImageCrop
+                croppedImageUrl={croppedImageUrl}
+                setCroppedImageUrl={setCroppedImageUrl}
+              />
+              <CustomInput
+                inputType="text"
+                placeholder="Blog Title"
+                name="title"
+                id="title"
+                label="Blog Title"
+                error={
+                  formik.touched.title && formik.errors.title
+                    ? formik.errors.title
+                    : ""
+                }
+                value={formik.values.title}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
 
-          <div className="">
-            <label className="block text-xs font-medium leading-6 text-gray-900">
-              Content
-            </label>
-            <JoditEditor
-              ref={editor}
-              value={content}
-              config={config}
-              onBlur={(newContent) => setContent(newContent)}
-              onChange={(newContent) => {
-                setContent(newContent);
-              }}
-            />
+              <CustomInput
+                inputType="text"
+                placeholder="Description"
+                name="description"
+                id="description"
+                label="Blog Description"
+                error={
+                  formik.touched.description && formik.errors.description
+                    ? formik.errors.description
+                    : ""
+                }
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+
+              <div className="">
+                <label className="block text-xs font-medium leading-6 text-gray-900">
+                  Content
+                </label>
+                <JoditEditor
+                  ref={editor}
+                  value={content}
+                  config={config}
+                  onBlur={(newContent) => setContent(newContent)}
+                  onChange={(newContent) => {
+                    setContent(newContent);
+                  }}
+                />
+              </div>
+              <div className="w-full pb-28 gap-2 flex justify-center max-w-md mx-auto pt-2">
+                <CustomButton
+                  text={isEditing ? "Update" : "Add"}
+                  type="submit"
+                  className="bg-[#131314] py-3 w-full text-white   hover:bg-slate-900"
+                />
+              </div>
+            </form>
           </div>
-          <div className="w-full pb-28 gap-2 flex justify-center max-w-md mx-auto pt-2">
-            <CustomButton
-              text="Save"
-              type="submit"
-              className="bg-[#131314] py-3 w-full text-white   hover:bg-slate-900"
-            />
-          </div>
-        </form>
-      </div></>)}</>
+        </>
+      )}
+    </>
   );
 };
 
