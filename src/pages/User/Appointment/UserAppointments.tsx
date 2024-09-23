@@ -19,7 +19,7 @@ const UserAppointments: React.FC = () => {
   const [modalData, setModalData] = useState<Appointment | null>(null);
   const { setLoader } = useLoader();
   const { addToast } = useToast();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const fetchAppointments = async (tab: "upcoming" | "finished") => {
     setLoader(true);
     try {
@@ -53,7 +53,9 @@ const UserAppointments: React.FC = () => {
   //     console.error("Error cancelling booked sessions:", error);
   //   }
   // }
-  
+  const now = new Date();
+  console.log(now, "this is the date"); // This will print the current date and time
+
   const OpenModal = (data: Appointment) => {
     setModalData(data);
     setIsOpen(true);
@@ -133,7 +135,7 @@ const UserAppointments: React.FC = () => {
                         </p>
 
                         <p className="text-gray-600 max-sm:text-center text-xs">
-                          {new Date(app.session_date).toLocaleDateString()} at{" "}
+                          {new Date(app.session_start).toLocaleDateString()} at{" "}
                           {app.scheduling.start_time}
                         </p>
                         <p className="text-gray-600 max-sm:text-center text-xs">
@@ -143,18 +145,42 @@ const UserAppointments: React.FC = () => {
                     </div>
 
                     <div className="gap-2 flex max-sm:flex-wrap">
-                      <button
-                        onClick={() => {
-                          activeTab == "finished" ? OpenModal(app) : navigate(`../../../../../video/${app.uuid}`);
-                        }}
-                        className="px-4 py-2 text-xs bg-white text-black border border-gray-400"
-                      >
-                        {activeTab === "upcoming" ? "Attend" : "View Details"}
-                      </button>
+                      {activeTab === "upcoming" &&
+                      new Date(
+                        app.session_start.replace(" ", "T") + "+05:30"
+                      ) <= new Date() &&
+                      new Date(app.session_end.replace(" ", "T") + "+05:30") >=
+                        new Date() ? (
+                        <button
+                          onClick={() => {
+                            navigate(`../../../../../video/${app.uuid}`);
+                          }}
+                          className="px-4 py-2 flex items-center justify-center gap-1 text-xs bg-white text-black font-medium border border-gray-400"
+                        >
+                          {"Join"}
+                          <div className="bg-green-700 h-2 rounded-full w-2"></div>
+                        </button>
+                      ) : (
+                        <button className="px-4 py-2 text-xs bg-gray-300 opacity-60 text-black border border-gray-400">
+                          {"Join"}
+                        </button>
+                      )}
+
+                      {activeTab == "finished" && (
+                        <button
+                          onClick={() => {
+                            OpenModal(app);
+                          }}
+                          className="px-4 py-2 text-xs bg-white text-black border border-gray-400"
+                        >
+                          {"View Details"}
+                        </button>
+                      )}
                       {activeTab === "upcoming" && (
                         <button
                           onClick={() => cancelBookedSessions(app.uuid)}
-                          className="px-4 py-2 text-xs bg-slate-800 text-white">
+                          className="px-4 py-2 text-xs bg-slate-800 text-white"
+                        >
                           Cancel
                         </button>
                       )}
@@ -199,7 +225,7 @@ const UserAppointments: React.FC = () => {
               {modalData && (
                 <div className="flex flex-col items-center gap-2">
                   <p>
-                    <strong>Session Date:</strong> {modalData.session_date}
+                    <strong>Session Date:</strong> {modalData.session_start}
                   </p>
                   <p>
                     <strong>Session Time:</strong>{" "}

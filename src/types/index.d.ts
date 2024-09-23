@@ -122,7 +122,8 @@ interface States{
 }
 interface Appointment {
   uuid: string;
-  session_date: string;
+  session_start: string;
+  session_end: string;
   scheduling: {
     start_time: string;
     end_time: string;

@@ -36,6 +36,7 @@ const OneToOneVideoCall = () => {
       showLeavingView: false,  // Skip the leave page
       showPreJoinView: false,  // Skip the pre-join settings page
       
+      // Add any additional configurations or UI preferences here
       
       onLeaveRoom:()=>{
         navigate(`../../../../../${role}/appointments`)
