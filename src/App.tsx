@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useSelector } from 'react-redux';
 import { RingLoader } from 'react-spinners';
+// import VideoCall from './pages/Common/VideoCall/VideoCall';
 
 
 // Lazy load components and pages
@@ -15,6 +16,7 @@ const RegisterPage = lazy(() => import('./pages/Common/Register/RegisterPage'));
 const OtpPage = lazy(() => import('./pages/Common/Otp/OtpPage'));
 const ForgotPassword = lazy(() => import('./pages/Common/ForgotPassword/ForgotPassword'));
 const ResetPassword = lazy(() => import('./pages/Common/ResetPassword/ResetPassword'));
+const VideoCallComponent = lazy(() => import('./pages/Common/VideoCall/VideoCall'));
 
 const UserRoutes = lazy(() => import('./routes/UserRoutes'));
 const AdminRoutes = lazy(() => import('./routes/AdminRoutes'));
@@ -67,6 +69,7 @@ function App() {
                 <Route path="/forgotpassword" element={<ForgotPassword />} />
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
                 <Route path="/chat" element={<ChatComponent />} />
+                <Route path="/video/:uuid" element={<VideoCallComponent/>}/>
                 <Route path="/user/*" element={<UserRoutes />} />
                 <Route path="/admin/*" element={<AdminRoutes />} />
                 <Route path="/lawyer/*" element={<LawyerRoutes />} />

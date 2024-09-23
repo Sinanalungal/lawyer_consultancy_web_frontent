@@ -10,6 +10,17 @@ import SearchForm from "../../../components/Search/Search";
 import Pagination from "../../../components/Pagination/Pagination";
 import SelectionBox from "../../../components/SelectBox/SelectBox";
 
+
+interface TableColumn {
+  key: string;
+  label: string;
+}
+
+interface TableRow {
+  [key: string]: any; 
+}
+
+
 const AdminBlog: React.FC = () => {
   const [search, setSearch] = useState<string>("");
   const [pageNum, setPageNum] = useState<number>(1);
@@ -17,8 +28,10 @@ const AdminBlog: React.FC = () => {
   const [nextPage, setNextPage] = useState<string | null>(null);
   const [prevPage, setPrevPage] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
-  const [status, setBlocked] = useState<string>('Listed');
-  const [currentUrl, setCurrentUrl] = useState<string | null>(`${process.env.VITE_BASE_URL}/blogsession/blogs/`);
+  const [status, setStatus] = useState<string>("Listed");
+  const [currentUrl, setCurrentUrl] = useState<string | null>(
+    `${process.env.VITE_BASE_URL}/blogsession/blogs/`
+  );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
   const navigate = useNavigate();
@@ -26,11 +39,7 @@ const AdminBlog: React.FC = () => {
   const fetchData = async () => {
     if (currentUrl) {
       try {
-        const data: BlogResponse = await fetchBlogs(
-          currentUrl,
-          search,
-          status
-        );
+        const data: BlogResponse = await fetchBlogs(currentUrl, search, status);
         setBlogs(data.results);
         setNextPage(data.next);
         setPrevPage(data.previous);
@@ -41,7 +50,6 @@ const AdminBlog: React.FC = () => {
     }
   };
   useEffect(() => {
-
     fetchData();
   }, [currentUrl, search, status]);
 
@@ -69,9 +77,13 @@ const AdminBlog: React.FC = () => {
       try {
         const updatedBlog = await updateBlogIsListed(
           selectedBlog.id,
-          (selectedBlog?.status=='Pending') ? "Listed" : (selectedBlog?.status=='Listed')?"Blocked" : "Listed"
+          selectedBlog?.status == "Pending"
+            ? "Listed"
+            : selectedBlog?.status == "Listed"
+            ? "Blocked"
+            : "Listed"
         );
-        fetchData()
+        fetchData();
         // setBlogs((prevBlogs) =>
         //   prevBlogs.map((blog) =>
         //     blog.id === selectedBlog.id
@@ -88,13 +100,12 @@ const AdminBlog: React.FC = () => {
     }
   };
   const options = [
-    { label: "Listed", action: () => setBlocked("Listed") },
-    { label: "Pending", action: () => setBlocked("Pending") },
-    { label: "Blocked", action: () => setBlocked("Blocked") },
+    { label: "Listed", action: () => setStatus("Listed") },
+    { label: "Pending", action: () => setStatus("Pending") },
+    { label: "Blocked", action: () => setStatus("Blocked") },
   ];
 
-
-  const columns = [
+  const columns:TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "blog", label: "Blog" },
     { key: "user", label: "User Name" },
@@ -118,14 +129,24 @@ const AdminBlog: React.FC = () => {
     status: blog.status,
     actions: (
       <button
-        className={`px-3 py-2 ${(blog?.status =='Pending') ? "bg-green-500":(blog?.status=='Listed')?"bg-red-500":"bg-green-500"}  text-white`}
+        className={`px-3 py-2 ${
+          blog?.status == "Pending"
+            ? "bg-green-500"
+            : blog?.status == "Listed"
+            ? "bg-red-500"
+            : "bg-green-500"
+        }  text-white`}
         onClick={() => handleToggleIsListed(blog)}
       >
-        {(blog?.status =='Pending') ? "List":(blog?.status=='Listed')?"Block":"List"}
+        {blog?.status == "Pending"
+          ? "List"
+          : blog?.status == "Listed"
+          ? "Block"
+          : "List"}
       </button>
     ),
   }));
-console.log(selectedBlog?.status);
+  console.log(selectedBlog?.status);
 
   return (
     <AdminLayout selected="4">
@@ -146,63 +167,86 @@ console.log(selectedBlog?.status);
         blocked={blocked}
         setBlocked={setBlocked}
       /> */}
-<div className="flex flex-col  h-full pb-16 ">
-      <div className="flex items-center justify-between max-sm:flex-col max-sm:items-end">
-      {options && <SelectionBox buttonLabel={status=='Listed'&&'Listed' || status=='Pending'&&'Pending' || status=='Blocked'&&'Blocked'} options={options} />}
-      <SearchForm search={search} setSearch={setSearch}/>
-      </div>
-      <div className="overflow-x-auto no-scrollbar">
-        <div className="min-w-full inline-block align-middle">
-          <div className="border  border-gray-300  min-h-[350px]">
-            <table className="min-w-full relative">
-              <thead>
-                <tr className="bg-gray-50">
-                  {columns.map((column) => (
-                    <th
-                      key={column.key}
-                      className="p-5 text-left text-xs leading-6 font-semibold text-gray-900 capitalize "
-                    >
-                      {column.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-300">
-                {data.length > 0 ? (
-                  data.map((row, rowIndex) => (
-                    <tr
-                      key={rowIndex}
-                      className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
-                    >
-                      {columns.map((column) => (
-                        <td key={column.key} className="px-4 py-4">
-                          {row[column.key]}
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                ) : (
-                  <div className=" w-full absolute flex justify-center items-center min-h-[250px]   text-gray-500 text-xs">
-                    no data available
-                  </div>
-                )}
-              </tbody>
-            </table>
+      <div className="flex flex-col  h-full pb-16 ">
+        <div className="flex items-center justify-between max-sm:flex-col max-sm:items-end">
+          {options && (
+            <SelectionBox
+              buttonLabel={
+                (status == "Listed" && "Listed") ||
+                (status == "Pending" && "Pending") ||
+                (status == "Blocked" && "Blocked")
+              }
+              options={options}
+            />
+          )}
+          <SearchForm search={search} setSearch={setSearch} />
+        </div>
+        <div className="overflow-x-auto no-scrollbar">
+          <div className="min-w-full inline-block align-middle">
+            <div className="border  border-gray-300  min-h-[350px]">
+              <table className="min-w-full relative">
+                <thead>
+                  <tr className="bg-gray-50">
+                    {columns.map((column) => (
+                      <th
+                        key={column.key}
+                        className="p-5 text-left text-xs leading-6 font-semibold text-gray-900 capitalize "
+                      >
+                        {column.label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-300">
+                  {data.length > 0 ? (
+                    data.map((row:TableRow, rowIndex) => (
+                      <tr
+                        key={rowIndex}
+                        className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
+                      >
+                        {columns.map((column) => (
+                          <td key={column.key} className="px-4 py-4">
+                            {row[column.key]}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <div className=" w-full absolute flex justify-center items-center min-h-[250px]   text-gray-500 text-xs">
+                      no data available
+                    </div>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
+        <Pagination
+          nextButton={handleNextPage}
+          previousButton={handlePreviousPage}
+          pageNum={pageNum}
+          totalPages={totalCount}
+        />
       </div>
-      <Pagination nextButton={handleNextPage} previousButton={handlePreviousPage} pageNum={pageNum} totalPages={totalCount}/>
-    </div>
       <ConfirmationModal
         isOpen={isModalOpen}
-        title={(selectedBlog?.status=='Pending') ? "List Blog" : (selectedBlog?.status=='Listed')?"Block Blog" : "List Blog"}
+        title={
+          selectedBlog?.status == "Pending"
+            ? "List Blog"
+            : selectedBlog?.status == "Listed"
+            ? "Block Blog"
+            : "List Blog"
+        }
         description={`Are you sure you want to ${
-          (selectedBlog?.status=='Pending') ? "list" : (selectedBlog?.status=='Listed')?"block" : "list"
+          selectedBlog?.status == "Pending"
+            ? "list"
+            : selectedBlog?.status == "Listed"
+            ? "block"
+            : "list"
         } this blog?`}
         onConfirm={confirmToggleIsListed}
         onCancel={() => setIsModalOpen(false)}
       />
-      
     </AdminLayout>
   );
 };

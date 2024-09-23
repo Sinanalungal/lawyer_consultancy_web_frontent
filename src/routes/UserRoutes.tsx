@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import UserPrivateRoute from './PrivateRouter/UserPrivateRoute';
 import { RingLoader } from 'react-spinners';
+import VideoCall from '../pages/Common/VideoCall/VideoCall';
 
 // Lazy load pages
 const AvailableLawyerSessions = lazy(() => import('../pages/User/LawyerSessions/AvailableLawyerSessions'));
@@ -37,6 +38,7 @@ function UserRoutes() {
           <Route path="" element={<LandingPage />} />
           <Route path="lawyers" element={<LawyerListing />} />
           {/* <Route path="booking" element={<BookAppointment />} /> */}
+          
           <Route path="profile" element={<Profile />} />
           <Route path="edit-profile" element={<EditProfilePage />} />
           <Route path="blog" element={<Blog />} />

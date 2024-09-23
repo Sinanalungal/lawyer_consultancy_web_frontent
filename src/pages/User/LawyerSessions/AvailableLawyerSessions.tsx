@@ -46,18 +46,16 @@ const InterviewScheduler: React.FC = () => {
     if (successParam) {
       setModalOpen(true);
     }
-    if (cancelParam && cancelParam.toLowerCase() === 'true') {
-      console.log('Entered into this: Cancel param is true');
-      addToast('danger', 'Payment is canceled!');
-      console.log('Toast triggered properly');
-      
+    if (cancelParam && cancelParam.toLowerCase() === "true") {
+      console.log("Entered into this: Cancel param is true");
+      addToast("danger", "Payment is canceled!");
+      console.log("Toast triggered properly");
     }
-    
+
     if (lawyer_Id) {
       setLawyerId(lawyer_Id);
     }
   }, [successParam, cancelParam]);
-  
 
   useEffect(() => {
     setLawyerId(lawyer_Id);

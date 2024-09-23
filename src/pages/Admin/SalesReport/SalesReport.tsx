@@ -102,20 +102,19 @@ const SalesReportTable: React.FC = () => {
         doc.text("Sales Report", 14, 16);
 
         const tableData = fetchedData.map((row: any) => [
-          row.uuid,
+          // row.uuid,
           row.user_profile.full_name,
           row.scheduling.lawyer_profile.user.full_name,
           formattedDate(row.booked_at),
           row.payment_details.transaction_id,
           row.payment_details.payment_method,
           formattedDate(row.payment_details.created_at),
-          Number(row.scheduling.price).toFixed(2),
+          (Number(row.scheduling.price) * 0.1).toFixed(2),
         ]);
 
         autoTable(doc, {
           head: [
             [
-              "Session ID",
               "User",
               "Lawyer",
               "Booking Date",
@@ -219,7 +218,7 @@ const SalesReportTable: React.FC = () => {
               <table className="min-w-full  table-auto border-collapse border border-gray-300">
                 <thead className="bg-gray-200 text-xs">
                   <tr>
-                    <th className="px-4 py-2 text-center border">Session ID</th>
+                    {/* <th className="px-4 py-2 text-center border">Session ID</th> */}
                     <th className="px-4 py-2 text-center border">User</th>
                     <th className="px-4 py-2 text-center border">Lawyer</th>
                     <th className="px-4 py-2 text-center border">
@@ -243,9 +242,9 @@ const SalesReportTable: React.FC = () => {
                   {salesData?.length > 0 ? (
                     salesData.map((row, index) => (
                       <tr key={index} className="bg-white text-xs">
-                        <td className="px-4 py-2 text-center border truncate">
+                        {/* <td className="px-4 py-2 text-center border truncate">
                           {row.uuid}
-                        </td>
+                        </td> */}
                         <td className="px-4 py-2 text-center border">
                           {row.user_profile.full_name}
                         </td>
@@ -267,7 +266,7 @@ const SalesReportTable: React.FC = () => {
                           {formattedDate(row.payment_details.created_at)}
                         </td>
                         <td className="px-4 py-2 text-center border">
-                          {Number(row.scheduling.price).toFixed(2)}
+                          {(Number(row.scheduling.price) * 0.1).toFixed(2)}
                         </td>
                       </tr>
                     ))

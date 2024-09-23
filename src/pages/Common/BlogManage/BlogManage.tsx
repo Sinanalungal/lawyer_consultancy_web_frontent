@@ -1,14 +1,25 @@
 import { useEffect, useState } from "react";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
-import ItemTable from "../../../components/Table/ItemTable";
-import { BlogDeleting, fetchBlogs, updateBlogIsListed } from "../../../services/Blogs";
+import { BlogDeleting, fetchPersonalBlogs, updateBlogIsListed } from "../../../services/Blogs";
 import { useNavigate } from "react-router-dom";
 import { Blog, BlogResponse } from "../../../types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
 import { LoginState } from "../../../redux/slice/LoginActions";
 import { useToast } from "../../../components/Toast/ToastManager";
+import Pagination from "../../../components/Pagination/Pagination";
+import SearchForm from "../../../components/Search/Search";
+import SelectionBox from "../../../components/SelectBox/SelectBox";
 
+
+interface TableColumn {
+  key: string;
+  label: string;
+}
+
+interface TableRow {
+  [key: string]: any; 
+}
 
 const BlogManage: React.FC = () => {
     const [search, setSearch] = useState<string>("");
@@ -17,8 +28,8 @@ const BlogManage: React.FC = () => {
     const [nextPage, setNextPage] = useState<string | null>(null);
     const [prevPage, setPrevPage] = useState<string | null>(null);
     const [totalCount, setTotalCount] = useState<number>(0);
-    const [blocked, setBlocked] = useState<boolean>(false);
-    const [currentUrl,setCurrentUrl]=useState<string|null>(`${process.env.VITE_BASE_URL}/blogsession/blogs/`);
+    const [status, setStatus] = useState<string>("Listed");
+    const [currentUrl,setCurrentUrl]=useState<string|null>(`${process.env.VITE_BASE_URL}/blogsession/personal-blogs/`);
     const navigate = useNavigate();
     const { addToast } = useToast();
     const { role } = useSelector((state: RootState) => state.login as LoginState)
@@ -28,10 +39,10 @@ console.log(role);
   const fetchData = async () => {
     if(currentUrl){
       try {
-        const data: BlogResponse = await fetchBlogs(
+        const data: BlogResponse = await fetchPersonalBlogs(
           currentUrl,
           search,
-          blocked
+          status
         );
         setBlogs(data.results);
         setNextPage(data.next);
@@ -45,7 +56,7 @@ console.log(role);
     useEffect(() => {
   
       fetchData();
-    }, [currentUrl, search, blocked]);
+    }, [currentUrl, search, status]);
   
     const handleNextPage = () => {
       if (nextPage) {
@@ -90,12 +101,12 @@ console.log(role);
     //   }
     // };
   
-    const columns = [
+    const columns:TableColumn[] = [
       { key: "id", label: "ID" },
       { key: "blog", label: "Blog" },
       // { key: "user", label: "User Name" },
       { key: "report", label: "Report Count" },
-      {key:'blocked',label: "Blocked" },
+      {key:'status',label: "Status" },
       { key: "published_at", label: "Published At" },
       { key: "actions", label: "Actions" },
     ];
@@ -111,7 +122,7 @@ console.log(role);
       // user: blog.user.full_name,
       report: blog.report_count ?? 0,
       published_at: new Date(blog.created_at).toLocaleDateString(),
-      blocked:blog.is_listed?"Not Blocked": "Blocked",
+      status:blog.status,
       actions: (
         <div className="gap-1 flex">
          <button
@@ -131,7 +142,11 @@ console.log(role);
       ),
     }));
   
-  
+    const options = [
+      { label: "Listed", action: () => setStatus("Listed") },
+      { label: "Pending", action: () => setStatus("Pending") },
+      { label: "Blocked", action: () => setStatus("Blocked") },
+    ];
 
   return (
     <>
@@ -147,7 +162,7 @@ console.log(role);
           Add Blog
         </p>
       </div>
-      <ItemTable
+      {/* <ItemTable
         columns={columns}
         data={data}
         itemsPerPage={10}
@@ -162,7 +177,68 @@ console.log(role);
         options={[{ label: 'Listed', action: () => setBlocked?.(true) },{ label: 'Unlisted', action: () => setBlocked?.(false) }]
 
       }
-      />
+      /> */}
+      <div className="flex flex-col  h-full pb-16 ">
+        <div className="flex items-center justify-between max-sm:flex-col max-sm:items-end">
+          {options && (
+            <SelectionBox
+              buttonLabel={
+                (status == "Listed" && "Listed") ||
+                (status == "Pending" && "Pending") ||
+                (status == "Blocked" && "Blocked")
+              }
+              options={options}
+            />
+          )}
+          <SearchForm search={search} setSearch={setSearch} />
+        </div>
+        <div className="overflow-x-auto no-scrollbar">
+          <div className="min-w-full inline-block align-middle">
+            <div className="border  border-gray-300  min-h-[350px]">
+              <table className="min-w-full relative">
+                <thead>
+                  <tr className="bg-gray-50">
+                    {columns.map((column) => (
+                      <th
+                        key={column.key}
+                        className="p-5 text-left text-xs leading-6 font-semibold text-gray-900 capitalize "
+                      >
+                        {column.label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-300">
+                  {data.length > 0 ? (
+                    data.map((row:TableRow, rowIndex) => (
+                      <tr
+                        key={rowIndex}
+                        className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
+                      >
+                        {columns.map((column) => (
+                          <td key={column.key} className="px-4 py-4">
+                            {row[column.key]}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <div className=" w-full absolute flex justify-center items-center min-h-[250px]   text-gray-500 text-xs">
+                      no data available
+                    </div>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <Pagination
+          nextButton={handleNextPage}
+          previousButton={handlePreviousPage}
+          pageNum={pageNum}
+          totalPages={totalCount}
+        />
+      </div>
     </>
   );
 };

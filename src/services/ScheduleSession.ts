@@ -137,4 +137,24 @@ export const getSchedulesForAdminSide = async (pageNum: number, search: string, 
       throw error;
     }
   };
-  
+
+  export const cancelAppointment = async (uuid: string): Promise<any> => {
+    const axiosInstance = await getAxiosInstance();
+    try {
+      const response = await axiosInstance.post(`/schedule/cancel-appointments/${uuid}/`);
+      return response.data;
+    } catch (error) {
+      console.error("Error canceling the appointment:", error);
+      throw error;
+    }
+  };
+//   export const ViewDetails = async (uuid: string): Promise<any> => {
+//     const axiosInstance = await getAxiosInstance();
+//     try {
+//       const response = await axiosInstance.post(`/schedule/appointment/${uuid}/`);
+//       return response.data;
+//     } catch (error) {
+//       console.error("Error canceling the appointment:", error);
+//       throw error;
+//     }
+//   };

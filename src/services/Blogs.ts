@@ -19,6 +19,23 @@ export const fetchBlogs = async (url: string, search: string, status: string) =>
   }
 };
 
+export const fetchPersonalBlogs = async (url: string, search: string, status: string) => {
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.get(url, {
+      params: {
+        search: search,
+        status: status
+      },
+    });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching blog data:", error);
+    throw error;
+  }
+};
+
 export const fetchBlogsUser = async (url: string, search?: string) => {
   const axiosInstance = await getAxiosInstance();
   try {

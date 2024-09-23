@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { fetchBookedSessions } from "../../../services/ScheduleSession";
+import {
+  cancelAppointment,
+  fetchBookedSessions,
+} from "../../../services/ScheduleSession";
 import { Appointment } from "../../../types";
 import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
-
-
+import { useToast } from "../../../components/Toast/ToastManager";
+import Modal from "../../../components/Modal/Modal";
+import { useNavigate } from "react-router-dom";
 
 const UserAppointments: React.FC = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
-  const [activeTab, setActiveTab] = useState<"upcoming" | "finished">("upcoming");
-  const {setLoader}=useLoader()
-
-
+  const [activeTab, setActiveTab] = useState<"upcoming" | "finished">(
+    "upcoming"
+  );
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [modalData, setModalData] = useState<Appointment | null>(null);
+  const { setLoader } = useLoader();
+  const { addToast } = useToast();
+  const navigate = useNavigate()
   const fetchAppointments = async (tab: "upcoming" | "finished") => {
     setLoader(true);
     try {
@@ -19,9 +27,36 @@ const UserAppointments: React.FC = () => {
       setAppointments(fetchedAppointments);
     } catch (error) {
       console.error("Error fetching appointments:", error);
-    }finally{
+    } finally {
       setLoader(false);
     }
+  };
+
+  const cancelBookedSessions = async (uuid: string) => {
+    try {
+      await cancelAppointment(uuid);
+      addToast("success", "Appointment cancelled successfully");
+      fetchAppointments("upcoming");
+    } catch (error) {
+      addToast("danger", "could not cancel appointment");
+      console.error("Error cancelling booked sessions:", error);
+    }
+  };
+
+  // const  viewDetails = async (uuid:string) =>{
+  //   try {
+  //     await cancelAppointment(uuid);
+  //     addToast('success','Appointment cancelled successfully')
+  //     fetchAppointments('upcoming')
+  //   } catch (error) {
+  //     addToast('danger','could not cancel appointment')
+  //     console.error("Error cancelling booked sessions:", error);
+  //   }
+  // }
+  
+  const OpenModal = (data: Appointment) => {
+    setModalData(data);
+    setIsOpen(true);
   };
 
   useEffect(() => {
@@ -96,23 +131,30 @@ const UserAppointments: React.FC = () => {
                         <p className="max-sm:text-sm max-sm:text-center font-semibold text-slate-800">
                           {app.scheduling.lawyer_profile.user.full_name}
                         </p>
-                        
+
                         <p className="text-gray-600 max-sm:text-center text-xs">
-                          {new Date(app.session_date).toLocaleDateString()}{" "}
-                          at {app.scheduling.start_time}
+                          {new Date(app.session_date).toLocaleDateString()} at{" "}
+                          {app.scheduling.start_time}
                         </p>
                         <p className="text-gray-600 max-sm:text-center text-xs">
-                        ID: {app.uuid}
+                          ID: {app.uuid}
                         </p>
                       </div>
                     </div>
 
                     <div className="gap-2 flex max-sm:flex-wrap">
-                      <button className="px-4 py-2 text-xs bg-white text-black border border-gray-400">
+                      <button
+                        onClick={() => {
+                          activeTab == "finished" ? OpenModal(app) : navigate(`../../../../../video/${app.uuid}`);
+                        }}
+                        className="px-4 py-2 text-xs bg-white text-black border border-gray-400"
+                      >
                         {activeTab === "upcoming" ? "Attend" : "View Details"}
                       </button>
                       {activeTab === "upcoming" && (
-                        <button className="px-4 py-2 text-xs bg-slate-800 text-white">
+                        <button
+                          onClick={() => cancelBookedSessions(app.uuid)}
+                          className="px-4 py-2 text-xs bg-slate-800 text-white">
                           Cancel
                         </button>
                       )}
@@ -146,6 +188,38 @@ const UserAppointments: React.FC = () => {
             )}
           </motion.div>
         </motion.div>
+        <Modal
+          modalOpen={isOpen}
+          setModalOpen={() => setIsOpen(!isOpen)}
+          children={
+            <>
+              <h2 className="text-xl flex justify-center mb-4 font-bold underline underline-offset-4">
+                Appointment Details
+              </h2>
+              {modalData && (
+                <div className="flex flex-col items-center gap-2">
+                  <p>
+                    <strong>Session Date:</strong> {modalData.session_date}
+                  </p>
+                  <p>
+                    <strong>Session Time:</strong>{" "}
+                    {modalData.scheduling.start_time} -{" "}
+                    {modalData.scheduling.end_time}
+                  </p>
+                  <p>
+                    <strong>Booked At:</strong> {modalData.booked_at}
+                  </p>
+
+                  <h3 className="text-sm font-semibold">Lawyer Details</h3>
+                  <p>
+                    <strong>Selected Lawyer:</strong>{" "}
+                    {modalData.scheduling.lawyer_profile.user.full_name}
+                  </p>
+                </div>
+              )}
+            </>
+          }
+        ></Modal>
       </div>
     </>
   );

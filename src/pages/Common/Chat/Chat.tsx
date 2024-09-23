@@ -370,6 +370,7 @@ const ChatComponent: React.FC = () => {
                                 controls
                                 src={message.audio}
                                 className="max-sm:w-[150px] "
+                                typeof="audio/mp3"
                               >
                                 Your browser does not support the audio element.
                               </audio>

@@ -1,0 +1,27 @@
+#videoDiv {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  #videoDiv {
+    display: flex;
+    flex-direction: column !important; 
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .zego-uikit-prebuilt-video-conference-join {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    background-color: black;
+    
+  }
+}

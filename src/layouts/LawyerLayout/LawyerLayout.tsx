@@ -10,10 +10,9 @@ import { IoIosChatboxes } from "react-icons/io";
 
 interface LawyerLayoutProps {
   children: React.ReactNode;
-  selected: string;
 }
 
-const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
+const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children }) => {
   const [active, setActive] = useState<boolean>(false);
   const { isAuthenticated, role } = useSelector(
     (state: RootState) => state.login
@@ -358,7 +357,7 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
         <div className="h-full  overflow-x-hidden overflow-y-scoll no-scrollbar max-[400px]:p-1 p-2">
           <main
             id="dashboard-main"
-            className="min-screen overflow-auto  px-2 py-6"
+            className="min-screen sm:pl-5 overflow-auto  px-2 py-6"
             style={{ scrollbarWidth: "none" }}
           >
             {error ? (
@@ -377,27 +376,3 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children, selected }) => {
 };
 
 export default LawyerLayout;
-
-const SvgComponent = ({
-  className = "",
-  fillColor = "currentColor",
-  width = "1em",
-  height = "4em",
-  ...props
-}) => {
-  return (
-    <svg
-      className={`text-white absolute -right-1 -top-1/2 z-10 hidden h-32 w-8 md:block ${className}`}
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="399.349 57.696 100.163 402.081"
-      width={width}
-      height={height}
-      {...props}
-    >
-      <path
-        fill={fillColor}
-        d="M 499.289 57.696 C 499.289 171.989 399.349 196.304 399.349 257.333 C 399.349 322.485 499.512 354.485 499.512 458.767 C 499.512 483.155 499.289 57.696 499.289 57.696 Z"
-      />
-    </svg>
-  );
-};
