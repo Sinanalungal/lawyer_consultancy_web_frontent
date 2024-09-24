@@ -145,25 +145,50 @@ const UserAppointments: React.FC = () => {
                     </div>
 
                     <div className="gap-2 flex max-sm:flex-wrap">
-                      {activeTab === "upcoming" &&
-                      new Date(
-                        app.session_start.replace(" ", "T") + "+05:30"
-                      ) <= new Date() &&
-                      new Date(app.session_end.replace(" ", "T") + "+05:30") >=
-                        new Date() ? (
-                        <button
-                          onClick={() => {
-                            navigate(`../../../../../video/${app.uuid}`);
-                          }}
-                          className="px-4 py-2 flex items-center justify-center gap-1 text-xs bg-white text-black font-medium border border-gray-400"
-                        >
-                          {"Join"}
-                          <div className="bg-green-700 h-2 rounded-full w-2"></div>
-                        </button>
-                      ) : (
-                        <button className="px-4 py-2 text-xs bg-gray-300 opacity-60 text-black border border-gray-400">
-                          {"Join"}
-                        </button>
+                      {activeTab === "upcoming" && (
+                        <>
+                          {new Date(
+                            app.session_start.replace(" ", "T") + "+05:30"
+                          ) <= new Date() &&
+                          new Date(
+                            app.session_end.replace(" ", "T") + "+05:30"
+                          ) >= new Date() ? (
+                            <>
+                              <button
+                                onClick={() => {
+                                  navigate(`../../../../../video/${app.uuid}`);
+                                }}
+                                className="px-4 py-2 flex items-center justify-center gap-1 text-xs bg-white text-black font-medium border border-gray-400"
+                              >
+                                {"Join"}
+                                <div className="bg-green-700 h-2 rounded-full w-2"></div>
+                              </button>
+                              <button
+                                onClick={() =>
+                                  addToast(
+                                    "danger",
+                                    "Not able to delete when session is started"
+                                  )
+                                }
+                                className="px-4 py-2 text-xs bg-slate-800 text-white"
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button className="px-4 py-2 text-xs bg-gray-300 opacity-60 text-black border border-gray-400">
+                                {"Join"}
+                              </button>
+                              <button
+                                onClick={() => cancelBookedSessions(app.uuid)}
+                                className="px-4 py-2 text-xs bg-slate-800 text-white"
+                              >
+                                Cancel
+                              </button>
+                            </>
+                          )}
+                        </>
                       )}
 
                       {activeTab == "finished" && (
@@ -176,14 +201,14 @@ const UserAppointments: React.FC = () => {
                           {"View Details"}
                         </button>
                       )}
-                      {activeTab === "upcoming" && (
+                      {/* {activeTab === "upcoming" && (
                         <button
                           onClick={() => cancelBookedSessions(app.uuid)}
                           className="px-4 py-2 text-xs bg-slate-800 text-white"
                         >
                           Cancel
                         </button>
-                      )}
+                      )} */}
                     </div>
                   </motion.li>
                 ))}

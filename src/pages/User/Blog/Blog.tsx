@@ -11,7 +11,6 @@ import {
 } from "../../../services/Blogs";
 import type { Blog, BlogResponse, ReadingBlog } from "../../../types";
 import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
-import { SlOptions } from "react-icons/sl";
 import Modal from "../../../components/Modal/Modal";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
 import { useToast } from "../../../components/Toast/ToastManager";
@@ -201,7 +200,7 @@ console.log(readingBlog,'this is the reading blog');
                   title={blog.title}
                   author={blog.author}
                   authorImage={blog.authorImage}
-                />
+                />  
                 </>
               ))}
             </div>

@@ -212,3 +212,25 @@ export const BlogDeleting = async (blog_id: number) => {
     throw error;
   }
 };
+
+export const getUserLikedBlogs = async(page:Number) =>{
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.get(`blogsession/user-liked-blogs/?page=${page}`);
+    // console.log(response.data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
+
+export const getUserSavedBlogs = async(page:Number) =>{
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.get(`blogsession/user-saved-blogs/?page=${page}`);
+    // console.log(response.data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

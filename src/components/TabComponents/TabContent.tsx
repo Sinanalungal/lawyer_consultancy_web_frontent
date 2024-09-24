@@ -3,7 +3,7 @@ import React from 'react';
 interface TabContentProps {
   open: string;
   tabCategory: string;
-  details: string;
+  details: any;
 }
 
 const TabContent: React.FC<TabContentProps> = ({ open, tabCategory, details }) => {

@@ -230,10 +230,16 @@ export default function Navbar() {
                       </div>
                     </div>
                     <Link
-                      to="/"
+                      to="../../../../user/saved-liked-blogs"
                       className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
                     >
-                      Service 1
+                      Saved & Liked Blogs
+                    </Link>
+                    <Link
+                      to="../../../../user/wallet"
+                      className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
+                    >
+                      Wallet
                     </Link>
                     <Link
                       to="../../../../user/profile"

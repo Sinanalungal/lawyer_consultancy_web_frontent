@@ -3,6 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import UserPrivateRoute from './PrivateRouter/UserPrivateRoute';
 import { RingLoader } from 'react-spinners';
 import VideoCall from '../pages/Common/VideoCall/VideoCall';
+import SavedAndLikedBlogs from '../pages/Common/SavedAndLikedBlogs/SavedAndLikedBlogs';
 
 // Lazy load pages
 const AvailableLawyerSessions = lazy(() => import('../pages/User/LawyerSessions/AvailableLawyerSessions'));
@@ -47,6 +48,7 @@ function UserRoutes() {
           <Route path="post-cases" element={<ClientPostCase />} />
           <Route path="ongoing-cases" element={<OngoingCases />} />
           <Route path="wallet" element={<WalletPage />} />
+          <Route path="saved-liked-blogs" element={<SavedAndLikedBlogs />} />
         </Route>
       </Routes>
     </Suspense>
