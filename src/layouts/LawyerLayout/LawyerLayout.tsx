@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { RootState, useAppDispatch, useAppSelector } from "../../redux/store"; 
+import { RootState, useAppDispatch, useAppSelector } from "../../redux/store";
 import { logout } from "../../redux/slice/LoginActions";
 import { fetchUserAsync } from "../../redux/slice/UserDataFetch";
 import { motion } from "framer-motion";
 import { IoIosChatboxes } from "react-icons/io";
-
+import NotificationSocket from "../../components/Common/NotificationSocket";
+import NotificationLayer from "../../components/Common/Notification";
 
 interface LawyerLayoutProps {
   children: React.ReactNode;
@@ -17,7 +18,10 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children }) => {
   const { isAuthenticated, role } = useSelector(
     (state: RootState) => state.login
   );
-  const { userDetail,error } = useAppSelector((state: RootState) => state.userData);
+  const [notificationsOpen, setNotificationsOpen] = useState<boolean>(false);
+  const { userDetail, error } = useAppSelector(
+    (state: RootState) => state.userData
+  );
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -204,12 +208,11 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children }) => {
                 <Link to={"../../../../chat"}>
                   <button className="focus:bg-slate-600 hover:bg-slate-600 flex w-full space-x-2 rounded-md px-8 py-4 font-semibold focus:outline-none">
                     <span>
-                      <IoIosChatboxes size={26}/>
+                      <IoIosChatboxes size={26} />
                     </span>
                     <span className="">Chat</span>
                   </button>
                 </Link>
-                
               </li>
             </ul>
 
@@ -291,7 +294,7 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children }) => {
                   </motion.p>
                 </button>
               </li>
-              
+
               {active && (
                 <motion.div
                   initial={{ opacity: 0, scale: 0.85, y: 10 }}
@@ -328,30 +331,28 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children }) => {
               )}
 
               <li className="">
-                <button className="flex h-8 w-8 items-center justify-center rounded-xl border text-gray-600 hover:text-black hover:shadow">
+                <button
+                  onClick={() => setNotificationsOpen(!notificationsOpen)}
+                  className="flex h-8 w-8 items-center justify-center rounded-xl border text-gray-600 hover:text-black hover:shadow"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
                     viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
+                    fill="currentColor"
+                    className="size-5"
                   >
+                    <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
                     <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      fillRule="evenodd"
+                      d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z"
+                      clipRule="evenodd"
                     />
                   </svg>
                 </button>
               </li>
             </ul>
           </div>
+          {notificationsOpen && <NotificationLayer open={notificationsOpen} />}
         </header>
 
         <div className="h-full  overflow-x-hidden overflow-y-scoll no-scrollbar max-[400px]:p-1 p-2">
@@ -360,14 +361,14 @@ const LawyerLayout: React.FC<LawyerLayoutProps> = ({ children }) => {
             className="min-screen sm:pl-5 overflow-auto  px-2 py-6"
             style={{ scrollbarWidth: "none" }}
           >
+            <NotificationSocket />
             {error ? (
-            <div className="flex justify-center items-center min-h-screen text-xs text-gray-600">
-              {error}
-            </div>
-          ) : (
-            children
-          )}
-           
+              <div className="flex justify-center items-center min-h-screen text-xs text-gray-600">
+                {error}
+              </div>
+            ) : (
+              children
+            )}
           </main>
         </div>
       </div>
