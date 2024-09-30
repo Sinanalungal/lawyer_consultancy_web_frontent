@@ -13,47 +13,49 @@ const NotificationSocket: React.FC = () => {
   const [notification, setNotification] = useState<Notification | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { value } = useAppSelector((state) => state.login);
-// console.log(value);
+  // console.log(value);
 
   useEffect(() => {
-    if(value){
-      const socket = new WebSocket(`ws://localhost:8000/notifications/${value}/`);
+    if (value) {
+      const socket = new WebSocket(
+        `ws://localhost:8000/notifications/${value}/`
+      );
 
-    socket.onopen = (event) => {
-      console.log("WebSocket connection established:", event);
-    };
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      console.log("Notification received:", data.notification);
-
-      // Parse the notification string into an object
-      const notificationData = JSON.parse(data.notification);
-      const newNotification: Notification = {
-        title: notificationData.title,
-        description: notificationData.description,
-        time: new Date(notificationData.time).toLocaleTimeString(), // Convert to local time
+      socket.onopen = (event) => {
+        console.log("WebSocket connection established:", event);
       };
 
-      setNotification(newNotification);
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log("Notification received:", data.notification);
 
-      setTimeout(() => {
-        setNotification(null);
-      }, 3000);
-    };
+        // Parse the notification string into an object
+        const notificationData = JSON.parse(data.notification);
+        const newNotification: Notification = {
+          title: notificationData.title,
+          description: notificationData.description,
+          time: new Date(notificationData.time).toLocaleTimeString(),
+        };
 
-    socket.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      setError("WebSocket error occurred. Please try again.");
-    };
+        setNotification(newNotification);
 
-    socket.onclose = (event) => {
-      console.log("WebSocket connection closed:", event);
-    };
+        setTimeout(() => {
+          setNotification(null);
+        }, 3000);
+      };
 
-    return () => {
-      socket.close();
-    };
+      socket.onerror = (error) => {
+        console.error("WebSocket error:", error);
+        setError("WebSocket error occurred. Please try again.");
+      };
+
+      socket.onclose = (event) => {
+        console.log("WebSocket connection closed:", event);
+      };
+
+      return () => {
+        socket.close();
+      };
     }
   }, [value]);
 
@@ -66,10 +68,10 @@ const NotificationSocket: React.FC = () => {
       {notification && (
         <motion.div
           className="fixed sm:top-3 z-50 sm:right-4 right-0 flex items-center bg-white border border-gray-200 shadow-md rounded-lg p-4 gap-4"
-          initial={{ opacity: 0, y: 20 }} 
-          animate={{ opacity: 1, y: 0 }} 
-          exit={{ opacity: 0, y: 20 }} 
-          transition={{ duration: 0.3 }} 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 20 }}
+          transition={{ duration: 0.3 }}
         >
           <div className="text-2xl mr-4">
             <svg
@@ -95,7 +97,9 @@ const NotificationSocket: React.FC = () => {
               {notification.title}
             </p>
             <p className="text-gray-600 text-xs">{notification.description}</p>
-            <p className="text-gray-400 text-[10px] mt-2">{notification.time}</p>
+            <p className="text-gray-400 text-[10px] mt-2">
+              {notification.time}
+            </p>
           </div>
           <button
             className="text-gray-500 text-xl hover:text-gray-800"

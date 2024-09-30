@@ -12,6 +12,7 @@ import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   bookAppointment,
+  bookAppointmentUsingWallet,
   getAvailableSchedulesForUser,
 } from "../../../services/ScheduleSession";
 import Modal from "../../../components/Modal/Modal";
@@ -21,7 +22,7 @@ import { useToast } from "../../../components/Toast/ToastManager";
 
 interface AvailableLawyerSessionsProps {}
 
-const InterviewScheduler: React.FC = () => {
+const SessionScheduler: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
@@ -29,6 +30,7 @@ const InterviewScheduler: React.FC = () => {
   const [lawyerId, setLawyerId] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<any | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [paymentModal,setPaymentModal] = useState<boolean>(false);
   const { setLoader } = useLoader();
   const { addToast } = useToast();
 
@@ -132,6 +134,27 @@ const InterviewScheduler: React.FC = () => {
       }
     } else {
       alert("Please select a session and date.");
+    }
+  };
+
+  const handleWalletPayment = async () => {
+    if (selectedSession && selectedDate) {
+      try {
+        const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
+        const result = await bookAppointmentUsingWallet(
+          selectedSession.uuid,
+          selectedDateStr
+        );
+        
+        navigate(`../../../user/available-sessions/?success=${result.checkout_id}`)
+      } catch (error) {
+        console.error("Error booking appointment:", error);
+        addToast('danger','Error booking Appointment')
+        // alert("Failed to book appointment. Please try again.");
+      }
+    } else {
+      addToast('info','Please select a session and date.')
+      // alert("Please select a session and date.");
     }
   };
 
@@ -256,9 +279,9 @@ const InterviewScheduler: React.FC = () => {
             </div>
           </AnimatePresence>
           {selectedSession && (
-            <motion.button
+            <motion.button 
               className="w-full mt-6 py-3 px-6 bg-slate-800 text-white rounded-lg text-sm font-bold tracking-wide uppercase hover:bg-slate-600 transition-colors ease-in-out"
-              onClick={handleConfirm}
+              onClick={()=>setPaymentModal(true)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, y: 10 }}
@@ -270,6 +293,42 @@ const InterviewScheduler: React.FC = () => {
           )}
         </motion.div>
       </motion.div>
+          <Modal modalOpen={paymentModal} setModalOpen={()=>setPaymentModal(!paymentModal)} children={
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+              <h2 className="text-2xl font-bold text-center mb-6">Select Payment Method</h2>
+              
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={() => {
+                    handleConfirm()
+                  }}
+                  className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md"
+                >
+                  Pay with Stripe
+                </button>
+                
+                <button
+                  onClick={() => {
+                    handleWalletPayment()
+                  }}
+                  className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
+                >
+                  Pay with Wallet
+                </button>
+              </div>
+      
+              <div className="flex justify-center mt-6">
+                <button
+                  onClick={()=>setPaymentModal(false)}
+                  className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md"
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+          }/>
       {modalOpen && (
         <Modal
           children={
@@ -334,7 +393,7 @@ const AvailableLawyerSessions: React.FC<AvailableLawyerSessionsProps> = () => {
         title="AVAILABLE SLOTS"
         description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
       />
-      <InterviewScheduler />
+      <SessionScheduler />
     </motion.div>
   );
 };

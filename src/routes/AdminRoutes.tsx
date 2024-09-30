@@ -2,6 +2,8 @@ import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AdminPrivateRoute from './PrivateRouter/AdminPrivateRoute';
 import { RingLoader } from 'react-spinners';
+import WalletPage from '../pages/Lawyer/Wallet/Wallet';
+import AdminWalletPage from '../pages/Admin/Wallet/Wallet';
 
 // Lazy load components
 const Dashboard = lazy(() => import('../pages/Admin/Dashboard/Dashboard'));
@@ -49,6 +51,7 @@ function AdminRoutes() {
             <Route path="self-blog" element={<AdminLayout selected="4"><BlogManage /></AdminLayout>} />
             <Route path="schedule-list" element={<ScheduleList />} />
             <Route path="sales-report" element={<SalesReportTable />} />
+            <Route path="wallet" element={<AdminWalletPage />} />
           </Route>
         </Routes>
       </Suspense>

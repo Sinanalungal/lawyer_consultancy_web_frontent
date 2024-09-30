@@ -5,18 +5,37 @@ import { RootState, useAppSelector } from "../../redux/store";
 import { motion } from "framer-motion";
 import { logout } from "../../redux/slice/LoginActions";
 import NotificationLayer from "./Notification";
-
+import { fetchUserSideLawyerList } from "../../services/fetchLawyers";
+import { Lawyer } from "../../types";
+import Drawer from "../Drawer/Drawer";
+interface LawyerListResponse {
+  count?: number;
+  next?: any;
+  previous?: string | null;
+  results: Lawyer[];
+}
 export default function Navbar() {
   const { isAuthenticated } = useSelector((state: RootState) => state.login);
   const { userDetail } = useAppSelector((state: RootState) => state.userData);
   const [active, setActive] = useState<string | null>(null);
   const [isHoveringMenu, setIsHoveringMenu] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [notificationsOpen,setNotificationsOpen] = useState<boolean>(false);
+  const [notificationsOpen, setNotificationsOpen] = useState<boolean>(false);
+  const [lawyersList, setLawyersList] = useState<Lawyer[] >([]);
+  const [next, setNext] = useState<string | null>(null); // Total number of pages
+  const [search, setSearch] = useState<string>("");
+  const [drawerData, setDrawerData] = useState<Lawyer | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
+  const [openLawyerListView, setOpenLawyerListView] = useState<boolean>(false);
   const dispatch = useDispatch();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -37,6 +56,63 @@ export default function Navbar() {
     restSpeed: 0.001,
   };
 
+  useEffect(() => {
+    const fetchLawyers = async () => {
+      try {
+        const params = {
+          department: "",
+          experience: "",
+          language: "",
+          search: search,
+        };
+        const fetchedLawyers: LawyerListResponse = await fetchUserSideLawyerList(
+          "userside/lawyers/",
+          params as any
+        );
+        console.log(
+          fetchedLawyers?.results,
+          "these are the navbar lawyers based on query"
+        );
+
+        setLawyersList(fetchedLawyers?.results);
+        setNext(fetchedLawyers.next);
+      } catch (error) {
+        console.error("Failed to fetch lawyers:", error);
+      }
+    };
+
+    fetchLawyers();
+  }, [search]);
+
+  const handleBlur = () => {
+    setTimeout(() => {
+      setOpenLawyerListView(false);
+    }, 100);
+  };
+  const handleNextCalling = async () => {
+    if (next != null) {
+      try {
+        const params = {
+          department: "",
+          experience: "",
+          language: "",
+          search: search,
+        };
+        const fetchedLawyers: LawyerListResponse = await fetchUserSideLawyerList(
+          next,
+          params as any
+        );
+
+        setLawyersList([...lawyersList, ...fetchedLawyers?.results]);
+
+        // if (fetchedLawyers.next) {
+        setNext(fetchedLawyers?.next);
+        // }
+      } catch (error) {
+        console.error("Failed to fetch lawyers:", error);
+      }
+    }
+  };
   return (
     <>
       <div className="flex fixed justify-between px-10 z-40 shadow-sm bg-white 3xl:container max-sm:px-3 py-5 items-center w-full">
@@ -143,7 +219,7 @@ export default function Navbar() {
               />
             </svg>
           </div>
-          <div className="w-64 max-md:hidden bg-slate-100 h-12 flex items-center px-4 rounded-full">
+          <div className="w-64  max-md:hidden bg-slate-100 h-12 flex items-center px-4 rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -157,25 +233,33 @@ export default function Navbar() {
               />
             </svg>
             <input
+              onFocus={() => setOpenLawyerListView(true)}
+              onBlur={handleBlur}
               type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
               className="bg-transparent text-[14px] pl-2 border-none focus:outline-none placeholder-gray-700"
               placeholder="Search..."
             />
           </div>
-          <div className="cursor-pointer" onClick={()=>setNotificationsOpen(!notificationsOpen)}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="size-6"
+
+          <div
+            className="cursor-pointer"
+            onClick={() => setNotificationsOpen(!notificationsOpen)}
           >
-            <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
-            <path
-              fillRule="evenodd"
-              d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z"
-              clipRule="evenodd"
-            />
-          </svg>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="size-6"
+            >
+              <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
+              <path
+                fillRule="evenodd"
+                d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z"
+                clipRule="evenodd"
+              />
+            </svg>
           </div>
           {notificationsOpen && <NotificationLayer open={notificationsOpen} />}
 
@@ -280,7 +364,75 @@ export default function Navbar() {
         </div>
       </div>
       <div className="h-20"></div>
+      {openLawyerListView && (
+        <div
+          className="fixed right-36 shadow-lg border border-gray-100 p-1 overflow-y-scroll no-scrollbar -mt-2 z-50 max-h-[330px] w-60 rounded-md max-md:hidden bg-white  "
+          onMouseDown={(e) => {
+            e.preventDefault();
+          }}
+        >
+          <p className="flex justify-center p-2 text-sm font-semibold ">Lawyers</p>
+          {lawyersList && lawyersList.length > 0 ? (
+  lawyersList.map((lawyer, index) => (
+    <div
+      onClick={() => {
+        setDrawerData(lawyer);
+        setIsDrawerOpen(true);
+      }}
+      key={index}
+      className="p-2 bg-slate-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-slate-100 flex items-start space-x-2"
+    >
+      <img
+        src={
+          lawyer.user_profile_image ??
+          "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
+        }
+        alt="Lawyer Profile"
+        className="w-10 my-auto rounded-md h-10 object-cover"
+      />
 
+      <div className="flex flex-col truncate">
+        <span className="font-semibold text-sm truncate text-gray-900">
+          {lawyer.user_full_name}
+        </span>
+
+        <span className="text-[10px] text-gray-600 truncate">
+          Department:{" "}
+          {lawyer?.departments.map((department, index) => (
+            <span key={index}>
+              {department.department_name}
+              {index < lawyer.departments.length - 1 && ", "}
+            </span>
+          ))}
+        </span>
+
+        <span className="text-[10px] text-gray-600 truncate">
+          Language:{" "}
+          {lawyer?.languages.map((language, index) => (
+            <span key={index}>
+              {language.name}
+              {index < lawyer.languages.length - 1 && ", "}
+            </span>
+          ))}
+        </span>
+
+        <span className="text-[10px] text-gray-600">
+          Experience: {lawyer.experience} Yr
+        </span>
+      </div>
+    </div>
+  ))
+) : (
+  <div className="flex justify-center items-center text-gray-500">
+    <p className="text-[10px]">No lawyer data found</p>
+  </div>
+)}
+
+          <div className="flex text-[10px] text-gray-500   justify-end">
+            <p className="py-2 pr-2 cursor-pointer" onClick={()=>handleNextCalling()}>More</p>
+          </div>
+        </div>
+      )}
       {isSidebarOpen && (
         <div className="fixed inset-0 text-gray-600 lg:hidden z-40 flex">
           <div
@@ -416,6 +568,11 @@ export default function Navbar() {
           </div>
         </div>
       )}
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={toggleDrawer}
+        lawyer={drawerData}
+      />
     </>
   );
 }

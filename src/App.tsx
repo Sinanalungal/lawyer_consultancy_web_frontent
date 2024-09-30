@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useSelector } from 'react-redux';
 import { RingLoader } from 'react-spinners';
-// import VideoCall from './pages/Common/VideoCall/VideoCall';
 
 
 // Lazy load components and pages

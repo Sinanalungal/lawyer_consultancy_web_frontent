@@ -10,7 +10,7 @@ import UserProfilePicture from "../../../components/ProfilePicManager/ProfilePic
 const EditProfilePage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<string>("Edit Profile");
   const { userDetail } = useAppSelector((state: RootState) => state.userData);
-  const tabs = ["Edit Profile", "Change Password", "Settings", "Invoice"];
+  const tabs = ["Edit Profile", "Change Password" ];
 
   return (
     // <UserLayout>

@@ -1,3 +1,5 @@
+import { AxiosError } from 'axios';  // Import AxiosError type
+
 interface Blog {
     id: number;
     title: string;
@@ -76,6 +78,7 @@ interface UpdatePasswordParams {
 }
 
 interface Schedule {
+  id: number;
   date: string;
   start_time: string;
   end_time: string;

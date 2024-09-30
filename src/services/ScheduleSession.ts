@@ -46,15 +46,25 @@ export const getActiveSchedules = async () => {
     }
 };
 
-export const cancelSchedule = async (uuid: string) => {
+// export const cancelSchedule = async (uuid: string) => {
+//     const axiosInstance = await getAxiosInstance();
+//     try {
+//         const response = await axiosInstance.patch(`schedule/cancel/${uuid}/`, {
+//             is_canceled: true
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.error(`Error canceling schedule with uuid ${uuid}:`, error);
+//         throw error;
+//     }
+// };
+export const cancelSchedule = async (value: number) => {
     const axiosInstance = await getAxiosInstance();
     try {
-        const response = await axiosInstance.patch(`schedule/cancel/${uuid}/`, {
-            is_canceled: true
-        });
+        const response =await axiosInstance.delete(`schedule/scheduled-session/${value}/delete/`);  
         return response.data;
     } catch (error) {
-        console.error(`Error canceling schedule with uuid ${uuid}:`, error);
+        console.error(`Error canceling schedule with uuid ${value}:`, error);
         throw error;
     }
 };
@@ -85,6 +95,36 @@ export const bookAppointment = async (schedulingUuid: string, selectedDate: stri
         const response = await axiosInstance.post('schedule/book-appointment/', {
             scheduling_uuid: schedulingUuid,
             scheduling_date: selectedDate,  // Include the selected date in the request payload
+        });
+        console.log("Appointment booked successfully:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error booking appointment:", error);
+        throw error; 
+    }
+};
+
+export const bookAppointmentUsingWallet = async (schedulingUuid: string, selectedDate: string) => {
+    const axiosInstance = await getAxiosInstance(); 
+    try {
+        const response = await axiosInstance.post('schedule/book-wallet-appointment/', {
+            scheduling_uuid: schedulingUuid,
+            scheduling_date: selectedDate,  
+        });
+        console.log("Appointment booked successfully:", response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error booking appointment:", error);
+        throw error; 
+    }
+};
+
+export const bookAppointmentForWallet = async (schedulingUuid: string, selectedDate: string) => {
+    const axiosInstance = await getAxiosInstance(); 
+    try {
+        const response = await axiosInstance.post('schedule/book-wallet-appointment/', {
+            scheduling_uuid: schedulingUuid,
+            scheduling_date: selectedDate, 
         });
         console.log("Appointment booked successfully:", response.data);
         return response.data;
@@ -148,13 +188,14 @@ export const getSchedulesForAdminSide = async (pageNum: number, search: string, 
       throw error;
     }
   };
-//   export const ViewDetails = async (uuid: string): Promise<any> => {
-//     const axiosInstance = await getAxiosInstance();
-//     try {
-//       const response = await axiosInstance.post(`/schedule/appointment/${uuid}/`);
-//       return response.data;
-//     } catch (error) {
-//       console.error("Error canceling the appointment:", error);
-//       throw error;
-//     }
-//   };
+  
+  export const ViewDetails = async (uuid: string): Promise<any> => {
+    const axiosInstance = await getAxiosInstance();
+    try {
+      const response = await axiosInstance.get(`/schedule/details-of-appointment/${uuid}/`);
+      return response.data;
+    } catch (error) {
+      console.error("Error canceling the appointment:", error);
+      throw error;
+    }
+  };

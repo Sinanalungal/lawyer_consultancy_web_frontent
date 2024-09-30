@@ -8,6 +8,7 @@ import {
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../components/Toast/ToastManager";
+import Modal from "../../../components/Modal/Modal";
 
 const formatDate = (
   isoString: string,
@@ -157,6 +158,12 @@ const Upcoming: React.FC<{ appointments: Appointment[] }> = ({
 const Completed: React.FC<{ appointments: Appointment[] }> = ({
   appointments,
 }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [modalData, setModalData] = useState<Appointment | null>(null);
+  const OpenModal = (data: Appointment) => {
+    setModalData(data);
+    setIsOpen(true);
+  };
   return (
     <div className="py-5 rounded-xl">
       {appointments.length === 0 ? (
@@ -182,7 +189,9 @@ const Completed: React.FC<{ appointments: Appointment[] }> = ({
                     UUID: {appointment.uuid}
                   </p>
                 </div>
-                <button className="my-4 px-4 py-2 border border-transparent text-xs font-medium rounded-md text-white bg-slate-600 hover:bg-slate-500">
+                <button onClick={() => {
+                            OpenModal(appointment);
+                          }} className="my-4 px-4 py-2 border border-transparent text-xs font-medium rounded-md text-white bg-slate-600 hover:bg-slate-500">
                   View Details
                 </button>
               </div>
@@ -190,6 +199,38 @@ const Completed: React.FC<{ appointments: Appointment[] }> = ({
           </div>
         ))
       )}
+      <Modal
+          modalOpen={isOpen}
+          setModalOpen={() => setIsOpen(!isOpen)}
+          children={
+            <>
+              <h2 className="text-xl flex justify-center mb-4 font-bold underline underline-offset-4">
+                Appointment Details
+              </h2>
+              {modalData && (
+                <div className="flex flex-col items-center gap-2">
+                  <p>
+                    <strong>Session Date:</strong> {modalData.session_start}
+                  </p>
+                  <p>
+                    <strong>Session Time:</strong>{" "}
+                    {modalData.scheduling.start_time} -{" "}
+                    {modalData.scheduling.end_time}
+                  </p>
+                  <p>
+                    <strong>Booked At:</strong> {modalData.booked_at}
+                  </p>
+
+                  <h3 className="text-sm font-semibold">Lawyer Details</h3>
+                  <p>
+                    <strong>User Details:</strong>{" "}
+                    {modalData.user_profile.full_name}
+                  </p>
+                </div>
+              )}
+            </>
+          }
+        ></Modal>
     </div>
   );
 };

@@ -14,29 +14,26 @@ const OneToOneVideoCall = () => {
   const { uuid } = useParams();
 
   const startCall = () => {
-    const appID = 1885863562;  // Zego app ID from your Zego Cloud account
-    const serverSecret = "1b64fc31dbcaf6ca1bfea884c5af3923";  // Zego server secret
-    const roomID = `${uuid}`;  // Define a unique room ID for each call
+    const appID = 1885863562;  
+    const serverSecret = "1b64fc31dbcaf6ca1bfea884c5af3923"; 
+    const roomID = `${uuid}`; 
     // const userID = 'user_' + new Date().getTime();  // Generate a unique user ID
     const userID = `user_${value}`;
-    const userName = `${userDetail.full_name}`;  // Set a user name for display
+    const userName = `${userDetail.full_name}`;  
 
-    // Generate the authentication token (for testing purposes)
     const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, userID, userName);
 
     const zp = ZegoUIKitPrebuilt.create(kitToken);
 
-    // One-to-one call scenario setup
     zp.joinRoom({
-      container: document.getElementById('video-container'),  // The container where the call UI will be displayed
-      sharedLinks: [],  // Leave empty as no need for joining links in one-to-one calls
+      container: document.getElementById('video-container'), 
+      sharedLinks: [], 
       scenario: {
-        mode: ZegoUIKitPrebuilt.OneONoneCall,  // One-to-One Call Mode
+        mode: ZegoUIKitPrebuilt.OneONoneCall,  
       },
-      showLeavingView: false,  // Skip the leave page
-      showPreJoinView: false,  // Skip the pre-join settings page
+      showLeavingView: false,  
+      showPreJoinView: false,  
       
-      // Add any additional configurations or UI preferences here
       
       onLeaveRoom:()=>{
         navigate(`../../../../../${role}/appointments`)
@@ -59,12 +56,7 @@ const OneToOneVideoCall = () => {
     
   }, [isAuthenticated, registered, userDetail,  hasJoinedRoom, navigate]);
 
-  // // Call startCall when the component is mounted
-  // useEffect(() => {
-    
-    
-  // }, []);
-
+  
   return (
     <div>
       <div id="video-container" style={{ width: '100%', height: '100vh' }}></div> {/* Set to full height for the best experience */}
