@@ -98,24 +98,24 @@ const Accordion: React.FC<AccordionProps> = ({ items }) => {
 
 const accordionItems = [
   {
-    title: "Explore Knowledge",
+    title: "Our Services",
     content:
-      "Discover new worlds of information with our interactive learning platform.",
+      "We offer expert legal consultation across various fields including family law, criminal law, corporate law, and property disputes. Our experienced lawyers provide professional guidance to help you navigate complex legal matters.",
   },
   {
-    title: "Innovative Learning",
+    title: "How to Book a Consultation",
     content:
-      "Experience cutting-edge educational techniques that adapt to your unique learning style.",
+      "Booking a consultation is simple. Choose a lawyer based on their expertise, select a time slot that suits you, and confirm your appointment. You will receive an notification when the session starts.",
   },
   {
-    title: "Global Community",
+    title: "How to Submit Your Case",
     content:
-      "Connect with learners worldwide and share insights in our vibrant, diverse community.",
+      "Submit your case through our secure online platform. Provide a detailed description of your legal issue, and our lawyers will review your case to determine if they can take it. Then you can then choose your preferred lawyer from the available lawyers.",
   },
   {
-    title: "Personalized Growth",
+    title: "Why Choose Us?",
     content:
-      "Track your progress and receive tailored recommendations to accelerate your learning journey.",
+      "Find out why our legal consultancy is the best choice for your legal needs, with personalized service and trusted expertise.",
   },
 ];
 

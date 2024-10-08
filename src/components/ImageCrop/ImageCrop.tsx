@@ -152,7 +152,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({
       const croppedDataURL = canvas.toDataURL("image/jpeg");
 
       setCroppedImageUrl(croppedDataURL);
-      setSelectedFile(null)
+      setSelectedFile(null);
     };
   };
 

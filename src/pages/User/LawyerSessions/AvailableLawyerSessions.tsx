@@ -1,7 +1,9 @@
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import { useState, useEffect } from "react";
 import {
-  isToday, isBefore, isAfter,
+  isToday,
+  isBefore,
+  isAfter,
   format,
   addDays,
   endOfMonth,
@@ -18,9 +20,10 @@ import {
 } from "../../../services/ScheduleSession";
 import Modal from "../../../components/Modal/Modal";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 import { useToast } from "../../../components/Toast/ToastManager";
 import { AxiosResponse } from "axios";
+import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
+import { WalletBalanceApi } from "../../../services/Wallet";
 
 interface AvailableLawyerSessionsProps {}
 
@@ -33,6 +36,7 @@ const SessionScheduler: React.FC = () => {
   const [selectedSession, setSelectedSession] = useState<any | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [paymentModal, setPaymentModal] = useState<boolean>(false);
+  const [walletPayment, setWalletPayment] = useState<number>(0);
   const { setLoader } = useLoader();
   const { addToast } = useToast();
 
@@ -64,6 +68,19 @@ const SessionScheduler: React.FC = () => {
   useEffect(() => {
     setLawyerId(lawyer_Id);
   }, [lawyer_Id]);
+
+  const fetchWalletBalance = async () => {
+    try {
+      const response = await WalletBalanceApi();
+      setWalletPayment(response.balance);
+    } catch (err) {
+      console.error("Error fetching wallet balance:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchWalletBalance();
+  }, [paymentModal]);
 
   useEffect(() => {
     const fetchAvailableSchedules = async () => {
@@ -125,7 +142,6 @@ const SessionScheduler: React.FC = () => {
         const { error } = await stripe.redirectToCheckout({
           sessionId: result.sessionId,
         });
-        
 
         if (error) {
           console.error("Error redirecting to checkout:", error);
@@ -140,68 +156,64 @@ const SessionScheduler: React.FC = () => {
     }
   };
 
-interface WalletApiResponse {
-  success?: string;
-  checkout_id: string;
-}
-
-const handleWalletPayment = async () => {
-  if (selectedSession && selectedDate) {
-    try {
-      const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
-
-      // Specify the type for Axios response
-      const result: AxiosResponse<WalletApiResponse> = await bookAppointmentUsingWallet(
-        selectedSession.uuid,
-        selectedDateStr
-      );
-
-      console.log(result, 'this is the result');
-
-      // Check if the status is 202
-      if (result.status === 202) {
-        addToast("success", "idea is working");
-
-        // Check Stripe Client ID
-        if (!process?.env.VITE_CLIENT_ID) {
-          throw new Error("Something wrong with Stripe key");
-        }
-
-        // Initialize Stripe with your public key
-        const stripe = await loadStripe(
-          "pk_test_51PMjrqSD4LlFpJPegNLUNIVDRjJmeaF1jW7lBzhnEQHgvmchbzkNn4pVdStSwROBEnbXvF2BpC4reOqUvHS1L3Yb00sfPbm63y"
-        );
-
-
-        if (!stripe) {
-          throw new Error("Failed to load Stripe.");
-        }
-
-        // Redirect to checkout
-        const { error } = await stripe.redirectToCheckout({
-          sessionId: result.data.checkout_id, // Accessing checkout ID correctly
-          
-        });
-
-        if (error) {
-          console.error("Error redirecting to checkout:", error);
-          alert("Failed to redirect to checkout. Please try again.");
-        }
-      } else {
-        navigate(
-          `../../../../user/available-sessions/success?checkout_id=${result.data.checkout_id}`
-        );
-      }
-
-    } catch (error) {
-      console.error("Error booking appointment:", error);
-      addToast("danger", "Error booking Appointment");
-    }
-  } else {
-    addToast("info", "Please select a session and date.");
+  interface WalletApiResponse {
+    success?: string;
+    checkout_id: string;
   }
-};
 
+  const handleWalletPayment = async () => {
+    if (selectedSession && selectedDate) {
+      try {
+        const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
+
+        // Specify the type for Axios response
+        const result: AxiosResponse<WalletApiResponse> = await bookAppointmentUsingWallet(
+          selectedSession.uuid,
+          selectedDateStr
+        );
+
+        console.log(result, "this is the result");
+
+        // Check if the status is 202
+        if (result.status === 202) {
+          addToast("success", "idea is working");
+
+          // Check Stripe Client ID
+          if (!process?.env.VITE_CLIENT_ID) {
+            throw new Error("Something wrong with Stripe key");
+          }
+
+          // Initialize Stripe with your public key
+          const stripe = await loadStripe(
+            "pk_test_51PMjrqSD4LlFpJPegNLUNIVDRjJmeaF1jW7lBzhnEQHgvmchbzkNn4pVdStSwROBEnbXvF2BpC4reOqUvHS1L3Yb00sfPbm63y"
+          );
+
+          if (!stripe) {
+            throw new Error("Failed to load Stripe.");
+          }
+
+          // Redirect to checkout
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: result.data.checkout_id, // Accessing checkout ID correctly
+          });
+
+          if (error) {
+            console.error("Error redirecting to checkout:", error);
+            alert("Failed to redirect to checkout. Please try again.");
+          }
+        } else {
+          navigate(
+            `../../../../user/available-sessions/success?checkout_id=${result.data.checkout_id}`
+          );
+        }
+      } catch (error) {
+        console.error("Error booking appointment:", error);
+        addToast("danger", "Error booking Appointment");
+      }
+    } else {
+      addToast("info", "Please select a session and date.");
+    }
+  };
 
   const handleNextMonth = () => {
     setCurrentMonth(addDays(endOfMonth(currentMonth), 1));
@@ -226,22 +238,22 @@ const handleWalletPayment = async () => {
       const isSelected =
         selectedDate &&
         format(day, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd");
-    
+
       const buttonClassName = isSelected
         ? "bg-slate-600 text-white"
-        : (isBefore(day, new Date())&&(!isToday(day)))
+        : isBefore(day, new Date()) && !isToday(day)
         ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-        : "hover:bg-slate-200"; 
-    
+        : "hover:bg-slate-200";
+
       days.push(
         <motion.button
           key={i}
           onClick={() => {
             // Allow selection for today and future dates only
-            if (!isBefore(day, new Date())|| isToday(day) ){
+            if (!isBefore(day, new Date()) || isToday(day)) {
               handleDateSelect(day);
-            }else{
-              addToast('info',"select valid dates")
+            } else {
+              addToast("info", "select valid dates");
             }
           }}
           className={`w-full h-10 rounded-full text-xs flex items-center justify-center ${buttonClassName}`}
@@ -293,7 +305,6 @@ const handleWalletPayment = async () => {
           </div>
         </motion.div>
 
-        {/* Time Selection & Confirmation */}
         <motion.div
           className="p-6 lg:p-8 w-full lg:w-1/2 xl:w-2/3 flex flex-col justify-between"
           initial={{ opacity: 0, x: 20 }}
@@ -355,45 +366,45 @@ const handleWalletPayment = async () => {
         modalOpen={paymentModal}
         setModalOpen={() => setPaymentModal(!paymentModal)}
         children={
-          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-              <h2 className="text-2xl font-bold text-center mb-6">
-                Select Payment Method
-              </h2>
+          <>
+            <h2 className="text-xl font-bold text-center mb-6">
+              Select Payment Method
+            </h2>
+            <p className="text-center my-4 gap-2">
+              <span>Wallet Balance: </span>
+              <span className="font-semibold"> ₹{walletPayment}</span>
+            </p>
+            <div className="flex max-sm:grid justify-center gap-3">
+              <button
+                onClick={() => {
+                  handleConfirm();
+                }}
+                className="px-6 py-3 shadow  bg-[#1e266e]  text-white font-semibold rounded-md"
+              >
+                Pay with Stripe
+              </button>
 
-              <div className="flex justify-center space-x-4">
-                <button
-                  onClick={() => {
-                    handleConfirm();
-                  }}
-                  className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md"
-                >
-                  Pay with Stripe
-                </button>
-
-                <button
-                  onClick={() => {
-                    handleWalletPayment();
-                  }}
-                  className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
-                >
-                  Pay with Wallet
-                </button>
-              </div>
-
-              <div className="flex justify-center mt-6">
-                <button
-                  onClick={() => setPaymentModal(false)}
-                  className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md"
-                >
-                  Cancel
-                </button>
-              </div>
+              <button
+                onClick={() => {
+                  handleWalletPayment();
+                }}
+                className="px-6 py-3 border border-gray-200  text-black shadow font-semibold rounded-md"
+              >
+                Pay with Wallet
+              </button>
             </div>
-          </div>
+
+            <div className="flex justify-center mt-6">
+              <button
+                onClick={() => setPaymentModal(false)}
+                className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md"
+              >
+                Cancel
+              </button>
+            </div>
+          </>
         }
       />
-     
     </>
   );
 };

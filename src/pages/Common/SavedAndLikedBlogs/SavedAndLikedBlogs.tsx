@@ -9,6 +9,7 @@ import ConfirmationModal from '../../../components/Modal/AlertModal';
 import Modal from '../../../components/Modal/Modal';
 import CommentSection from '../../../components/Comments/Comments';
 import { useToast } from '../../../components/Toast/ToastManager';
+import { RingLoader } from 'react-spinners';
 
 interface BlogSavedOrLiked {
     blog: Blog;
@@ -22,7 +23,7 @@ const SavedAndLikedBlogs: React.FC = () => {
     const [totalPages, setTotalPages] = useState<number>(1);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
-    const [tab, setTab] = useState<'saved' | 'liked'>('saved'); // Type for the active tab
+    const [tab, setTab] = useState<'saved' | 'liked'>('saved'); 
     const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
     const [readingBlog, setReadingBlog] = useState<Blog | null>(null);
     const [isConfirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
@@ -149,6 +150,13 @@ const SavedAndLikedBlogs: React.FC = () => {
           console.error("Error liking blog:", error);
         }
       };
+      const spinnerStyle = {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+      };
+    
 
     return (
         <div className="mx-auto  pb-10 dark:bg-dark lg:pb-20">
@@ -181,11 +189,14 @@ const SavedAndLikedBlogs: React.FC = () => {
             </nav>
           </div>
             {isLoading ? (
-                <p>Loading...</p>
+                // <p>Loading...</p>
+                <div style={spinnerStyle}>
+                  <RingLoader color="#36d7b7" />
+                </div>
             ) : error ? (
                 <p>{error}</p>
             ) : blogsData.length === 0 ? (
-                <p>No blogs found.</p>
+                <p className='w-full h-[300px] flex justify-center items-center'>No blogs found.</p>
             ) : (
                 <div className="px-10 py-4  grid gap-5 2xl:grid-cols-4 xl:grid-cols-3 sm:grid-cols-2 sm:mx-auto lg:max-w-full">
             {blogsData.map((blog, index) => {

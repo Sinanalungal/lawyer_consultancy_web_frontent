@@ -268,17 +268,15 @@ const LawyerListing: React.FC = () => {
       <div className="flex  flex-wrap justify-center gap-3  py-6 px-3">
         {lawyers && Array.isArray(lawyers) && lawyers.length > 0 ? (
           lawyers.map((lawyer, index) => (
-              <div
-                key={index}
-                onClick={() => {
-                  setIsDrawerOpen(true);
-                  setDrawerData(lawyer);
-                }}
-              >
-                <LawyerListingCard lawyer={lawyer} />
-                
-              </div>
-             
+            <div
+              key={index}
+              onClick={() => {
+                setIsDrawerOpen(true);
+                setDrawerData(lawyer);
+              }}
+            >
+              <LawyerListingCard lawyer={lawyer} />
+            </div>
           ))
         ) : (
           <div className="flex flex-auto col-span-1 sm:col-span-2 lg:col-span-3 flex-col justify-center min-h-[200px] items-center p-4 md:p-5">

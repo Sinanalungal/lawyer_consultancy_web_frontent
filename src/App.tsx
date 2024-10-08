@@ -84,7 +84,6 @@ function App() {
                 <Route path="/user/*" element={<UserRoutes />} />
                 <Route path="/admin/*" element={<AdminRoutes />} />
                 <Route path="/lawyer/*" element={<LawyerRoutes />} />
-                {/* <Route path="/sidebar" element={<SidebarDemo/>}/> */}
               </Routes>
             </Suspense>
           </GoogleOAuthProvider>

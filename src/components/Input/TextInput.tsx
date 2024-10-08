@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface CustomTextAreaProps {
   placeholder?: string;
@@ -67,7 +67,11 @@ const CustomTextArea: React.FC<CustomTextAreaProps> = ({
           </div>
         )}
       </div>
-      {error && <p id={`${id}-error`} className="mt-[1px] text-[10px] text-red-600">{error}</p>}
+      {error && (
+        <p id={`${id}-error`} className="mt-[1px] text-[10px] text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

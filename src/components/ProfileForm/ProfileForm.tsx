@@ -12,16 +12,18 @@ interface FormValues {
 }
 
 const ProfileForm: React.FC = () => {
-  const { userDetail, error, status } = useAppSelector((state: RootState) => state.userData); // Extract error and status from state
+  const { userDetail, error, status } = useAppSelector(
+    (state: RootState) => state.userData
+  );
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
-  const {addToast} = useToast()
+  const { addToast } = useToast();
 
-  const formik = useFormik({
+  const formik = useFormik<FormValues>({
     initialValues: {
       full_name: userDetail?.full_name || "",
     },
-    enableReinitialize: true, // Add this line
+    enableReinitialize: true,
     validationSchema: Yup.object({
       full_name: Yup.string()
         .matches(/^[a-zA-Z]+(?: [a-zA-Z]+)?$/, "Please enter a valid Full Name")
@@ -36,8 +38,6 @@ const ProfileForm: React.FC = () => {
         }
       } catch (error) {
         console.error("Update error:", error);
-        // Optionally display an error message
-        // addToast("error", "Failed to update profile.");
       }
     },
   });
@@ -45,9 +45,11 @@ const ProfileForm: React.FC = () => {
   return (
     <form onSubmit={formik.handleSubmit} className="md:pr-20">
       {/* Display form status or error messages */}
-      {formik.status && <div className="text-red-500 text-sm mb-4">{formik.status}</div>}
+      {formik.status && (
+        <div className="text-red-500 text-sm mb-4">{formik.status}</div>
+      )}
       {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
-      
+
       <div className="grid gap-6 mb-6 lg:grid-cols-2">
         <div>
           <label
@@ -61,7 +63,9 @@ const ProfileForm: React.FC = () => {
             id="full_name"
             name="full_name"
             className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
-              formik.touched.full_name && formik.errors.full_name ? 'border-red-500' : ''
+              formik.touched.full_name && formik.errors.full_name
+                ? "border-red-500"
+                : ""
             }`}
             value={formik.values.full_name}
             onChange={formik.handleChange}
@@ -69,7 +73,9 @@ const ProfileForm: React.FC = () => {
             required
           />
           {formik.touched.full_name && formik.errors.full_name ? (
-            <div className="text-red-500 text-xs">{formik.errors.full_name}</div>
+            <div className="text-red-500 text-xs">
+              {formik.errors.full_name}
+            </div>
           ) : null}
         </div>
         <div>

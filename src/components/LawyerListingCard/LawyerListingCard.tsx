@@ -1,7 +1,7 @@
 import React from "react";
 import { Lawyer } from "../../types";
 import { motion } from "framer-motion";
-import './LawyerListingCard.css'
+import "./LawyerListingCard.css";
 interface LawyerProps {
   lawyer: Lawyer;
 }
@@ -35,22 +35,27 @@ const LawyerListingCard: React.FC<LawyerProps> = ({ lawyer }) => (
       <h2 className="text-lg max-sm:text-xs font-bold w-[95%] text-gray-800 truncate">
         Adv. {lawyer.user_full_name.toUpperCase()}
       </h2>
-      
+
       <p className="text-sm text-gray-700 grid  mt-1">
-        <span className="mx-auto"> {lawyer.languages.map((lang) => lang.name).join(", ")}</span>
+        <span className="mx-auto">
+          {" "}
+          {lawyer.languages.map((lang) => lang.name).join(", ")}
+        </span>
       </p>
       <p className="text-sm text-gray-700 grid  mt-1">
         <span className="mx-auto"> {lawyer.experience} Yr of Experience</span>
       </p>
       <p className="text-sm text-gray-700 grid  mt-1">
-        <span className="mx-auto">{lawyer.departments.map((department) => department.department_name).join(", ")}</span>
+        <span className="mx-auto">
+          {lawyer.departments
+            .map((department) => department.department_name)
+            .join(", ")}
+        </span>
       </p>
 
       <button className="text-sm font-medium my-2 bg-[#1e266e] px-4 text-white py-1.5 rounded-xl">
         Connect
       </button>
-
-    
     </div>
   </motion.div>
 );

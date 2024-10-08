@@ -14,7 +14,7 @@ const LawyerFirmSection: React.FC<LawyerFirmSectionProps> = ({ content }) => {
   return (
     <div className="">
       <h2 className="text-3xl font-bold text-center max-sm:text-2xl sm:px-10  py-4 mb-5 text-[#1e266e]">
-        Comprehensive Legal Solutions Tailored to Your Needs
+        Navigate Your Legal Journey with Us
       </h2>
       <div className="container mb-20 max-w-7xl mx-auto p-2">
         <img

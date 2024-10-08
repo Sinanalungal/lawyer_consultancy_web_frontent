@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
-import { Navigate, Outlet } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../../redux/store';
-import { LoginState, logout } from '../../redux/slice/LoginActions';
-import LawyerLayout from '../../layouts/LawyerLayout/LawyerLayout';
-import { SidebarDemo } from '../../pages/Sidebar/SidebarComponentLawyer';
+import React, { useEffect } from "react";
+import { Navigate, Outlet } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { LoginState, logout } from "../../redux/slice/LoginActions";
+import { SidebarDemo } from "../../layouts/LawyerLayout/SidebarComponentLawyer";
 
 const LawyerPrivateRoute: React.FC = () => {
   const dispatch = useDispatch();
@@ -19,8 +18,8 @@ const LawyerPrivateRoute: React.FC = () => {
   useEffect(() => {
     if (!authTokens && !isAuthenticated) {
       dispatch(logout());
-      console.log('logged out worked');
-      
+      console.log("logged out worked");
+
       // navigate("/");
     }
   }, [authTokens, isAuthenticated]);

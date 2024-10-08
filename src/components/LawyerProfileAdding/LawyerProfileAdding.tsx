@@ -8,7 +8,9 @@ interface LawyerProfileAddingProps {
   setAdminProfile?: (url: Blob | null) => void;
 }
 
-const LawyerProfileAdding: React.FC<LawyerProfileAddingProps> = ({ setAdminProfile }) => {
+const LawyerProfileAdding: React.FC<LawyerProfileAddingProps> = ({
+  setAdminProfile,
+}) => {
   const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 

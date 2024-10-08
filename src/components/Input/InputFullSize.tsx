@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface CustomInputProps {
   inputType?: string;
@@ -45,7 +45,6 @@ const CustomInputFullSized: React.FC<CustomInputProps> = ({
             error
               ? "border-red-500 border ring-red-500 focus:ring-red-500 "
               : "border-gray-200 border ring-0 focus:ring-[linear-gradient(90deg,_#7F00FF,_#E100FF)]"
-
           }`}
           placeholder={placeholder}
           aria-describedby={error ? `${id}-error` : undefined}
@@ -68,7 +67,11 @@ const CustomInputFullSized: React.FC<CustomInputProps> = ({
           </div>
         )}
       </div>
-      {error && <p id={`${id}-error`} className="mt-[1px] text-[10px] text-red-600">{error}</p>}
+      {error && (
+        <p id={`${id}-error`} className="mt-[1px] text-[10px] text-red-600">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

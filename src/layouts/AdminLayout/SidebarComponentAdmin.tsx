@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sidebar, SidebarBody, SidebarLink } from "./Sidebar";
+import { Sidebar, SidebarBody, SidebarLink } from '../../components/Sidebar/Sidebar'
 import {
   IconArrowLeft,
   IconBellRingingFilled,
@@ -10,8 +10,12 @@ import {
   IconClock2,
   IconGavel,
   IconNews,
+  IconReportAnalytics,
+  IconScale,
   IconSettings,
+  IconCreditCardRefund,
   IconUserBolt,
+  IconUsers,
   IconWallet,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
@@ -28,60 +32,81 @@ import NotificationSocket from "../../components/Common/NotificationSocket";
 interface LawyerLayoutProps {
   children: React.ReactNode;
 }
-export function SidebarDemo({ children }: LawyerLayoutProps) {
+export function SidebarDemoAdmin({ children }: LawyerLayoutProps) {
   const links = [
     {
       label: "Dashboard",
-      href: "../../../../lawyer",
+      href: "../../../../admin",
       icon: (
         <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
-      label: "Schedules",
-      href: "../../../../lawyer/sessions",
+      label: "Lawyers",
+      href: "../../../../admin/lawyers",
       icon: (
-        <IconClock2 className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <IconScale className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
-      label: "Appointments",
-      href: "../../../../lawyer/appointments",
+      label: "Users",
+      href: "../../../../admin/users",
       icon: (
-        <IconCalendarClock className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <IconUsers className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
       label: "Blogs",
-      href: "../../../../lawyer/blog",
+      href: "../../../../admin/blog",
       icon: (
         <IconNews className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
-      label: "Case manage",
-      href: "../../../../lawyer/cases",
+      label: "Cases",
+      href: "../../../../admin/case-list",
       icon: (
         <IconGavel className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
-      label: "Wallet",
-      href: "../../../../lawyer/wallet",
+      label: "Schedules",
+      href: "../../../../admin/schedule-list",
       icon: (
-        <IconWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <IconClock2 className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
     {
-      label: "Chat",
-      href: "../../../../chat",
+      label: "Sales Report",
+      href: "../../../../admin/sales-report",
       icon: (
-        <IconBrandHipchat className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <IconReportAnalytics className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
+    {
+      label: "Withdraw Requests",
+      href: "../../../../admin/withdrawal",
+      icon: (
+        <IconCreditCardRefund className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+      ),
+    },
+    // {
+    //   label: "Wallet",
+    //   href: "../../../../admin/wallet",
+    //   icon: (
+    //     <IconWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+    //   ),
+    // },
+    // {
+    //   label: "Chat",
+    //   href: "../../../../chat",
+    //   icon: (
+    //     <IconBrandHipchat className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+    //   ),
+    // },
     {
       label: "Profile",
-      href: "../../../../lawyer/profile",
+      href: "../../../../admin/profile",
       icon: (
         <IconUserBolt className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
@@ -111,14 +136,6 @@ export function SidebarDemo({ children }: LawyerLayoutProps) {
       dispatch(fetchUserAsync());
     }
   }, [isAuthenticated, dispatch]);
-  // const transition = {
-  //   type: "spring",
-  //   mass: 0.5,
-  //   damping: 11.5,
-  //   stiffness: 100,
-  //   restDelta: 0.001,
-  //   restSpeed: 0.001,
-  // };
 
   return (
     <div
@@ -156,13 +173,15 @@ export function SidebarDemo({ children }: LawyerLayoutProps) {
             </div>
           </div>
           <div>
-          <div  onClick={() => setNotificationsOpen(!notificationsOpen)}><SidebarLink
-              link={{
-                label: "Notifications",
-                href: "#",
-                icon: <NotificationCountSocket />,
-              }}
-            /></div>
+            <div onClick={() => setNotificationsOpen(!notificationsOpen)}>
+              <SidebarLink
+                link={{
+                  label: "Notifications",
+                  href: "#",
+                  icon: <NotificationCountSocket />,
+                }}
+              />
+            </div>
             <div
               className="relative"
               onMouseEnter={() => setActive(true)}
@@ -196,7 +215,7 @@ export function SidebarDemo({ children }: LawyerLayoutProps) {
                   initial={{ opacity: 0, scale: 0.85, y: 10 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
                   transition={{ type: "spring", mass: 0.5, damping: 11.5 }}
-                  className="absolute z-20 top-[calc(100%_-_.6rem)] md:top-[calc(100%_-9.8rem)] right-0 transform"
+                  className="absolute z-50 top-[calc(100%_-_.6rem)] md:top-[calc(100%_-9.8rem)] right-0 transform"
                 >
                   <div className="w-48 bg-white border border-gray-200 shadow-lg rounded-md p-4 space-y-1">
                     <Link
@@ -210,7 +229,7 @@ export function SidebarDemo({ children }: LawyerLayoutProps) {
                       Your Blogs
                     </Link>
                     <Link
-                      to="../../../../lawyer/profile"
+                      to="../../../../admin/profile"
                       className="block p-1 rounded-md text-xs text-gray-700 font-medium hover:bg-gray-100"
                     >
                       Profile
@@ -223,7 +242,6 @@ export function SidebarDemo({ children }: LawyerLayoutProps) {
                       Sign out
                     </div>
                   </div>
-                  {/* Arrow mark */}
                   <div className="absolute left-2 bottom-[-0.3rem] w-3 h-3 transform rotate-45 bg-white "></div>
                 </motion.div>
               )}
@@ -231,7 +249,6 @@ export function SidebarDemo({ children }: LawyerLayoutProps) {
           </div>
         </SidebarBody>
       </Sidebar>
-
       <div className="grid flex-1 overflow-hidden">
         {notificationsOpen && <NotificationLayer open={notificationsOpen} />}
         <div className="p-2 bg-gray-100 2xl:px-10 md:px-10 md:py-20 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 w-full mx-auto dark:bg-neutral-900 flex flex-col gap-2 h-full overflow-y-auto  no-scrollbar">
@@ -264,9 +281,9 @@ export const Logo = () => {
           Acet Labs
         </motion.span>
       </div>
-        <div className="px- py-1  flex justify-center items-center text-xs max-w-[70px] bg-white rounded-md shadow-sm">
-          Lawyer
-        </div>
+      <div className="px- py-1  flex justify-center items-center text-xs max-w-[70px] bg-white rounded-md shadow-sm">
+        Admin
+      </div>
     </Link>
   );
 };

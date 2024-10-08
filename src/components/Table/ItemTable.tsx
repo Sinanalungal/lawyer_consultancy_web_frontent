@@ -1,8 +1,8 @@
 import React from "react";
-import Pagination from "../Pagination/Pagination";
 import SearchForm from "../Search/Search";
 import SelectionBox from "../SelectBox/SelectBox";
-import { Table, ChevronDown } from 'lucide-react';
+import { Table, ChevronDown } from "lucide-react";
+import Pagination from "../Pagination/Pagination";
 
 interface TableColumn {
   key: string;
@@ -10,7 +10,7 @@ interface TableColumn {
 }
 
 interface TableRow {
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 interface TableProps {
@@ -40,8 +40,8 @@ const ItemTable: React.FC<TableProps> = ({
   blocked,
   setBlocked,
   options = [
-    { label: 'Unblocked', action: () => setBlocked?.(false) },
-    { label: 'Blocked', action: () => setBlocked?.(true) },
+    { label: "Unblocked", action: () => setBlocked?.(false) },
+    { label: "Blocked", action: () => setBlocked?.(true) },
   ],
 }) => {
   return (
@@ -82,7 +82,10 @@ const ItemTable: React.FC<TableProps> = ({
                       className="hover:bg-gray-50 transition-colors duration-200"
                     >
                       {columns.map((column) => (
-                        <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td
+                          key={column.key}
+                          className="px-6 py-4 whitespace-nowrap text-sm text-gray-500"
+                        >
                           {row[column.key]}
                         </td>
                       ))}
@@ -90,7 +93,10 @@ const ItemTable: React.FC<TableProps> = ({
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={columns.length} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                    <td
+                      colSpan={columns.length}
+                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"
+                    >
                       <div className="flex flex-col items-center justify-center space-y-2">
                         <Table className="h-12 w-12 text-gray-400" />
                         <p>No data available</p>

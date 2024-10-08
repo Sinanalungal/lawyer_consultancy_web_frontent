@@ -24,7 +24,7 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
         if (blob) {
           try {
             const data = await dispatch(updateProfileImageAsync(blob)).unwrap();
-            console.log('Profile image updated successfully:', data);
+            console.log("Profile image updated successfully:", data);
           } catch (error) {
             console.error("Error updating profile image:", error);
           }
@@ -33,20 +33,19 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
         }
       }
     };
-    
-    ProfileUpdation()
-    
-  },[croppedImageUrl])
+
+    ProfileUpdation();
+  }, [croppedImageUrl]);
 
   const handleRemoveProfileImage = async () => {
     try {
       const data = await dispatch(updateProfileImageAsync(null)).unwrap();
-      console.log('Profile image removed successfully:', data);
+      console.log("Profile image removed successfully:", data);
     } catch (error) {
       console.error("Error removing profile image:", error);
     }
   };
-  
+
   const dataURItoBlob = (dataURI: string) => {
     if (!dataURI) {
       return null;
@@ -108,10 +107,6 @@ const UserProfilePicture: React.FC<UserProfilePictureProps> = ({
 };
 
 export default UserProfilePicture;
-
-
-
-
 
 import Cropper from "react-easy-crop";
 import { useToast } from "../Toast/ToastManager";
@@ -177,46 +172,6 @@ const ProfileCrop: React.FC<ImageCropProps> = ({
       image.src = url;
     });
   };
-
-  // const getCroppedImg = async () => {
-  //   if (!selectedFile || !croppedAreaPixels) {
-  //     addToast("danger", "Please upload an image.");
-  //     return;
-  //   }
-  //   const image = await createImage(selectedFile);
-  //   const canvas = document.createElement("canvas");
-  //   const ctx = canvas.getContext("2d");
-
-  //   if (!ctx) {
-  //     return null;
-  //   }
-
-  //   canvas.width = croppedAreaPixels.width;
-  //   canvas.height = croppedAreaPixels.height;
-
-  //   ctx.drawImage(
-  //     image,
-  //     croppedAreaPixels.x,
-  //     croppedAreaPixels.y,
-  //     croppedAreaPixels.width,
-  //     croppedAreaPixels.height,
-  //     0,
-  //     0,
-  //     croppedAreaPixels.width,
-  //     croppedAreaPixels.height
-  //   );
-
-  //   return new Promise<string>((resolve, reject) => {
-  //     canvas.toBlob((blob) => {
-  //       if (blob) {
-  //         const url = URL.createObjectURL(blob);
-  //         resolve(url);
-  //       } else {
-  //         reject(new Error("Canvas is empty"));
-  //       }
-  //     }, "image/jpeg");
-  //   });
-  // };
 
   const onCropDone = (croppedArea: any) => {
     if (!selectedFile || !croppedAreaPixels) {
@@ -342,29 +297,6 @@ const ProfileCrop: React.FC<ImageCropProps> = ({
                         </p>
                       </button>
                     </label>
-                    {/* <label onClick={() => onAspectRatioChange(4 / 3)}>
-                <button
-                  type="button"
-                  className={`${
-                    aspectRatio === 4 / 3
-                      ? "bg-gray-900"
-                      : "border border-gray-500"
-                  } py-2 items-center rounded px-3 flex justify-center space-x-1`}
-                >
-                  <div
-                    className={`${
-                      aspectRatio === 4 / 3 ? "border-white" : "border-gray-700"
-                    } w-[10px] h-[10px] border-2`}
-                  ></div>
-                  <p
-                    className={`${
-                      aspectRatio === 4 / 3 ? "text-white" : "text-gray-700"
-                    } text-[10px]`}
-                  >
-                    4:3
-                  </p>
-                </button>
-              </label> */}
                   </div>
                   <div className="my-4 flex justify-center items-center gap-5">
                     <div
@@ -389,4 +321,3 @@ const ProfileCrop: React.FC<ImageCropProps> = ({
     </>
   );
 };
-

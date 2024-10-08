@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
 import ImageCrop from "../../../components/ImageCrop/ImageCrop";
 import CustomInput from "../../../components/Input/Input";

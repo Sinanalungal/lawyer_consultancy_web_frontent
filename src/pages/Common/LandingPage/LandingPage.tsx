@@ -53,22 +53,22 @@ const LandingPage: React.FC = () => {
 
   const content = [
     {
-      title: "The first rule of Apple club is that you boast about Apple club.",
+      title: "Expert Legal Advice at Your Fingertips",
       description:
-        "Keep a journal, quickly jot down a grocery list, and take amazing class notes. Want to convert those notes to text? No problem. Langotiya jeetu ka mara hua yaar is ready to capture every thought.",
+        "Get access to professional legal consultation from experienced lawyers in various fields. Whether you need help with family law, criminal defense, or corporate matters, we have you covered.",
     },
     {
-      title: "Stay productive and organized.",
+      title: "Easy Case Submission Process",
       description:
-        "Manage your daily tasks efficiently and keep track of your appointments with ease. We bring the tools to enhance your workflow and help you stay on top of everything.",
+        "Submit your legal case securely through our platform. Provide details, upload relevant documents, and get matched with lawyers who are ready to assist you. Receive timely feedback on whether they can take your case.",
     },
     {
-      title: "Seamless integration with all your devices.",
+      title: "Seamless Consultation Scheduling",
       description:
-        "Whether you're at home or on the go, access all your files and notes from any device. Stay connected, stay efficient, and never miss a beat.",
+        "Book consultations effortlessly with our intuitive scheduling tool. Choose a time that works for you, and consult with your preferred lawyer at your convenience, either in person or online.",
     },
   ];
-
+  
   return (
     <>
       {isAuthenticated ? (

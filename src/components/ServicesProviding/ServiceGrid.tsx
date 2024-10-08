@@ -29,12 +29,7 @@ const ServicesGrid: React.FC = () => {
   const [color, setColor] = useState("#000000");
 
   return (
-    <div
-      className="relative"
-      //   style={{
-      //       backgroundImage: "url('./Curve Line.svg')"
-      //     }}
-    >
+    <div className="relative">
       <Particles
         className="absolute inset-0"
         quantity={700}

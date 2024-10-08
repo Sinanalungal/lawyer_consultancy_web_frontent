@@ -1,5 +1,6 @@
 // HeroSection.tsx
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface HeroSectionProps {}
 
@@ -26,9 +27,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({}) => {
           <p className="mt-2 text-sm max-sm:text-[10px]">
             Expert legal guidance at your fingertips, anytime, anywhere.
           </p>
-          <button className="mt-8 px-6 mx-auto max-sm:w-36 w-44 py-3 max-sm:text-xs bg-blue-600 hover:bg-blue-600 text-white font-semibold rounded-lg transition duration-300">
+          <Link to={'/user/lawyers'}><button className="mt-8 px-6 mx-auto max-sm:w-36 w-44 py-3 max-sm:text-xs bg-blue-600 hover:bg-blue-600 text-white font-semibold rounded-lg transition duration-300">
             Find Lawyers
-          </button>
+          </button></Link>
         </div>
 
         <div className="">

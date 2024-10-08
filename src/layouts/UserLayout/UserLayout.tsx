@@ -23,27 +23,6 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
 
   const { loader } = useLoader(); 
   
-  // useEffect(() => {
-  //   const handleScroll = () => {
-  //     const currentScrollTop = window.scrollY;
-
-  //     if (currentScrollTop <= 0) {
-  //       setIsVisible(true);
-  //     } else if (currentScrollTop > lastScrollTop.current) {
-  //       setIsVisible(false);
-  //     } else {
-  //       setIsVisible(true);
-  //     }
-
-  //     lastScrollTop.current = currentScrollTop;
-  //   };
-
-  //   window.addEventListener('scroll', handleScroll);
-
-  //   return () => {
-  //     window.removeEventListener('scroll', handleScroll);
-  //   };
-  // }, []);
 
   useEffect(() => {
     if (isAuthenticated) {

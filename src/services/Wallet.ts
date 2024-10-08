@@ -88,3 +88,13 @@ export const updateWithdrawalStatus = async (id: number, status: string) => {
     }
   };
   
+export const WalletBalanceApi = async () => {
+    const axiosInstance = await getAxiosInstance();
+    try {
+        const response = await axiosInstance.get('wallet/wallet-balance-access/');
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
