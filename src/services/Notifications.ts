@@ -9,3 +9,13 @@ export const getUserNotifications = async (page: number) => {
     throw error;
   }
 };
+
+export const getUserNotificationsCount = async () => {
+  const axiosInstance = await getAxiosInstance();
+  try {
+    const response = await axiosInstance.get(`notification/notifications-count/`); 
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

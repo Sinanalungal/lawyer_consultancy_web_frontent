@@ -2,6 +2,7 @@ import React from "react";
 import Pagination from "../Pagination/Pagination";
 import SearchForm from "../Search/Search";
 import SelectionBox from "../SelectBox/SelectBox";
+import { Table, ChevronDown } from 'lucide-react';
 
 interface TableColumn {
   key: string;
@@ -38,60 +39,78 @@ const ItemTable: React.FC<TableProps> = ({
   total,
   blocked,
   setBlocked,
-  options= [
+  options = [
     { label: 'Unblocked', action: () => setBlocked?.(false) },
     { label: 'Blocked', action: () => setBlocked?.(true) },
   ],
 }) => {
-
-
   return (
-    <div className="flex flex-col  h-full pb-16 ">
-      <div className="flex items-center justify-between max-sm:flex-col max-sm:items-end">
-      {options && <SelectionBox buttonLabel={blocked?options[1].label:options[0].label} options={options} />}
-      <SearchForm search={search} setSearch={setSearch}/>
+    <div className="flex flex-col pb-8 bg-white rounded-lg shadow-md">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200 max-sm:flex-col max-sm:items-stretch max-sm:space-y-4">
+        {options && (
+          <SelectionBox
+            buttonLabel={blocked ? options[1].label : options[0].label}
+            options={options}
+          />
+        )}
+        <SearchForm search={search} setSearch={setSearch} />
       </div>
       <div className="overflow-x-auto no-scrollbar">
         <div className="min-w-full inline-block align-middle">
-          <div className="border  border-gray-300  min-h-[350px]">
-            <table className="min-w-full relative">
-              <thead>
-                <tr className="bg-gray-50">
+          <div className="min-h-[350px] relative">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
                   {columns.map((column) => (
                     <th
                       key={column.key}
-                      className="p-5 text-left text-xs leading-6 font-semibold text-gray-900 capitalize "
+                      className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
                     >
-                      {column.label}
+                      <div className="flex items-center">
+                        {column.label}
+                        <ChevronDown className="ml-1 h-4 w-4" />
+                      </div>
                     </th>
                   ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-300">
+              <tbody className="bg-white divide-y divide-gray-200">
                 {data.length > 0 ? (
                   data.map((row, rowIndex) => (
                     <tr
                       key={rowIndex}
-                      className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
+                      className="hover:bg-gray-50 transition-colors duration-200"
                     >
                       {columns.map((column) => (
-                        <td key={column.key} className="px-4 py-4">
+                        <td key={column.key} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {row[column.key]}
                         </td>
                       ))}
                     </tr>
                   ))
                 ) : (
-                  <div className=" w-full absolute flex justify-center items-center min-h-[250px]   text-gray-500 text-xs">
-                    no data available
-                  </div>
+                  <tr>
+                    <td colSpan={columns.length} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        <Table className="h-12 w-12 text-gray-400" />
+                        <p>No data available</p>
+                      </div>
+                    </td>
+                  </tr>
                 )}
               </tbody>
             </table>
           </div>
         </div>
       </div>
-      <Pagination nextButton={nextButton} previousButton={previousButton} pageNum={pageNum} totalPages={total}/>
+      <div className="mt-4 px-4">
+        <Pagination
+          nextButton={nextButton}
+          previousButton={previousButton}
+          pageNum={pageNum}
+          totalPages={total}
+        />
+      </div>
     </div>
   );
 };

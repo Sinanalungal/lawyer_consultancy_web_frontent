@@ -76,7 +76,7 @@ const LoginForm = () => {
         className="bg-white border  font-black text-xs max-w-md mx-auto h-12 rounded-xl"
       />
       <div className="my-8 relative w-[80%] max-w-sm text-xs flex justify-center mx-auto border-t border-gray-300 ">
-        <p className="absolute top-0  -mt-2 text-gray-500  bg-white px-5">or sign in with email</p>
+        <p className="absolute top-0  -mt-2 text-gray-500 rounded-full border bg-white px-5">or sign in with email</p>
       </div>
 
       <form className="my-6" onSubmit={formik.handleSubmit}>

@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAppSelector } from "../../redux/store";
+import { cn } from "../../utils/cn";
+import { AnimatedList } from "../Ui/animated-list-components";
+import { HiMiniInboxArrowDown } from "react-icons/hi2";
+
 
 interface Notification {
   title: string;
@@ -9,109 +13,157 @@ interface Notification {
   time: string;
 }
 
-const NotificationSocket: React.FC = () => {
+const NotificationSocket: React.FC = ({className}:{className?:string}) => {
   const [notification, setNotification] = useState<Notification | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { value } = useAppSelector((state) => state.login);
-  // console.log(value);
+
+  // Store notifications persistently
+  useEffect(() => {
+    const storedNotification = localStorage.getItem("latestNotification");
+    if (storedNotification) {
+      setNotification(JSON.parse(storedNotification));
+    }
+  }, []);
 
   useEffect(() => {
     if (value) {
-      const socket = new WebSocket(
-        `ws://localhost:8000/notifications/${value}/`
-      );
+      const connectWebSocket = () => {
+        const socket = new WebSocket(`ws://localhost:8000/notifications/${value}/`);
 
-      socket.onopen = (event) => {
-        console.log("WebSocket connection established:", event);
-      };
-
-      socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        console.log("Notification received:", data.notification);
-
-        // Parse the notification string into an object
-        const notificationData = JSON.parse(data.notification);
-        const newNotification: Notification = {
-          title: notificationData.title,
-          description: notificationData.description,
-          time: new Date(notificationData.time).toLocaleTimeString(),
+        socket.onopen = (event) => {
+          console.log('notification socket is opened ');
+          
+          console.log("WebSocket connection established:", event);
         };
 
-        setNotification(newNotification);
+        socket.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          console.log("Notification received:", data.notification);
 
-        setTimeout(() => {
-          setNotification(null);
-        }, 3000);
+          const notificationData = JSON.parse(data.notification);
+          const newNotification: Notification = {
+            title: notificationData.title,
+            description: notificationData.description,
+            time: new Date(notificationData.time).toLocaleTimeString(),
+          };
+
+          // Persist the notification in localStorage
+          localStorage.setItem("latestNotification", JSON.stringify(newNotification));
+          setNotification(newNotification);
+
+          // Clear notification after 3 seconds
+          setTimeout(() => {
+            setNotification(null);
+            localStorage.removeItem("latestNotification");
+          }, 3000);
+        };
+
+        socket.onerror = (error) => {
+          console.error("WebSocket error:", error);
+          setError("WebSocket error occurred. Please try again.");
+        };
+
+        socket.onclose = (event) => {
+          console.log("WebSocket connection closed. Attempting to reconnect...");
+          setTimeout(connectWebSocket, 5000); // Try to reconnect after 5 seconds
+        };
+
+        return () => {
+          socket.close();
+        };
       };
 
-      socket.onerror = (error) => {
-        console.error("WebSocket error:", error);
-        setError("WebSocket error occurred. Please try again.");
-      };
-
-      socket.onclose = (event) => {
-        console.log("WebSocket connection closed:", event);
-      };
-
-      return () => {
-        socket.close();
-      };
+      const cleanUpSocket = connectWebSocket();
+      return cleanUpSocket;
     }
   }, [value]);
 
   const onDismiss = () => {
     setNotification(null);
+    localStorage.removeItem("latestNotification");
   };
 
   return ReactDOM.createPortal(
     <AnimatePresence>
       {notification && (
         <motion.div
-          className="fixed sm:top-3 z-50 sm:right-4 right-0 flex items-center bg-white border border-gray-200 shadow-md rounded-lg p-4 gap-4"
+          className="fixed sm:top-3 z-50 sm:right-4 right-0 flex items-center bg-white border border-gray-200 shadow-md rounded-lg  gap-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 20 }}
           transition={{ duration: 0.3 }}
         >
-          <div className="text-2xl mr-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="black"
-              className="size-6"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.478 5.559A1.5 1.5 0 0 1 6.912 4.5H9A.75.75 0 0 0 9 3H6.912a3 3 0 0 0-2.868 2.118l-2.411 7.838a3 3 0 0 0-.133.882V18a3 3 0 0 0 3 3h15a3 3 0 0 0 3-3v-4.162c0-.299-.045-.596-.133-.882l-2.412-7.838A3 3 0 0 0 17.088 3H15a.75.75 0 0 0 0 1.5h2.088a1.5 1.5 0 0 1 1.434 1.059l2.213 7.191H17.89a3 3 0 0 0-2.684 1.658l-.256.513a1.5 1.5 0 0 1-1.342.829h-3.218a1.5 1.5 0 0 1-1.342-.83l-.256-.512a3 3 0 0 0-2.684-1.658H3.265l2.213-7.191Z"
-                clipRule="evenodd"
-              />
-              <path
-                fillRule="evenodd"
-                d="M12 2.25a.75.75 0 0 1 .75.75v6.44l1.72-1.72a.75.75 0 1 1 1.06 1.06l-3 3a.75.75 0 0 1-1.06 0l-3-3a.75.75 0 0 1 1.06-1.06l1.72 1.72V3a.75.75 0 0 1 .75-.75Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
-          <div className="flex-grow">
-            <p className="font-bold text-sm text-gray-700">
-              {notification.title}
-            </p>
-            <p className="text-gray-600 text-xs">{notification.description}</p>
-            <p className="text-gray-400 text-[10px] mt-2">
-              {notification.time}
-            </p>
-          </div>
-          <button
-            className="text-gray-500 text-xl hover:text-gray-800"
-            onClick={onDismiss}
-          >
-            &times;
-          </button>
+          <div
+        className={cn(
+          "relative  flex   w-full flex-col  overflow-hidden ",
+          className,
+        )}
+      >
+        <AnimatedList>
+          {/* {notification.map((item, idx) => (
+            <Notification {...item} key={idx} />
+          ))} */}
+          {notification &&  <Notification {...notification}  />}
+        </AnimatedList>
+      </div>
         </motion.div>
+      //   <motion.div
+      //   className="fixed sm:top-3 z-50 sm:right-4 right-0 flex items-center bg-white border border-gray-200 shadow-md rounded-lg p-4 gap-4"
+      //   initial={{ opacity: 0, y: 20 }}
+      //   animate={{ opacity: 1, y: 0 }}
+      //   exit={{ opacity: 0, y: 20 }}
+      //   transition={{ duration: 0.3 }}
+      // >
+       
+      // </motion.div>
       )}
-    </AnimatePresence>,
+    </AnimatePresence>
+    ,
     document.getElementById("notification-root")!
   );
 };
 
 export default NotificationSocket;
+
+
+
+
+
+const Notification = ({ title, description,   time }: Notification) => {
+  return (
+    <figure
+      className={cn(
+        "relative mx-auto min-h-fit w-full max-w-[400px] cursor-pointer overflow-hidden rounded-2xl p-4",
+        // animation styles
+        "transition-all duration-200 ease-in-out hover:scale-[103%]",
+        // light styles
+        "bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
+        // dark styles
+        "transform-gpu dark:bg-transparent dark:backdrop-blur-md dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]",
+      )}
+    >
+      <div className="flex flex-row items-center gap-3">
+        <div
+          className="flex size-10 items-center justify-center rounded-2xl"
+          style={{
+            backgroundColor: '#1e266e',
+          }}
+        >
+          <span className="text-lg p-3"><HiMiniInboxArrowDown color="white"/>
+          </span>
+        </div>
+        <div className="flex flex-col overflow-hidden">
+          <figcaption className="flex flex-row items-center whitespace-pre text-lg font-medium dark:text-white ">
+            <span className="text-sm sm:text-lg">{title}</span>
+            <span className="mx-1">·</span>
+            <span className="text-xs text-gray-500">{time}</span>
+          </figcaption>
+          <p className="text-sm font-normal dark:text-white/60">
+            {description}
+          </p>
+        </div>
+      </div>
+    </figure>
+  );
+};

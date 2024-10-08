@@ -155,158 +155,154 @@ const SalesReportTable: React.FC = () => {
 
   return (
     <>
-      <AdminLayout selected="7">
-        <div className="container mx-auto p-4">
-          <AdminPageTitle
-            title="SALES REPORT"
-            description="Sales reports listed here..."
-          />
+      <div className="container mx-auto p-4">
+        <AdminPageTitle
+          title="SALES REPORT"
+          description="Sales reports listed here..."
+        />
 
-          {/* Search and Filters */}
-          <div className="flex justify-end max-sm:grid gap-2 text-xs sm:space-x-4 items-end mb-4">
-            <div>
-              <label htmlFor="from-date" className="block text-xs font-medium">
-                From Date
-              </label>
-              <DatePicker
-                id="from-date"
-                selected={fromDate}
-                onChange={(date: Date | null) => setFromDate(date)}
-                dateFormat="yyyy-MM-dd"
-                className="border border-gray-300 rounded p-2"
-                placeholderText="Select From Date"
-              />
-            </div>
-            <div>
-              <label htmlFor="to-date" className="block text-xs font-medium">
-                To Date
-              </label>
-              <DatePicker
-                id="to-date"
-                selected={toDate}
-                onChange={(date: Date | null) => setToDate(date)}
-                dateFormat="yyyy-MM-dd"
-                className="border border-gray-300 rounded p-2"
-                placeholderText="Select To Date"
-              />
-            </div>
-
-            <button
-              onClick={downloadPDF}
-              className="px-4 py-2 bg-blue-600 text-white rounded shadow-md hover:bg-blue-700 transition"
-            >
-              Download PDF
-            </button>
+        {/* Search and Filters */}
+        <div className="flex justify-end max-sm:grid gap-2 text-xs sm:space-x-4 items-end mb-4">
+          <div>
+            <label htmlFor="from-date" className="block text-xs font-medium">
+              From Date
+            </label>
+            <DatePicker
+              id="from-date"
+              selected={fromDate}
+              onChange={(date: Date | null) => setFromDate(date)}
+              dateFormat="yyyy-MM-dd"
+              className="border border-gray-300 rounded p-2"
+              placeholderText="Select From Date"
+            />
           </div>
-
-          {/* Search Input */}
-          <div className="mb-4">
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={handleSearch}
-              placeholder="Search by user..."
-              className="border border-gray-300 rounded p-2 w-full text-xs"
+          <div>
+            <label htmlFor="to-date" className="block text-xs font-medium">
+              To Date
+            </label>
+            <DatePicker
+              id="to-date"
+              selected={toDate}
+              onChange={(date: Date | null) => setToDate(date)}
+              dateFormat="yyyy-MM-dd"
+              className="border border-gray-300 rounded p-2"
+              placeholderText="Select To Date"
             />
           </div>
 
-          {/* Table */}
-          {loading ? (
-            <p>Loading...</p>
-          ) : (
-            <div className="overflow-x-auto  rounded-lg shadow">
-              <table className="min-w-full  table-auto border-collapse border border-gray-300">
-                <thead className="bg-gray-200 text-xs">
-                  <tr>
-                    {/* <th className="px-4 py-2 text-center border">Session ID</th> */}
-                    <th className="px-4 py-2 text-center border">User</th>
-                    <th className="px-4 py-2 text-center border">Lawyer</th>
-                    <th className="px-4 py-2 text-center border">
-                      Booking Date
-                    </th>
-                    <th className="px-4 py-2 text-center border">
-                      Transaction ID
-                    </th>
-                    <th className="px-4 py-2 text-center border">
-                      Payment Method
-                    </th>
-                    <th className="px-4 py-2 text-center border">
-                      Transaction Time
-                    </th>
-                    <th className="px-4 py-2 text-center border">
-                      Payment Amount
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {salesData?.length > 0 ? (
-                    salesData.map((row, index) => (
-                      <tr key={index} className="bg-white text-xs">
-                        {/* <td className="px-4 py-2 text-center border truncate">
+          <button
+            onClick={downloadPDF}
+            className="px-4 py-2 bg-blue-600 text-white rounded shadow-md hover:bg-blue-700 transition"
+          >
+            Download PDF
+          </button>
+        </div>
+
+        {/* Search Input */}
+        <div className="mb-4">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearch}
+            placeholder="Search by user..."
+            className="border border-gray-300 rounded p-2 w-full text-xs"
+          />
+        </div>
+
+        {/* Table */}
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
+          <div className="overflow-x-auto  rounded-lg shadow">
+            <table className="min-w-full  table-auto border-collapse border border-gray-300">
+              <thead className="bg-gray-200 text-xs">
+                <tr>
+                  {/* <th className="px-4 py-2 text-center border">Session ID</th> */}
+                  <th className="px-4 py-2 text-center border">User</th>
+                  <th className="px-4 py-2 text-center border">Lawyer</th>
+                  <th className="px-4 py-2 text-center border">Booking Date</th>
+                  <th className="px-4 py-2 text-center border">
+                    Transaction ID
+                  </th>
+                  <th className="px-4 py-2 text-center border">
+                    Payment Method
+                  </th>
+                  <th className="px-4 py-2 text-center border">
+                    Transaction Time
+                  </th>
+                  <th className="px-4 py-2 text-center border">
+                    Payment Amount
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {salesData?.length > 0 ? (
+                  salesData.map((row, index) => (
+                    <tr key={index} className="bg-white text-xs">
+                      {/* <td className="px-4 py-2 text-center border truncate">
                           {row.uuid}
                         </td> */}
-                        <td className="px-4 py-2 text-center border">
-                          {row.user_profile.full_name}
-                        </td>
-                        <td className="px-4 py-2 text-center border truncate">
-                          {row.scheduling.lawyer_profile.user.full_name}
-                        </td>
+                      <td className="px-4 py-2 text-center border">
+                        {row.user_profile.full_name}
+                      </td>
+                      <td className="px-4 py-2 text-center border truncate">
+                        {row.scheduling.lawyer_profile.user.full_name}
+                      </td>
 
-                        <td className="px-4 py-2 text-center border truncate">
-                          {formattedDate(row.booked_at)}
-                        </td>
+                      <td className="px-4 py-2 text-center border truncate">
+                        {formattedDate(row.booked_at)}
+                      </td>
 
-                        <td className="px-4 py-2 text-center border truncate">
-                          {row.payment_details.transaction_id}
-                        </td>
-                        <td className="px-4 py-2 text-center border truncate">
-                          {row.payment_details.payment_method}
-                        </td>
-                        <td className="px-4 py-2 text-center border truncate">
-                          {formattedDate(row.payment_details.created_at)}
-                        </td>
-                        <td className="px-4 py-2 text-center border">
-                          {(Number(row.scheduling.price) * 0.1).toFixed(2)}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={8}
-                        className="px-4 truncate  text-xs py-2 text-center border"
-                      >
-                        No sales data available for the selected date range.
+                      <td className="px-4 py-2 text-center border truncate">
+                        {row.payment_details.transaction_id}
+                      </td>
+                      <td className="px-4 py-2 text-center border truncate">
+                        {row.payment_details.payment_method}
+                      </td>
+                      <td className="px-4 py-2 text-center border truncate">
+                        {formattedDate(row.payment_details.created_at)}
+                      </td>
+                      <td className="px-4 py-2 text-center border">
+                        {(Number(row.scheduling.price) * 0.1).toFixed(2)}
                       </td>
                     </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-
-          {/* Pagination */}
-          <div className="flex justify-end gap-1 text-xs items-center mt-4">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-            >
-              Previous
-            </button>
-            <span>
-              Page {currentPage} of {totalPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-            >
-              Next
-            </button>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={8}
+                      className="px-4 truncate  text-xs py-2 text-center border"
+                    >
+                      No sales data available for the selected date range.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
+        )}
+
+        {/* Pagination */}
+        <div className="flex justify-end gap-1 text-xs items-center mt-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          >
+            Previous
+          </button>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+          >
+            Next
+          </button>
         </div>
-      </AdminLayout>
+      </div>
     </>
   );
 };

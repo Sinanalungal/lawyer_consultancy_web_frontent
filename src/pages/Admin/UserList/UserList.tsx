@@ -125,7 +125,7 @@ const AdminUser: React.FC = () => {
   }));
 
   return (
-    <AdminLayout selected="3">
+    <>
       <AdminPageTitle
         title="Users"
         description="Manage user verification statuses and view user details."
@@ -151,7 +151,7 @@ const AdminUser: React.FC = () => {
         onConfirm={handleToggleVerification}
         description={`Are you sure you want to ${selectedUser?.is_verified ? "block" : "unblock"} ${selectedUser?.full_name}?`}
       />
-    </AdminLayout>
+    </>
   );
 };
 

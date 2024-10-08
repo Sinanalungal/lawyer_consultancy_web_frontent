@@ -1,88 +1,120 @@
 import React, { useState, useEffect } from "react";
-import PageTitle from "../../../components/PageTitle/PageTitle";
-import {
-  CaseFinishedApi,
-  getUserAllotedCases,
-} from "../../../services/Case";
+import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router-dom";
+import { Briefcase, ChevronLeft, ChevronRight } from "lucide-react";
+import { CaseFinishedApi, getUserAllotedCases } from "../../../services/Case";
+import PageTitle from "../../../components/PageTitle/PageTitle";
 import SearchForm from "../../../components/Search/Search";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
 
-const CaseCard: React.FC<any> = ({ caseItem, handleCaseFinished }) => {
+interface CaseModel {
+  case_type: string;
+  description: string;
+  user_email: string;
+  user_phone: string;
+  budget: number;
+}
+
+interface SelectedCase {
+  case_model: CaseModel;
+}
+
+interface CaseItem {
+  id: number;
+  status: string;
+  created_at: string;
+  selected_case: SelectedCase;
+}
+
+interface CaseCardProps {
+  caseItem: CaseItem;
+  handleCaseFinished: (id: number) => void;
+}
+
+const CaseCard: React.FC<CaseCardProps> = ({ caseItem, handleCaseFinished }) => {
   const [showFull, setShowFull] = useState<boolean>(false);
 
-  const formatDate = (dateString: string) => {
-    const options: Intl.DateTimeFormatOptions = {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    };
+  const formatDate = (dateString: string): string => {
+    const options: Intl.DateTimeFormatOptions = { year: "numeric", month: "long", day: "numeric" };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   return (
-    <div className="bg-white shadow-md rounded-lg p-6 border border-gray-200 transition-transform transform hover:scale-105 duration-200 ease-in-out">
-      <div className="flex justify-between max-sm:flex-col gap-1 items-center mb-2">
-        <h3 className="text-md font-semibold truncate text-gray-800">
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="bg-white shadow-lg rounded-xl p-6 border border-gray-200 hover:shadow-xl transition-all duration-300"
+    >
+      <div className="flex justify-between items-center mb-4 max-[400px]:grid">
+        <h3 className="text-lg font-semibold max-[400px]:text-base text-gray-800">
           {caseItem.selected_case.case_model.case_type.toUpperCase()}
         </h3>
-
-        <div className="flex gap-1">
+        <div className="flex items-center gap-2 max-[400px]:grid">
           <span
             className={`${
               caseItem.status === "Ongoing"
                 ? "bg-green-100 text-green-600"
                 : "bg-red-100 text-red-600"
-            } text-xs px-3 py-1 rounded-full font-medium`}
+            } text-xs px-3 py-1 text-center rounded-full font-medium`}
           >
             {caseItem.status}
           </span>
           <button
             onClick={() => handleCaseFinished(caseItem.id)}
-            className="text-white rounded bg-slate-800 px-2 text-xs hover:underline"
+            className="bg-slate-800 text-white rounded-full px-3 py-1 text-xs hover:bg-slate-700 transition-colors duration-300"
           >
-            Finished
+            Mark as Finished
           </button>
         </div>
       </div>
 
-      <p
-        className={`text-xs text-gray-500 cursor-pointer ${
-          !showFull && "truncate"
-        }`}
-        onClick={() => setShowFull(!showFull)}
-      >
-        Description: {caseItem.selected_case.case_model.description}
-      </p>
-      <strong><i><p className="text-xs text-gray-500">
-        User Email: {caseItem.selected_case.case_model.user_email}
-      </p></i></strong>
-      <strong><i><p className="text-xs text-gray-500">
-        User Phone: {caseItem.selected_case.case_model.user_phone}
-      </p></i></strong>
-      <p className="text-xs text-gray-500">
-        Budget: {caseItem.selected_case.case_model.budget}
-      </p>
-      <p className="text-xs text-gray-500 mb-4">
-        Applied on: {formatDate(caseItem.created_at)}
-      </p>
-    </div>
+      <div className="space-y-2 ">
+        <p
+          className={`text-sm max-[400px]:text-xs text-gray-600 cursor-pointer ${
+            !showFull && "line-clamp-2"
+          }`}
+          onClick={() => setShowFull(!showFull)}
+        >
+          <span className="font-semibold max-[400px]:text-xs">Description:</span> {caseItem.selected_case.case_model.description}
+        </p>
+        <p className="text-sm text-gray-600 truncate max-[400px]:text-xs">
+          <span className="font-semibold ">User Email:</span> {caseItem.selected_case.case_model.user_email}
+        </p>
+        <p className="text-sm text-gray-600 truncate max-[400px]:text-xs">
+          <span className="font-semibold">User Phone:</span> {caseItem.selected_case.case_model.user_phone}
+        </p>
+        <p className="text-sm text-gray-600 truncate max-[400px]:text-xs">
+          <span className="font-semibold">Budget:</span> ${caseItem.selected_case.case_model.budget}
+        </p>
+        <p className="text-sm text-gray-600 truncate max-[400px]:text-xs">
+          <span className="font-semibold">Applied on:</span> {formatDate(caseItem.created_at)}
+        </p>
+      </div>
+    </motion.div>
   );
 };
 
+interface CasesData {
+  results: CaseItem[];
+  totalPages: number;
+}
+
 const LawyerCaseManagement: React.FC = () => {
-  const [cases, setCases] = useState<any[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [status, setStatus] = useState("Ongoing");
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [cases, setCases] = useState<CaseItem[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [status, setStatus] = useState<string>("Ongoing");
+  const [showConfirmationModal, setShowConfirmationModal] = useState<boolean>(false);
   const [selectedCaseId, setSelectedCaseId] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchCases = async () => {
       try {
-        const casesData = await getUserAllotedCases(currentPage, searchTerm, status);
+        const casesData: CasesData = await getUserAllotedCases(currentPage, searchTerm, status);
         setCases(casesData.results);
         setTotalPages(casesData.totalPages);
       } catch (error) {
@@ -113,74 +145,91 @@ const LawyerCaseManagement: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="bg-gray-100 min-h-screen">
       <PageTitle
         title="Case Management"
         description="Manage and review cases assigned to you."
       />
-      <div className="w-full -mt-8 flex items-center flex-wrap max-[400px]:justify-center max-[400px]:gap-2 justify-end sm:px-10">
-        <Link to={"../available-cases"}>
-          <div className="bg-slate-900 text-white text-[10px] rounded-md font-medium py-3 px-3">
-            Available Cases
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+          <Link
+            to="../available-cases"
+            className="bg-slate-800 text-white rounded-full px-6 py-2 text-sm font-medium hover:bg-slate-700 transition-colors duration-300 flex items-center space-x-2 mb-4 sm:mb-0"
+          >
+            <Briefcase size={18} />
+            <span>Available Cases</span>
+          </Link>
+          <div className="flex items-center space-x-4 max-[400px]:flex-col-reverse">
+            <SearchForm search={searchTerm} setSearch={setSearchTerm} />
+            <select
+              value={status}
+              onChange={(e) => setStatus(e.target.value)}
+              className="px-4 py-2 max-[400px]:text-xs border border-gray-300 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-slate-500"
+            >
+              <option value="Ongoing">Ongoing</option>
+              <option value="Completed">Completed</option>
+            </select>
           </div>
-        </Link>
-      </div>
-      <div className="sm:px-10 flex items-center justify-end gap-1">
-        <SearchForm search={searchTerm} setSearch={setSearchTerm} />
-        <select
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          className=" px-1 py-2 border border-gray-300 text-xs rounded-xl"
-        >
-          <option value="Ongoing">Ongoing</option>
-          <option value="Completed">Completed</option>
-        </select>
-      </div>
-      <div className="p-6 ">
-        {cases.length > 0 ? (
-          <div className="grid grid-cols-1 gap-2">
-            {cases.map((caseItem) => (
-              <CaseCard key={caseItem.id} caseItem={caseItem} handleCaseFinished={handleCaseFinished} />
-            ))}
-          </div>
-        ) : (
-          <p className="text-center text-gray-600">No cases available.</p>
-        )}
-        <div className="flex justify-end gap-3 text-xs items-center mt-4">
+        </div>
+
+        <AnimatePresence>
+          {cases.length > 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            >
+              {cases.map((caseItem) => (
+                <CaseCard
+                  key={caseItem.id}
+                  caseItem={caseItem}
+                  handleCaseFinished={handleCaseFinished}
+                />
+              ))}
+            </motion.div>
+          ) : (
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center text-gray-600 py-12"
+            >
+              No cases available.
+            </motion.p>
+          )}
+        </AnimatePresence>
+
+        <div className="flex justify-center items-center mt-8">
           <button
-            className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
+            className="px-4 py-2 text-xs bg-slate-200 rounded-full hover:bg-slate-300 transition-colors duration-300 flex items-center"
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
           >
-            Previous
+            <ChevronLeft size={18} />
+            <span className="ml-1 max-[400px]:hidden">Previous</span>
           </button>
-          <span className="text-gray-600">
-            {currentPage} of {totalPages}
+          <span className="mx-4 text-xs text-gray-600">
+            Page {currentPage} of {totalPages}
           </span>
           <button
-            className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
-            onClick={() =>
-              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-            }
+            className="px-4 py-2 bg-slate-200 text-xs rounded-full hover:bg-slate-300 transition-colors duration-300 flex items-center"
+            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
-            Next
+            <span className="mr-1 max-[400px]:hidden">Next</span>
+            <ChevronRight size={18} />
           </button>
         </div>
       </div>
-      
-      {showConfirmationModal && (
-        <ConfirmationModal
-          isOpen={showConfirmationModal}
-          title="Are you sure you want to finish this case?"
-          description="You won't be able to revert this action."
-          // confirmText="Yes, finish it!"
-          // cancelText="Cancel"
-          onConfirm={confirmFinishCase}
-          onCancel={() => setShowConfirmationModal(false)}
-        />
-      )}
-    </>
+
+      <ConfirmationModal
+        isOpen={showConfirmationModal}
+        title="Finish Case"
+        description="Are you sure you want to mark this case as finished? This action cannot be undone."
+        onConfirm={confirmFinishCase}
+        onCancel={() => setShowConfirmationModal(false)}
+      />
+    </div>
   );
 };
 

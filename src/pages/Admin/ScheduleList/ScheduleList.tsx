@@ -2,7 +2,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
 import ItemTable from "../../../components/Table/ItemTable";
-import { getSchedulesForAdminSide, updateSchedulingStatusAdmin } from "../../../services/ScheduleSession";
+import {
+  getSchedulesForAdminSide,
+  updateSchedulingStatusAdmin,
+} from "../../../services/ScheduleSession";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
 
 interface LawyerProfile {
@@ -28,10 +31,13 @@ const ScheduleList: React.FC = () => {
   const [pageNum, setPageNum] = useState<number>(1);
   const [schedulings, setSchedulings] = useState<SchedulingItem[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
-  const [isListedFilter, setIsListedFilter] = useState<string | null>('true');
-  
+  const [isListedFilter, setIsListedFilter] = useState<string | null>("true");
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedScheduling, setSelectedScheduling] = useState<SchedulingItem | null>(null);
+  const [
+    selectedScheduling,
+    setSelectedScheduling,
+  ] = useState<SchedulingItem | null>(null);
 
   useEffect(() => {
     fetchSchedulings();
@@ -47,7 +53,11 @@ const ScheduleList: React.FC = () => {
 
   const fetchSchedulings = async () => {
     try {
-      const data = await getSchedulesForAdminSide(pageNum, search, isListedFilter);
+      const data = await getSchedulesForAdminSide(
+        pageNum,
+        search,
+        isListedFilter
+      );
       setSchedulings(data.results);
       setTotalPages(Math.ceil(data.count / 2));
     } catch (error) {
@@ -119,7 +129,7 @@ const ScheduleList: React.FC = () => {
   };
 
   return (
-    <AdminLayout selected="6">
+    <>
       <AdminPageTitle
         title="All Schedulings"
         description="View and manage all schedulings."
@@ -147,7 +157,7 @@ const ScheduleList: React.FC = () => {
         onConfirm={confirmAction}
         onCancel={() => setIsModalOpen(false)}
       />
-    </AdminLayout>
+    </>
   );
 };
 

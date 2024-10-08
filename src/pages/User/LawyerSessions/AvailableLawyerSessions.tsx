@@ -1,6 +1,7 @@
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import { useState, useEffect } from "react";
 import {
+  isToday, isBefore, isAfter,
   format,
   addDays,
   endOfMonth,
@@ -19,6 +20,7 @@ import Modal from "../../../components/Modal/Modal";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 import { useToast } from "../../../components/Toast/ToastManager";
+import { AxiosResponse } from "axios";
 
 interface AvailableLawyerSessionsProps {}
 
@@ -30,7 +32,7 @@ const SessionScheduler: React.FC = () => {
   const [lawyerId, setLawyerId] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<any | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [paymentModal,setPaymentModal] = useState<boolean>(false);
+  const [paymentModal, setPaymentModal] = useState<boolean>(false);
   const { setLoader } = useLoader();
   const { addToast } = useToast();
 
@@ -123,6 +125,7 @@ const SessionScheduler: React.FC = () => {
         const { error } = await stripe.redirectToCheckout({
           sessionId: result.sessionId,
         });
+        
 
         if (error) {
           console.error("Error redirecting to checkout:", error);
@@ -137,26 +140,68 @@ const SessionScheduler: React.FC = () => {
     }
   };
 
-  const handleWalletPayment = async () => {
-    if (selectedSession && selectedDate) {
-      try {
-        const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
-        const result = await bookAppointmentUsingWallet(
-          selectedSession.uuid,
-          selectedDateStr
+interface WalletApiResponse {
+  success?: string;
+  checkout_id: string;
+}
+
+const handleWalletPayment = async () => {
+  if (selectedSession && selectedDate) {
+    try {
+      const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
+
+      // Specify the type for Axios response
+      const result: AxiosResponse<WalletApiResponse> = await bookAppointmentUsingWallet(
+        selectedSession.uuid,
+        selectedDateStr
+      );
+
+      console.log(result, 'this is the result');
+
+      // Check if the status is 202
+      if (result.status === 202) {
+        addToast("success", "idea is working");
+
+        // Check Stripe Client ID
+        if (!process?.env.VITE_CLIENT_ID) {
+          throw new Error("Something wrong with Stripe key");
+        }
+
+        // Initialize Stripe with your public key
+        const stripe = await loadStripe(
+          "pk_test_51PMjrqSD4LlFpJPegNLUNIVDRjJmeaF1jW7lBzhnEQHgvmchbzkNn4pVdStSwROBEnbXvF2BpC4reOqUvHS1L3Yb00sfPbm63y"
         );
-        
-        navigate(`../../../user/available-sessions/?success=${result.checkout_id}`)
-      } catch (error) {
-        console.error("Error booking appointment:", error);
-        addToast('danger','Error booking Appointment')
-        // alert("Failed to book appointment. Please try again.");
+
+
+        if (!stripe) {
+          throw new Error("Failed to load Stripe.");
+        }
+
+        // Redirect to checkout
+        const { error } = await stripe.redirectToCheckout({
+          sessionId: result.data.checkout_id, // Accessing checkout ID correctly
+          
+        });
+
+        if (error) {
+          console.error("Error redirecting to checkout:", error);
+          alert("Failed to redirect to checkout. Please try again.");
+        }
+      } else {
+        navigate(
+          `../../../../user/available-sessions/success?checkout_id=${result.data.checkout_id}`
+        );
       }
-    } else {
-      addToast('info','Please select a session and date.')
-      // alert("Please select a session and date.");
+
+    } catch (error) {
+      console.error("Error booking appointment:", error);
+      addToast("danger", "Error booking Appointment");
     }
-  };
+  } else {
+    addToast("info", "Please select a session and date.");
+  }
+};
+
 
   const handleNextMonth = () => {
     setCurrentMonth(addDays(endOfMonth(currentMonth), 1));
@@ -181,17 +226,30 @@ const SessionScheduler: React.FC = () => {
       const isSelected =
         selectedDate &&
         format(day, "yyyy-MM-dd") === format(selectedDate, "yyyy-MM-dd");
+    
+      const buttonClassName = isSelected
+        ? "bg-slate-600 text-white"
+        : (isBefore(day, new Date())&&(!isToday(day)))
+        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+        : "hover:bg-slate-200"; 
+    
       days.push(
         <motion.button
           key={i}
-          onClick={() => handleDateSelect(day)}
-          className={`w-full h-10 rounded-full text-xs flex items-center justify-center ${
-            isSelected ? "bg-slate-600 text-white" : "hover:bg-slate-200"
-          }`}
-          whileHover={{ scale: 1.1 }}
+          onClick={() => {
+            // Allow selection for today and future dates only
+            if (!isBefore(day, new Date())|| isToday(day) ){
+              handleDateSelect(day);
+            }else{
+              addToast('info',"select valid dates")
+            }
+          }}
+          className={`w-full h-10 rounded-full text-xs flex items-center justify-center ${buttonClassName}`}
+          whileHover={{ scale: isBefore(day, new Date()) ? 1 : 1.1 }} // Only scale up on non-past dates
           whileTap={{ scale: 0.9 }}
           animate={{ scale: isSelected ? 1.2 : 1 }}
           transition={{ type: "spring", stiffness: 300 }}
+          disabled={isBefore(day, new Date()) && !isToday(day)} // Disable button for past dates, but allow today
         >
           {format(day, "d")}
         </motion.button>
@@ -279,9 +337,9 @@ const SessionScheduler: React.FC = () => {
             </div>
           </AnimatePresence>
           {selectedSession && (
-            <motion.button 
+            <motion.button
               className="w-full mt-6 py-3 px-6 bg-slate-800 text-white rounded-lg text-sm font-bold tracking-wide uppercase hover:bg-slate-600 transition-colors ease-in-out"
-              onClick={()=>setPaymentModal(true)}
+              onClick={() => setPaymentModal(true)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               initial={{ opacity: 0, y: 10 }}
@@ -293,34 +351,39 @@ const SessionScheduler: React.FC = () => {
           )}
         </motion.div>
       </motion.div>
-          <Modal modalOpen={paymentModal} setModalOpen={()=>setPaymentModal(!paymentModal)} children={
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <Modal
+        modalOpen={paymentModal}
+        setModalOpen={() => setPaymentModal(!paymentModal)}
+        children={
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-              <h2 className="text-2xl font-bold text-center mb-6">Select Payment Method</h2>
-              
+              <h2 className="text-2xl font-bold text-center mb-6">
+                Select Payment Method
+              </h2>
+
               <div className="flex justify-center space-x-4">
                 <button
                   onClick={() => {
-                    handleConfirm()
+                    handleConfirm();
                   }}
                   className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md"
                 >
                   Pay with Stripe
                 </button>
-                
+
                 <button
                   onClick={() => {
-                    handleWalletPayment()
+                    handleWalletPayment();
                   }}
                   className="px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-md"
                 >
                   Pay with Wallet
                 </button>
               </div>
-      
+
               <div className="flex justify-center mt-6">
                 <button
-                  onClick={()=>setPaymentModal(false)}
+                  onClick={() => setPaymentModal(false)}
                   className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-md"
                 >
                   Cancel
@@ -328,55 +391,9 @@ const SessionScheduler: React.FC = () => {
               </div>
             </div>
           </div>
-          }/>
-      {modalOpen && (
-        <Modal
-          children={
-            <div className="p-4 text-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="size-20 mx-auto mb-2"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z"
-                />
-              </svg>
-                                          
-              {/* <Lottie
-                animationData={successAnimation}
-                loop={false}
-                autoplay={true}
-                style={{ width: 150, height: 150 }}
-                className="mx-auto"
-              /> */}    
-              <h2 className="text-lg font-bold mb-4">Purchased Successfully</h2>
-              <p className="text-sm">
-                Your session has been booked successfully.
-              </p>
-              <button
-                onClick={() => {
-                  setModalOpen(false);
-                  navigate(-5);
-                }}
-                className="mt-4 bg-slate-800 text-white py-2 px-4 rounded-lg"
-              >
-                Close
-              </button>
-            </div>
-          }
-          modalOpen={modalOpen}
-          setModalOpen={() => {
-            setModalOpen(false);
-            navigate(-5);
-          }}
-        />
-      )}
+        }
+      />
+     
     </>
   );
 };

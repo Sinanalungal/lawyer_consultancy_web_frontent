@@ -8,7 +8,6 @@ const LawyerSessionManage: React.FC = () => {
 
   const renderContentPage = () => {
     switch (activeTab) {
-      
       case "scheduling":
         return (
           <>
@@ -21,7 +20,7 @@ const LawyerSessionManage: React.FC = () => {
             <Scheduled />
           </>
         );
-     
+
       default:
         return null;
     }
@@ -30,27 +29,26 @@ const LawyerSessionManage: React.FC = () => {
   return (
     <div className="mx-auto  py-10 px-4">
       <AdminPageTitle
-        title="APPOINTMENT"
-        description="Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum has been the industry standard dummy text ever since the 1500s"
+        title="SCHEDULES"
+        description="Lorem Ipsum is simply dummy text of the printing and typesetting industry."
       />
       <div className="mb-8 flex justify-center">
-  <nav className="flex space-x-2 border rounded-full p-1 bg-white shadow-md">
-    {["scheduled", "scheduling"].map((tab) => (
-      <button
-        key={tab}
-        className={`px-4 py-2 max-sm:text-xs font-medium text-sm rounded-full transition ${
-          activeTab === tab
-            ? "bg-slate-800 text-white shadow-md"
-            : "text-gray-600"
-        }`}
-        onClick={() => setActiveTab(tab)}
-      >
-        {tab.charAt(0).toUpperCase() + tab.slice(1).replace(/_/g, " ")}
-      </button>
-    ))}
-  </nav>
-</div>
-
+        <nav className="flex space-x-2 border rounded-full p-1 bg-white shadow-md">
+          {["scheduled", "scheduling"].map((tab) => (
+            <button
+              key={tab}
+              className={`px-4 py-2 max-sm:text-xs font-medium text-sm rounded-full transition ${
+                activeTab === tab
+                  ? "bg-slate-800 text-white shadow-md"
+                  : "text-gray-600"
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1).replace(/_/g, " ")}
+            </button>
+          ))}
+        </nav>
+      </div>
 
       <div className="mt-6  bg-white  rounded-lg">{renderContentPage()}</div>
     </div>
@@ -79,7 +77,7 @@ const Schedules: React.FC = () => {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [filteredSchedules, setFilteredSchedules] = useState<Schedule[]>([]);
   const { addToast } = useToast();
-  
+
   useEffect(() => {
     const fetchSchedules = async () => {
       try {
@@ -274,14 +272,6 @@ const Scheduling: React.FC = () => {
         .required("Price is required")
         .min(1, "Price must be greater than 0")
         .max(1000, "Price must be less than or equal to 1000"),
-      // referenceUntil: Yup.date()
-      //   .required("Reference Until date is required")
-      //   .when(
-      //     "date",
-      //     (date, schema) =>
-      //       date &&
-      //       schema.min(date, "Reference Until date must be after Start date")
-      //   ),
     }),
     onSubmit: async (values) => {
       const formData = new FormData();
@@ -289,16 +279,15 @@ const Scheduling: React.FC = () => {
       formData.append("start_time", values.time);
       formData.append("end_time", values.endTime);
       formData.append("price", values.price);
-      // formData.append("reference_until", values.referenceUntil);
 
       try {
         const result = await addSchedule(formData);
         console.log("Schedule added successfully:", result);
         addToast("success", "Schedule added successfully");
         formik.resetForm();
-      } catch (error: any) {
+      } catch (error:any) {
         console.error("Failed to add schedule:", error);
-        if (error.response.data.detail){
+        if (error.response.data.detail) {
           addToast("danger", error.response.data.detail);
         }
       }
@@ -422,36 +411,7 @@ const Scheduling: React.FC = () => {
                 ) : null}
               </div>
             </div>
-            {/* <div className="w-full px-3 sm:w-1/2">
-              <div className="mb-5">
-                <label
-                  htmlFor="referenceUntil"
-                  className="mb-3 block text-xs font-medium text-[#07074D]"
-                >
-                  Reference Until
-                </label>
-                <input
-                  type="date"
-                  name="referenceUntil"
-                  id="referenceUntil"
-                  value={formik.values.referenceUntil}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  className={`w-full rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-xs font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md ${
-                    formik.touched.referenceUntil &&
-                    formik.errors.referenceUntil
-                      ? "border-red-500"
-                      : ""
-                  }`}
-                />
-                {formik.touched.referenceUntil &&
-                formik.errors.referenceUntil ? (
-                  <div className="text-red-500 text-xs">
-                    {formik.errors.referenceUntil}
-                  </div>
-                ) : null}
-              </div>
-            </div> */}
+            
           </div>
 
           <div>
@@ -480,7 +440,6 @@ const Scheduled: React.FC = () => {
         setSchedules(data);
       } catch (error) {
         console.error(error);
-        // addToast('danger', 'Failed to fetch schedules.');
       }
     };
     fetchSchedules();
@@ -489,7 +448,7 @@ const Scheduled: React.FC = () => {
   const handleCancel = async (uuid: number) => {
     try {
       console.log(uuid);
-      
+
       await cancelSchedule(uuid);
       setSchedules((prev) => prev.filter((schedule) => schedule.id !== uuid));
       addToast("success", "Schedule canceled successfully.");
@@ -501,7 +460,7 @@ const Scheduled: React.FC = () => {
   return (
     <>
       <div className="py-5 rounded-xl">
-        {schedules.map((schedule) => (
+        {schedules.length > 0? schedules.map((schedule) => (
           <div
             key={schedule.uuid}
             className="max-w-md mx-auto border bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-3"
@@ -512,9 +471,9 @@ const Scheduled: React.FC = () => {
                   <p className="block mt-1 text-sm leading-tight font-medium text-gray-800">
                     Time: {schedule.start_time} - {schedule.end_time}
                   </p>
-                  
+
                   <p className="block mt-2 leading-tight font-bold text-gray-800">
-                  ₹{schedule.price}
+                    ₹{schedule.price}
                   </p>
                   <p className="mt-2 text-gray-500 text-xs">
                     <i>Date:&nbsp;{schedule.date}</i>
@@ -523,15 +482,19 @@ const Scheduled: React.FC = () => {
                 </div>
                 <button
                   className="max-sm:mt-5 max-sm:w-full px-4 py-3 border border-transparent text-xs font-medium rounded-md text-white bg-red-700 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                  onClick={() =>{console.log(schedule.uuid,'this si the uuid');
-                   handleCancel(schedule.id )}}
+                  onClick={() => {
+                    console.log(schedule.uuid, "this si the uuid");
+                    handleCancel(schedule.id);
+                  }}
                 >
                   Cancel Schedule
                 </button>
               </div>
             </div>
           </div>
-        ))}
+        )):<div className="text-xs justify-center w-full min-h-[150px] text-gray-500 items-center flex">
+          <p>No Scheduled Session Available</p>
+          </div>}
       </div>
     </>
   );

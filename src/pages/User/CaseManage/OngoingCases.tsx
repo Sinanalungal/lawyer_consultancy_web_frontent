@@ -46,7 +46,11 @@ const OngoingCases: React.FC = () => {
     const fetchCases = async () => {
       setLoader(true);
       try {
-        const casesData = await getUserAllotedCases(currentPage, searchTerm, status);
+        const casesData = await getUserAllotedCases(
+          currentPage,
+          searchTerm,
+          status
+        );
         setCases(casesData.results);
         setTotalPages(casesData.totalPages);
       } catch (error) {
@@ -91,14 +95,16 @@ const OngoingCases: React.FC = () => {
         />
 
         {activeTab === "appliedCases" && (
-          <section id="applied-cases" className="mb-12 max-w-5xl mx-auto">
-            <div className="sm:px-10 flex items-center justify-end gap-2">
+          <section id="applied-cases" className="mb-12 max-w-6xl mx-auto">
+            <div className="sm:px-6 flex items-center justify-between gap-4 mb-2">
               <SearchForm search={searchTerm} setSearch={setSearchTerm} />
 
               <select
-                className="border border-gray-300 rounded-2xl px-2 text-xs py-3 text-gray-700"
+                className="shadow text-xs cursor-pointer border-white rounded-lg px-8 flex py-2 text-gray-700 focus:outline-none focus:ring-0 focus:border-transparent"
                 value={status}
-                onChange={(e) => setStatus(e.target.value as "Ongoing" | "Completed")}
+                onChange={(e) =>
+                  setStatus(e.target.value as "Ongoing" | "Completed")
+                }
               >
                 <option value="Ongoing">Ongoing</option>
                 <option value="Completed">Completed</option>
@@ -106,89 +112,105 @@ const OngoingCases: React.FC = () => {
             </div>
 
             <motion.div
-              className="bg-white p-6 rounded-lg overflow-x-scroll shadow-md border border-gray-200"
+              className="bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <table className="w-full border table-auto border-collapse bg-white">
-                <thead>
-                  <tr className="bg-gray-50 border-b-2 text-sm">
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Case Type</th>
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Status</th>
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Reference Until</th>
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Lawyer</th>
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium">Details</th>
-                    <th className="py-3 px-4 text-center text-gray-600 font-medium"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cases.length > 0 ? (
-                    cases.map((caseItem) => (
-                      <tr key={caseItem.id} className="hover:bg-gray-50 text-xs">
-                        <td className="py-4 text-center px-4 text-gray-800">
-                          {caseItem.selected_case.case_model.case_type}
-                        </td>
-                        <td className="py-4 px-4 text-center">
-                          <span
-                            className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full ${
-                              caseItem.status === "Ongoing"
-                                ? "bg-yellow-100 text-yellow-900"
-                                : "bg-green-100 text-green-800"
-                            }`}
-                          >
-                            {caseItem.status}
-                          </span>
-                        </td>
-                        <td className="py-4 px-4 text-center text-gray-600">
-                          {caseItem.selected_case.case_model.reference_until}
-                        </td>
-                        <td className="py-4 px-4 text-center text-gray-600">
-                          {caseItem.selected_case.lawyer.user.full_name}
-                        </td>
-                        <td
-                          onClick={() => {
-                            setSelectedCase(caseItem);
-                            setViewDetailsModal(true);
-                          }}
-                          className="py-4 px-4 text-center text-blue-800 cursor-pointer"
-                        >
-                          View Details
-                        </td>
-                        {status=='Ongoing'&&<td className="py-4 px-4 text-center space-x-4">
-                          <button
-                            onClick={() => openModal(caseItem.id)}
-                            className="text-white rounded bg-slate-800 p-2 hover:underline"
-                          >
-                            Finish
-                          </button>
-                        </td>}
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan={6} className="text-center py-4 text-gray-600">
-                        No cases available.
-                      </td>
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                      <th className="px-6 py-3">Case Type</th>
+                      <th className="px-6 py-3">Status</th>
+                      <th className="px-6 py-3">Reference Until</th>
+                      <th className="px-6 py-3">Lawyer</th>
+                      <th className="px-6 py-3">Details</th>
+                      <th className="px-6 py-3">Actions</th>
                     </tr>
-                  )}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {cases.length > 0 ? (
+                      cases.map((caseItem) => (
+                        <tr
+                          key={caseItem.id}
+                          className="hover:bg-gray-50 transition-colors duration-200"
+                        >
+                          <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-800">
+                            {caseItem.selected_case.case_model.case_type}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${
+                                caseItem.status === "Ongoing"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-green-100 text-green-800"
+                              }`}
+                            >
+                              {caseItem.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-600">
+                            {caseItem.selected_case.case_model.reference_until}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-600">
+                            {caseItem.selected_case.lawyer.user.full_name}
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-xs">
+                            <button
+                              onClick={() => {
+                                setSelectedCase(caseItem);
+                                setViewDetailsModal(true);
+                              }}
+                              className="text-blue-600 hover:text-blue-900 transition-colors duration-200"
+                            >
+                              View Details
+                            </button>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-[13px]">
+                            {status === "Ongoing" && (
+                              <button
+                                onClick={() => openModal(caseItem.id)}
+                                className="text-white bg-slate-800 hover:bg-slate-700 px-3 py-1 rounded transition-colors duration-200"
+                              >
+                                Finish
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={6}
+                          className="px-6 py-4 text-center text-sm text-gray-500"
+                        >
+                          No cases available.
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
 
-              <div className="flex justify-end gap-3 text-xs items-center mt-4">
+              <div className="flex justify-end items-center bg-gray-50 px-6 py-3 border-t border-gray-200">
                 <button
-                  className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
-                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-3"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
                   disabled={currentPage === 1}
                 >
                   Previous
                 </button>
-                <span className="text-gray-600">
-                  {currentPage} of {totalPages}
+                <span className="text-xs text-gray-700">
+                  Page {currentPage} of {totalPages}
                 </span>
                 <button
-                  className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
-                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  className="ml-3 px-4 py-2 border border-gray-300 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                  }
                   disabled={currentPage === totalPages}
                 >
                   Next
@@ -199,18 +221,31 @@ const OngoingCases: React.FC = () => {
         )}
 
         {/* Modal for Case Details */}
-        <Modal modalOpen={viewDetailsModal} setModalOpen={() => setViewDetailsModal(false)}>
+        <Modal
+          modalOpen={viewDetailsModal}
+          setModalOpen={() => setViewDetailsModal(false)}
+        >
           {selectedCase && (
             <div className="p-4 space-y-4">
               <h3 className="text-xl font-semibold text-gray-800">
                 Case Type: {selectedCase.selected_case.case_model.case_type}
               </h3>
-              <p className="text-gray-600">Description: {selectedCase.selected_case.case_model.description}</p>
-              <p className="text-gray-600">Budget: ₹{selectedCase.selected_case.case_model.budget}</p>
+              <p className="text-gray-600">
+                Description: {selectedCase.selected_case.case_model.description}
+              </p>
+              <p className="text-gray-600">
+                Budget: ₹{selectedCase.selected_case.case_model.budget}
+              </p>
               <p className="text-gray-600">Status: {selectedCase.status}</p>
-              <h4 className="text-lg font-semibold text-gray-800 mt-4">Lawyer Details:</h4>
-              <p className="text-gray-600">Name: {selectedCase.selected_case.lawyer.user.full_name}</p>
-              <p className="text-gray-600">Experience: {selectedCase.selected_case.lawyer.experience} years</p>
+              <h4 className="text-lg font-semibold text-gray-800 mt-4">
+                Lawyer Details:
+              </h4>
+              <p className="text-gray-600">
+                Name: {selectedCase.selected_case.lawyer.user.full_name}
+              </p>
+              <p className="text-gray-600">
+                Experience: {selectedCase.selected_case.lawyer.experience} years
+              </p>
             </div>
           )}
         </Modal>

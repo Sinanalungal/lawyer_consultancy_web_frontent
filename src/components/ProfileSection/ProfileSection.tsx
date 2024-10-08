@@ -11,7 +11,7 @@ const ProfileSection: React.FC = () => {
   return (
     <section className="relative pt-20">
       {/* Top Background Section */}
-      <div className="w-full absolute bg-gradient-to-r  from-blue-500 via-indigo-500 to-blue-700 top-0 left-0 z-0 h-56 object-cover" >
+      <div className="w-full absolute bg-[#1e266e] top-0 left-0 z-0 h-56 object-cover" >
       <h2 className="text-3xl font-semibold pb-6 pt-10 max-sm:text-xl text-white text-center">
             USER PROFILE
           </h2>
@@ -84,13 +84,13 @@ const ProfileSection: React.FC = () => {
             {/* Action Buttons */}
             <div className="flex items-center gap-3 sm:gap-6">
               <Link to="/user/edit-profile">
-                <button className="py-2 px-4 sm:py-3 sm:px-6 rounded-full bg-indigo-600 text-white font-semibold text-xs sm:text-base shadow-lg transition-all duration-500 hover:bg-indigo-700">
+                <button className="py-2 px-4 sm:py-3 sm:px-6 rounded-full bg-[#1e266e] text-white font-semibold text-xs sm:text-base shadow-lg transition-all duration-500 hover:bg-indigo-700">
                   Edit Profile
                 </button>
               </Link>
 
               {/* Notification Icon */}
-              <button className="relative py-2 px-4 sm:py-3 sm:px-6 rounded-full bg-gray-200 text-gray-700 font-semibold text-xs sm:text-base shadow-lg transition-all duration-500 hover:bg-gray-300">
+              {/* <button className="relative py-2 px-4 sm:py-3 sm:px-6 rounded-full bg-gray-200 text-gray-700 font-semibold text-xs sm:text-base shadow-lg transition-all duration-500 hover:bg-gray-300">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="currentColor"
@@ -104,7 +104,7 @@ const ProfileSection: React.FC = () => {
                   />
                 </svg>
                 <span className="absolute top-0 right-0 w-2.5 h-2.5 rounded-full bg-red-500"></span>
-              </button>
+              </button> */}
             </div>
           </div>
 

@@ -226,7 +226,7 @@ const AddBlog: React.FC = () => {
   return (
     <>
       {role == "admin" ? (
-        <AdminLayout selected="4">
+        <>
           <AdminPageTitle
             title={isEditing ? "Update Blog" : "Add Blog"}
             description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,"
@@ -304,7 +304,7 @@ const AddBlog: React.FC = () => {
               </div>
             </form>
           </div>
-        </AdminLayout>
+        </>
       ) : (
         <>
           <AdminPageTitle

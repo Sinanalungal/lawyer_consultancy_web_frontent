@@ -1,40 +1,56 @@
 import React from "react";
 import { Lawyer } from "../../types";
 import { motion } from "framer-motion";
-
+import './LawyerListingCard.css'
 interface LawyerProps {
   lawyer: Lawyer;
 }
 
 const LawyerListingCard: React.FC<LawyerProps> = ({ lawyer }) => (
-  
   <motion.div
-  initial={{ opacity: 0, scale: 0.9 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ duration: 0.3 }} 
-  className="w-[230px] relative  rounded-md shadow bg-white p-2 cursor-pointer ">
-{/* <p className="absolute top-44 right-2 bg-gray-800 rounded-l-full rounded-t-full p-2 font-medium text-xs text-gray-400">⭐4</p> */}
-    {lawyer.user_profile_image?(<img
-      src={lawyer?.user_profile_image}
-      alt="Profile Image"
-      className="h-[200px] text-xs object-cover rounded w-[230px]"
-    />):(<img
-      src="https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
-      alt="Profile Image"
-      className="h-[200px] text-xs rounded object-cover w-[230px]"
-    />)}
-    <div className="py-3 space-y-1">
-      <p className="truncate   text-center text-lg font-bold">
-        {lawyer.user_full_name.toLocaleUpperCase()}
+    initial={{ opacity: 0, x: -50 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ duration: 0.3 }}
+    className="flex flex-col items-center cursor-pointer mx-auto p-4 max-sm:w-full mb-12  sm:w-[400px] transition-all duration-300"
+  >
+    {/* Circular Profile Image */}
+    <div className="mb-4 flex justify-center items-center rounded-full overflow-hidden border border-gray-300 w-[220px] h-[220px]">
+      {lawyer.user_profile_image ? (
+        <img
+          src={lawyer.user_profile_image}
+          alt="profile Image"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <img
+          src="/justice-law-design.png"
+          alt="default Profile Image"
+          className="w-full h-full object-cover"
+        />
+      )}
+    </div>
+
+    {/* Lawyer Details */}
+    <div className="flex flex-col items-center">
+      <h2 className="text-lg max-sm:text-xs font-bold w-[95%] text-gray-800 truncate">
+        Adv. {lawyer.user_full_name.toUpperCase()}
+      </h2>
+      
+      <p className="text-sm text-gray-700 grid  mt-1">
+        <span className="mx-auto"> {lawyer.languages.map((lang) => lang.name).join(", ")}</span>
       </p>
-      <p className="h-8 text-center font-medium overflow-hidden text-[10px]  text-gray-600 ">
-        Specialized in departments include {lawyer.departments.map(department => department.department_name).join(", ")}      </p>
-      <div className="flex flex-col justify-between font-medium items-center">
-        <p className="truncate text-center  text-[10px] text-gray-600 ">
-          <p>Experience: {lawyer.experience} Yr</p>
-          <p>Language:{lawyer.languages.map(lang => lang.name).join(", ")}</p>
-        </p>
-      </div>
+      <p className="text-sm text-gray-700 grid  mt-1">
+        <span className="mx-auto"> {lawyer.experience} Yr of Experience</span>
+      </p>
+      <p className="text-sm text-gray-700 grid  mt-1">
+        <span className="mx-auto">{lawyer.departments.map((department) => department.department_name).join(", ")}</span>
+      </p>
+
+      <button className="text-sm font-medium my-2 bg-[#1e266e] px-4 text-white py-1.5 rounded-xl">
+        Connect
+      </button>
+
+    
     </div>
   </motion.div>
 );

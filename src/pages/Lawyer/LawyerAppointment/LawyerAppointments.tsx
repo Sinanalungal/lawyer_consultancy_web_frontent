@@ -49,7 +49,7 @@ const LawyerAppointments: React.FC = () => {
   }, [activeTab]);
 
   const renderContent = () => {
-    if (loading) return <p>Loading appointments...</p>;
+    if (loading) return <p className="flex justify-center  text-xs min-h-[250px] items-center">Loading appointments...</p>;
     if (error) return <p>{error}</p>;
 
     switch (activeTab) {
@@ -63,12 +63,29 @@ const LawyerAppointments: React.FC = () => {
   };
 
   return (
-    <div className="mx-auto py-10 px-4">
+    <div className=" py-10 px-4">
       <AdminPageTitle
         title="APPOINTMENT"
         description="Manage your upcoming and completed appointments"
       />
-      <div className="bg-white mx-auto md:max-w-[250px] shadow-md rounded-lg p-2">
+      <div className="mb-8 flex justify-center">
+        <nav className="flex space-x-2 border rounded-full p-1  shadow-md">
+          {["upcoming", "completed"].map((tab) => (
+            <button
+              key={tab}
+              className={`px-4 py-2 max-sm:text-xs font-medium text-sm rounded-full transition ${
+                activeTab === tab
+                  ? "bg-slate-800 text-white shadow-md"
+                  : "text-gray-600"
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </nav>
+      </div>
+      {/* <div className="bg-white mx-auto md:max-w-[250px] shadow-md rounded-lg p-2">
         <div className="flex flex-wrap gap-2 md:flex-nowrap justify-between">
           {["upcoming", "completed"].map((tab) => (
             <button
@@ -84,8 +101,8 @@ const LawyerAppointments: React.FC = () => {
             </button>
           ))}
         </div>
-      </div>
-      <div className="mt-6 bg-white rounded-lg">{renderContent()}</div>
+      </div> */}
+      <div className="mt-6 bg-transparent rounded-lg">{renderContent()}</div>
     </div>
   );
 };
@@ -109,7 +126,7 @@ const Upcoming: React.FC<{ appointments: Appointment[] }> = ({
   return (
     <div className="py-5 rounded-xl">
       {appointments.length === 0 ? (
-        <p className="flex justify-center min-h-[250px] items-center">
+        <p className="flex justify-center text-xs min-h-[250px] items-center">
           No Upcoming appointments.
         </p>
       ) : (
@@ -189,9 +206,12 @@ const Completed: React.FC<{ appointments: Appointment[] }> = ({
                     UUID: {appointment.uuid}
                   </p>
                 </div>
-                <button onClick={() => {
-                            OpenModal(appointment);
-                          }} className="my-4 px-4 py-2 border border-transparent text-xs font-medium rounded-md text-white bg-slate-600 hover:bg-slate-500">
+                <button
+                  onClick={() => {
+                    OpenModal(appointment);
+                  }}
+                  className="my-4 px-4 py-2 border border-transparent text-xs font-medium rounded-md text-white bg-slate-600 hover:bg-slate-500"
+                >
                   View Details
                 </button>
               </div>
@@ -200,37 +220,37 @@ const Completed: React.FC<{ appointments: Appointment[] }> = ({
         ))
       )}
       <Modal
-          modalOpen={isOpen}
-          setModalOpen={() => setIsOpen(!isOpen)}
-          children={
-            <>
-              <h2 className="text-xl flex justify-center mb-4 font-bold underline underline-offset-4">
-                Appointment Details
-              </h2>
-              {modalData && (
-                <div className="flex flex-col items-center gap-2">
-                  <p>
-                    <strong>Session Date:</strong> {modalData.session_start}
-                  </p>
-                  <p>
-                    <strong>Session Time:</strong>{" "}
-                    {modalData.scheduling.start_time} -{" "}
-                    {modalData.scheduling.end_time}
-                  </p>
-                  <p>
-                    <strong>Booked At:</strong> {modalData.booked_at}
-                  </p>
+        modalOpen={isOpen}
+        setModalOpen={() => setIsOpen(!isOpen)}
+        children={
+          <>
+            <h2 className="text-xl flex justify-center mb-4 font-bold underline underline-offset-4">
+              Appointment Details
+            </h2>
+            {modalData && (
+              <div className="flex flex-col items-center gap-2">
+                <p>
+                  <strong>Session Date:</strong> {modalData.session_start}
+                </p>
+                <p>
+                  <strong>Session Time:</strong>{" "}
+                  {modalData.scheduling.start_time} -{" "}
+                  {modalData.scheduling.end_time}
+                </p>
+                <p>
+                  <strong>Booked At:</strong> {modalData.booked_at}
+                </p>
 
-                  <h3 className="text-sm font-semibold">Lawyer Details</h3>
-                  <p>
-                    <strong>User Details:</strong>{" "}
-                    {modalData.user_profile.full_name}
-                  </p>
-                </div>
-              )}
-            </>
-          }
-        ></Modal>
+                <h3 className="text-sm font-semibold">Lawyer Details</h3>
+                <p>
+                  <strong>User Details:</strong>{" "}
+                  {modalData.user_profile.full_name}
+                </p>
+              </div>
+            )}
+          </>
+        }
+      ></Modal>
     </div>
   );
 };

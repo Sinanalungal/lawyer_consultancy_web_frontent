@@ -1,13 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FiSmile, FiPaperclip } from "react-icons/fi";
+import { FiSmile, FiPaperclip, FiMic, FiSend } from "react-icons/fi";
 import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
 import { fetchThreadMessages, fetchThreads } from "../../../services/Chat";
 import ClipLoader from "react-spinners/ClipLoader";
 import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
 import { AppDispatch, RootState, useAppSelector } from "../../../redux/store";
 import { fetchUserAsync } from "../../../redux/slice/UserDataFetch";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Message {
   id: number;
@@ -235,312 +236,326 @@ const ChatComponent: React.FC = () => {
     });
     return { formattedDate, formattedTime };
   };
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(scrollToBottom, [messages]);
 
   return (
     <div className="flex h-screen bg-gray-100 overflow-hidden">
-      <div
-        className={`flex flex-col ${
-          selectedUser
-            ? "max-md:hidden md:w-1/3 lg:w-1/4"
-            : "w-full md:w-1/3 lg:w-1/4"
-        } bg-white border-r border-gray-300`}
-      >
-        <div className="p-4 border-b border-gray-300">
-          <h3 className="text-xl font-semibold px-2">Chats</h3>
-        </div>
-        <ul className="flex-1 overflow-y-auto">
-          {users?.map((user) => (
-            <li
-              key={user?.id}
-              className={`flex items-center p-3 px-6 cursor-pointer hover:bg-gray-100 ${
-                selectedUser?.id === user.id ? "bg-gray-200" : ""
-              }`}
-              onClick={() => setSelectedUser(user)}
-            >
-              <img
-                src={
-                  user?.other_user.profile_image ??
-                  "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
-                }
-                alt={user?.other_user.full_name}
-                className="w-10 h-10 rounded-full mr-3 "
-              />
-              <div className="grid">
-                <h4 className="text-sm font-medium">
-                  {user?.other_user.full_name.toUpperCase()}
-                </h4>
-                <p className="text-xs text-gray-500 truncate">
-                  {user?.last_message
-                    ? user.last_message.content_type === "text"
-                      ? user.last_message.message ||
-                        "No message content available"
-                      : user.last_message.content_type || "Unknown content type"
-                    : ""}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ul>
+    <motion.div
+      initial={{ x: -300, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className={`flex flex-col ${
+        selectedUser
+          ? "max-md:hidden md:w-1/3 lg:w-1/4"
+          : "w-full md:w-1/3 lg:w-1/4"
+      } bg-white border-r border-gray-300 shadow-md`}
+    >
+      <div className="p-4 border-b border-gray-300 bg-gray-50">
+        <h3 className="text-xl font-semibold px-2 text-gray-800">Chats</h3>
       </div>
+      <ul className="flex-1 overflow-y-auto">
+        {users?.map((user) => (
+          <motion.li
+            key={user?.id}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`flex items-center p-3 px-6 cursor-pointer hover:bg-gray-100 transition-colors duration-200 ${
+              selectedUser?.id === user.id ? "bg-blue-50" : ""
+            }`}
+            onClick={() => setSelectedUser(user)}
+          >
+            <img
+              src={
+                user?.other_user.profile_image ??
+                "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
+              }
+              alt={user?.other_user.full_name}
+              className="w-12 h-12 rounded-full mr-3 object-cover border-2 border-gray-200"
+            />
+            <div className="grid">
+              <h4 className="text-sm font-medium text-gray-800">
+                {user?.other_user.full_name.toUpperCase()}
+              </h4>
+              <p className="text-xs text-gray-500 truncate max-w-[150px]">
+                {user?.last_message
+                  ? user.last_message.content_type === "text"
+                    ? user.last_message.message ||
+                      "No message content available"
+                    : user.last_message.content_type || "Unknown content type"
+                  : ""}
+              </p>
+            </div>
+          </motion.li>
+        ))}
+      </ul>
+    </motion.div>
 
-      <div
-        className={`flex flex-col ${
-          selectedUser
-            ? "w-full md:w-2/3 lg:w-3/4"
-            : "max-md:hidden md:w-2/3 lg:w-3/4"
-        } bg-gray-100`}
-      >
-        {selectedUser ? (
-          <>
-            <div className="flex items-center p-4 border-b border-gray-300 bg-white">
-              {selectedUser && (
-                <>
-                  <img
-                    src={
-                      selectedUser?.other_user.profile_image ??
-                      "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
-                    }
-                    alt={selectedUser?.other_user.full_name}
-                    className="w-10 h-10 rounded-full mr-3 "
-                  />
-                  <h4 className="text-lg font-semibold">
+    <motion.div
+      initial={{ x: 300, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className={`flex flex-col ${
+        selectedUser
+          ? "w-full md:w-2/3 lg:w-3/4"
+          : "max-md:hidden md:w-2/3 lg:w-3/4"
+      } bg-gray-100`}
+    >
+      {selectedUser ? (
+        <>
+          <div className="flex items-center p-4 border-b border-gray-300 bg-white shadow-sm">
+            {selectedUser && (
+              <>
+                <img
+                  src={
+                    selectedUser?.other_user.profile_image ??
+                    "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
+                  }
+                  alt={selectedUser?.other_user.full_name}
+                  className="w-12 h-12 rounded-full mr-3 object-cover border-2 border-gray-200"
+                />
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-800">
                     {selectedUser?.other_user.full_name.toUpperCase()}
                   </h4>
-                </>
-              )}
-            </div>
+                  <p className="text-xs text-gray-500">Online</p>
+                </div>
+              </>
+            )}
+          </div>
 
-            <div className="flex-1 overflow-y-auto p-4">
-              <div className="space-y-4">
-                {messages?.map((message, index) => {
-                  const { formattedDate, formattedTime } = TimeDateFormate(
-                    message.timestamp as string
-                  );
-                  const showDate =
-                    index === 0 ||
-                    formattedDate !==
-                      new Date(
-                        messages[index - 1].timestamp as string
-                      ).toLocaleDateString();
+          <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
+            <div className="space-y-4">
+              {messages?.map((message, index) => {
+                const { formattedDate, formattedTime } = TimeDateFormate(
+                  message.timestamp as string
+                );
+                const showDate =
+                  index === 0 ||
+                  formattedDate !==
+                    new Date(
+                      messages[index - 1].timestamp as string
+                    ).toLocaleDateString();
 
-                  return (
-                    <>
-                      {" "}
-                      {showDate && (
-                        <div className="text-center my-2">
-                          <span className="bg-slate-200 px-2 text-gray-700 text-[9px] py-1 rounded-lg">
-                            {formattedDate}
-                          </span>
-                        </div>
+                return (
+                  <React.Fragment key={index}>
+                    {showDate && (
+                      <div className="text-center my-2">
+                        <span className="bg-gray-200 px-3 py-1 rounded-full text-gray-700 text-xs">
+                          {formattedDate}
+                        </span>
+                      </div>
+                    )}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className={`flex gap-2.5 ${
+                        message.send_by === value
+                          ? "justify-end"
+                          : "justify-start"
+                      }`}
+                    >
+                      {message.send_by === selectedUser.other_user.id && (
+                        <img
+                          src={
+                            selectedUser.other_user.profile_image ??
+                            "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
+                          }
+                          alt="Second User"
+                          className="w-8 h-8 object-cover rounded-full"
+                        />
                       )}
                       <div
-                        key={index}
-                        className={`flex  gap-2.5 ${
+                        className={`flex flex-col max-w-[70%] ${
                           message.send_by === value
-                            ? "justify-end"
-                            : "justify-start"
+                            ? "items-end"
+                            : "items-start"
                         }`}
                       >
-                        {message.send_by === selectedUser.other_user.id && (
-                          <img
-                            src={
-                              selectedUser.other_user.profile_image ??
-                              "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
-                            }
-                            alt="Second User"
-                            className="w-10 max-sm:h-8 max-sm:w-8 h-10 object-cover rounded-full"
-                          />
-                        )}
                         <div
-                          className={`flex flex-col  max-w-[80%] ${
+                          className={`px-4 py-2 rounded-lg shadow-sm ${
                             message.send_by === value
-                              ? "text-right"
-                              : "text-left"
+                              ? "bg-blue-500 text-white"
+                              : "bg-white text-gray-800"
                           }`}
                         >
-                          <div
-                            className={`px-3 ws  py-2 rounded ${
-                              message.send_by === value
-                                ? "bg-slate-300 rounded text-gray-800"
-                                : "bg-gray-300 text-gray-900"
-                            }`}
-                          >
-                            {message.content_type == "audio" ? (
-                              <audio
-                                controls
-                                src={message.audio}
-                                className="max-sm:w-[150px] "
-                                typeof="audio/mp3"
-                              >
-                                Your browser does not support the audio element.
-                              </audio>
-                            ) : message.content_type == "" ? (
-                              <a
-                                href={message.image}
-                                download
-                                className="text-blue-500"
-                              >
-                                {/* Download File */}
-                              </a>
-                            ) : message.content_type == "text" ? (
-                              <h2 className="text-sm font-normal leading-snug max-sm:text-xs break-words">
-                                {message.message}
-                              </h2>
-                            ) : (
-                              <h2 className="text-sm font-normal leading-snug max-sm:text-xs">
-                                {/* {message.text} */}
-                              </h2>
-                            )}
-                          </div>
-                          <div className="justify-end items-center inline-flex">
-                            <h6 className="text-[9px] font-normal leading-4 py-1 text-gray-500">
-                              {formattedTime}
-                            </h6>
-                          </div>
+                          {message.content_type === "audio" ? (
+                            <audio
+                              controls
+                              src={message.audio}
+                              className="max-w-full"
+                            >
+                              Your browser does not support the audio element.
+                            </audio>
+                          ) : message.content_type === "" ? (
+                            <a
+                              href={message.image}
+                              download
+                              className="text-blue-300 hover:underline"
+                            >
+                              Download File
+                            </a>
+                          ) : (
+                            <p className="text-sm break-words">
+                              {message.message}
+                            </p>
+                          )}
                         </div>
-                        {message.send_by === value && (
-                          <img
-                            src={
-                              userDetail?.profile_image ??
-                              "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
-                            }
-                            alt="User Avatar"
-                            className="w-10 max-sm:h-8 max-sm:w-8 h-10 object-cover rounded-full"
-                          />
-                        )}
+                        <span className="text-xs text-gray-500 mt-1">
+                          {formattedTime}
+                        </span>
                       </div>
-                    </>
-                  );
-                })}
-              </div>
+                      {message.send_by === value && (
+                        <img
+                          src={
+                            userDetail?.profile_image ??
+                            "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
+                          }
+                          alt="User Avatar"
+                          className="w-8 h-8 object-cover rounded-full"
+                        />
+                      )}
+                    </motion.div>
+                  </React.Fragment>
+                );
+              })}
+              <div ref={messagesEndRef} />
             </div>
+          </div>
 
-            <div className="p-3 relative">
+          <div className="p-4 bg-white border-t border-gray-300">
+            <AnimatePresence>
               {showEmojiPicker && !audioStart && (
-                <div className="absolute bottom-16 max-[400px]:hidden max-h-screen  overflow-scroll  max-md:left-0 ">
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 20 }}
+                  className="absolute bottom-16 right-4 z-10"
+                >
                   <EmojiPicker
                     emojiStyle={EmojiStyle.APPLE}
-                    // theme="light"
                     onEmojiClick={handleEmojiClick}
                   />
-                </div>
+                </motion.div>
               )}
+            </AnimatePresence>
 
-              <div
-                className={`flex items-center gap-3  border-gray-300 py-1 sm:px-3 px-2 rounded-full relative ${
-                  (!audioStart || audioPreview) && "border"
-                }`}
-              >
+            <div
+              className={`flex items-center gap-3 border border-gray-300 py-2 px-4 rounded-full relative ${
+                audioStart && "bg-red-50"
+              }`}
+            >
+              {!audioStart ? (
                 <>
-                  <div
-                    className=""
-                    onClick={() => {
-                      setAudioStart(true);
-                      setContentType("audio");
-                    }}
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-gray-500 hover:text-gray-700 transition-colors"
                   >
-                    <AudioRecorder
-                      onRecordingComplete={() => {
-                        setAudioPreview(
-                          URL.createObjectURL(
-                            recorderControls?.recordingBlob as Blob
-                          )
-                        );
-                        setAudioStart(false);
-                        setContentType("audio");
+                    <FiPaperclip size={20} />
+                  </button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                    accept="image/*,video/*"
+                  />
+
+                  <button
+                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                    className="text-gray-500 hover:text-gray-700 transition-colors"
+                  >
+                    <FiSmile size={20} />
+                  </button>
+
+                  {!audioPreview ? (
+                    <input
+                      type="text"
+                      value={inputText}
+                      onChange={(e) => {
+                        setInputText(e.target.value);
+                        setContentType("text");
                       }}
-                      recorderControls={recorderControls}
-                      showVisualizer
+                      className="flex-1 text-sm border-none outline-none text-gray-800 bg-transparent placeholder-gray-400"
+                      placeholder="Type a message..."
                     />
-                  </div>
-                  {!audioStart && (
-                    <>
-                      {/* implement later */}
-                      <button
-                        onClick={() => fileInputRef.current?.click()}
-                        className="text-xl hidden text-gray-400"
+                  ) : (
+                    <div className="flex flex-1 items-center">
+                      <audio
+                        controls
+                        src={audioPreview}
+                        className="w-full"
                       >
-                        <FiPaperclip />
-                      </button>
-                      <input
-                        type="file"
-                        ref={fileInputRef}
-                        style={{ display: "none" }}
-                        onChange={handleFileChange}
-                        accept="image/*,video/*"
-                      />
-
+                        Your browser does not support the audio element.
+                      </audio>
                       <button
-                        onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-                        className="text-xl max-[400px]:hidden text-gray-400"
-                      >
-                        <FiSmile />
-                      </button>
-
-                      {!audioPreview ? (
-                        <input
-                          type="text"
-                          value={inputText}
-                          onChange={(e) => {
-                            setInputText(e.target.value);
-                            setContentType("text");
-                          }}
-                          className="w-full text-sm h-full max-sm:text-xs py-1 border-none outline-none text-gray-900 bg-transparent placeholder:text-gray-500"
-                          placeholder="Type a message..."
-                        />
-                      ) : (
-                        <div className="flex w-full justify-center items-center">
-                          <audio
-                            controls
-                            src={audioPreview}
-                            className="w-full text-xs"
-                          >
-                            Your browser does not support the audio element.
-                          </audio>
-                          <p onClick={() => handleClose()}>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="currentColor"
-                              className="size-4 text-gray-600 sm:size-6"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25Zm-1.72 6.97a.75.75 0 1 0-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 1 0 1.06 1.06L12 13.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L13.06 12l1.72-1.72a.75.75 0 1 0-1.06-1.06L12 10.94l-1.72-1.72Z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </p>
-                        </div>
-                      )}
-
-                      <button
-                        className="bg-slate-800 text-white max-sm:px-2 px-4 py-2 rounded-full"
-                        onClick={handleSendMessage}
+                        onClick={handleClose}
+                        className="ml-2 text-gray-500 hover:text-gray-700"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 24 24"
                           fill="currentColor"
-                          className="size-6 max-sm:size-4"
+                          className="w-5 h-5"
                         >
-                          <path d="M3.478 2.404a.75.75 0 0 0-.926.941l2.432 7.905H13.5a.75.75 0 0 1 0 1.5H4.984l-2.432 7.905a.75.75 0 0 0 .926.94 60.519 60.519 0 0 0 18.445-8.986.75.75 0 0 0 0-1.218A60.517 60.517 0 0 0 3.478 2.404Z" />
+                          <path
+                            fillRule="evenodd"
+                            d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm-1.72 6.97a.75.75 0 10-1.06 1.06L10.94 12l-1.72 1.72a.75.75 0 101.06 1.06L12 13.06l1.72 1.72a.75.75 0 101.06-1.06L13.06 12l1.72-1.72a.75.75 0 10-1.06-1.06L12 10.94l-1.72-1.72z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </button>
-                    </>
+                    </div>
                   )}
+
+                  <button
+                    className="bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition-colors"
+                    onClick={handleSendMessage}
+                  >
+                    <FiSend size={20} />
+                  </button>
                 </>
-              </div>
+              ) : (
+                <div className="flex-1 flex justify-center items-center">
+                  <AudioRecorder
+                    onRecordingComplete={(blob) => {
+                      setAudioPreview(URL.createObjectURL(blob));
+                      setAudioStart(false);
+                      setContentType("audio");
+                    }}
+                    recorderControls={recorderControls}
+                    showVisualizer
+                  />
+                </div>
+              )}
+
+              {!audioStart && (
+                <button
+                  className="text-gray-500 hover:text-gray-700 transition-colors"
+                  onClick={() => {
+                    setAudioStart(true);
+                    setContentType("audio");
+                  }}
+                >
+                  <FiMic size={20} />
+                </button>
+              )}
             </div>
-          </>
-        ) : (
-          <div className="flex items-center justify-center h-full text-gray-700 text-sm">
-            {/* <ClipLoader size={50} color={"#123abc"} loading={true} /> */}
-            Select an user to view messages
           </div>
-        )}
-      </div>
-    </div>
+        </>
+      ) : (
+        <div className="flex items-center justify-center h-full text-gray-700">
+          <p className="text-lg">Select a user to start chatting</p>
+        </div>
+      )}
+    </motion.div>
+  </div>
   );
 };
 

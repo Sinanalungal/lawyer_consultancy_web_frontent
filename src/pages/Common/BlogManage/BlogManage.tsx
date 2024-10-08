@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
-import { BlogDeleting, fetchPersonalBlogs, updateBlogIsListed } from "../../../services/Blogs";
+import { BlogDeleting, fetchPersonalBlogs } from "../../../services/Blogs";
 import { useNavigate } from "react-router-dom";
 import { Blog, BlogResponse } from "../../../types";
 import { useSelector } from "react-redux";
@@ -11,33 +11,33 @@ import Pagination from "../../../components/Pagination/Pagination";
 import SearchForm from "../../../components/Search/Search";
 import SelectionBox from "../../../components/SelectBox/SelectBox";
 
-
 interface TableColumn {
   key: string;
   label: string;
 }
 
 interface TableRow {
-  [key: string]: any; 
+  [key: string]: any;
 }
 
 const BlogManage: React.FC = () => {
-    const [search, setSearch] = useState<string>("");
-    const [pageNum, setPageNum] = useState<number>(1);
-    const [blogs, setBlogs] = useState<Blog[]>([]);
-    const [nextPage, setNextPage] = useState<string | null>(null);
-    const [prevPage, setPrevPage] = useState<string | null>(null);
-    const [totalCount, setTotalCount] = useState<number>(0);
-    const [status, setStatus] = useState<string>("Listed");
-    const [currentUrl,setCurrentUrl]=useState<string|null>(`${process.env.VITE_BASE_URL}/blogsession/personal-blogs/`);
-    const navigate = useNavigate();
-    const { addToast } = useToast();
-    const { role } = useSelector((state: RootState) => state.login as LoginState)
-console.log(role);
+  const [search, setSearch] = useState<string>("");
+  const [pageNum, setPageNum] = useState<number>(1);
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [nextPage, setNextPage] = useState<string | null>(null);
+  const [prevPage, setPrevPage] = useState<string | null>(null);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [status, setStatus] = useState<string>("Listed");
+  const [currentUrl, setCurrentUrl] = useState<string | null>(
+    `${process.env.VITE_BASE_URL}/blogsession/personal-blogs/`
+  );
+  const navigate = useNavigate();
+  const { addToast } = useToast();
+  const { role } = useSelector((state: RootState) => state.login as LoginState);
+  console.log(role);
 
-  
   const fetchData = async () => {
-    if(currentUrl){
+    if (currentUrl) {
       try {
         const data: BlogResponse = await fetchPersonalBlogs(
           currentUrl,
@@ -53,81 +53,70 @@ console.log(role);
       }
     }
   };
-    useEffect(() => {
-  
-      fetchData();
-    }, [currentUrl, search, status]);
-  
-    const handleNextPage = () => {
-      if (nextPage) {
-        setCurrentUrl(nextPage)
-        setPageNum((prev) => prev + 1);
-      }
-    };
-  
-    const handlePreviousPage = () => {
-      if (prevPage) {
-        setCurrentUrl(prevPage)
-        setPageNum((prev) => prev - 1);
-      }
-    };
+  useEffect(() => {
+    fetchData();
+  }, [currentUrl, search, status]);
 
-    const handleBlogDeletion = async (blog_id: number) => {
-      try{
-        const response = await BlogDeleting(blog_id)
-        console.log(response)
-        addToast('success','Blog deleted successfully')
-        fetchData()
-      }catch (error) {
-        addToast('danger','something went wrong')
-      }
+  const handleNextPage = () => {
+    if (nextPage) {
+      setCurrentUrl(nextPage);
+      setPageNum((prev) => prev + 1);
     }
-  
-    // const handleToggleIsListed = async (
-    //   blogId: number,
-    //   currentIsListed: boolean
-    // ) => {
-    //   try {
-    //     const updatedBlog = await updateBlogIsListed(blogId, !currentIsListed);
-    //     setBlogs((prevBlogs) =>
-    //       prevBlogs.map((blog) =>
-    //         blog.id === blogId
-    //           ? { ...blog, is_listed: updatedBlog.is_listed }
-    //           : blog
-    //       )
-    //     );
-    //   } catch (error) {
-    //     console.error("Failed to update blog:", error);
-    //   }
-    // };
-  
-    const columns:TableColumn[] = [
-      { key: "id", label: "ID" },
-      { key: "blog", label: "Blog" },
-      // { key: "user", label: "User Name" },
-      { key: "report", label: "Report Count" },
-      {key:'status',label: "Status" },
-      { key: "published_at", label: "Published At" },
-      { key: "actions", label: "Actions" },
-    ];
-  
-    const data = blogs.map((blog) => ({
-      id: blog.id,
-      blog: (
-        <div className="flex items-center gap-2">
-          <img src={blog.image} className="w-12 h-12 object-cover" alt="" />
-          <p className="truncate">{blog.title}</p>
-        </div>
-      ),
-      // user: blog.user.full_name,
-      report: blog.report_count ?? 0,
-      published_at: new Date(blog.created_at).toLocaleDateString(),
-      status:blog.status,
-      actions: (
-        <div className="gap-1 flex">
-         <button
+  };
+
+  const handlePreviousPage = () => {
+    if (prevPage) {
+      setCurrentUrl(prevPage);
+      setPageNum((prev) => prev - 1);
+    }
+  };
+
+  const handleBlogDeletion = async (blog_id: number) => {
+    try {
+      const response = await BlogDeleting(blog_id);
+      console.log(response);
+      addToast("success", "Blog deleted successfully");
+      fetchData();
+    } catch (error) {
+      addToast("danger", "something went wrong");
+    }
+  };
+
+  const columns: TableColumn[] = [
+    { key: "id", label: "ID" },
+    { key: "blog", label: "Blog" },
+    // { key: "user", label: "User Name" },
+    { key: "report", label: "Report Count" },
+    { key: "status", label: "Status" },
+    { key: "published_at", label: "Published At" },
+    { key: "actions", label: "Actions" },
+  ];
+
+  const data = blogs.map((blog) => ({
+    id: blog.id,
+    blog: (
+      <div className="flex items-center gap-2">
+        <img src={blog.image} className="w-12 h-12 object-cover" alt="" />
+        <p className="truncate">{blog.title}</p>
+      </div>
+    ),
+    // user: blog.user.full_name,
+    report: blog.report_count ?? 0,
+    published_at: new Date(blog.created_at).toLocaleDateString(),
+    status: blog.status,
+    actions: (
+      <div className="gap-1 flex">
+        <button
           className={`px-3  py-2 bg-slate-700 text-white`}
-          onClick={() =>{role =='admin'? navigate(`../../../../../../admin/blog/add-blog/?blog=${blog.id}`):navigate(`../../../../../../lawyer/blog/add-blog/?blog=${blog.id}`)}}
+          onClick={() => {
+            role == "admin"
+              ? navigate(
+                  `../../../../../../admin/blog/add-blog/?blog=${blog.id}`
+                )
+              : navigate(
+                  `../../../../../../lawyer/blog/add-blog/?blog=${blog.id}`
+                );
+          }}
         >
           Edit
         </button>
@@ -137,26 +126,31 @@ console.log(role);
         >
           Delete
         </button>
-       
-        </div>
-      ),
-    }));
-  
-    const options = [
-      { label: "Listed", action: () => setStatus("Listed") },
-      { label: "Pending", action: () => setStatus("Pending") },
-      { label: "Blocked", action: () => setStatus("Blocked") },
-    ];
+      </div>
+    ),
+  }));
+
+  const options = [
+    { label: "Listed", action: () => setStatus("Listed") },
+    { label: "Pending", action: () => setStatus("Pending") },
+    { label: "Blocked", action: () => setStatus("Blocked") },
+  ];
 
   return (
     <>
-    <AdminPageTitle
+      <AdminPageTitle
         title="Your Blogs"
         description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,"
       />
       <div className="w-full flex justify-end text-white text-xs">
         <p
-          onClick={() => navigate(role=='lawyer'?"../../../../../lawyer/blog/add-blog":"../../../../../admin/blog/add-blog")}
+          onClick={() =>
+            navigate(
+              role == "lawyer"
+                ? "../../../../../lawyer/blog/add-blog"
+                : "../../../../../admin/blog/add-blog"
+            )
+          }
           className="bg-slate-800 px-3 py-2 cursor-pointer rounded-sm mb-4"
         >
           Add Blog
@@ -210,7 +204,7 @@ console.log(role);
                 </thead>
                 <tbody className="divide-y divide-gray-300">
                   {data.length > 0 ? (
-                    data.map((row:TableRow, rowIndex) => (
+                    data.map((row: TableRow, rowIndex) => (
                       <tr
                         key={rowIndex}
                         className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
@@ -244,5 +238,3 @@ console.log(role);
 };
 
 export default BlogManage;
-
-

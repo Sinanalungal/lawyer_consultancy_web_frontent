@@ -9,7 +9,7 @@ import ConfirmationModal from "../../../components/Modal/AlertModal";
 import SearchForm from "../../../components/Search/Search";
 import Pagination from "../../../components/Pagination/Pagination";
 import SelectionBox from "../../../components/SelectBox/SelectBox";
-
+import { ChevronDown } from "lucide-react";
 
 interface TableColumn {
   key: string;
@@ -17,9 +17,8 @@ interface TableColumn {
 }
 
 interface TableRow {
-  [key: string]: any; 
+  [key: string]: any;
 }
-
 
 const AdminBlog: React.FC = () => {
   const [search, setSearch] = useState<string>("");
@@ -105,7 +104,7 @@ const AdminBlog: React.FC = () => {
     { label: "Blocked", action: () => setStatus("Blocked") },
   ];
 
-  const columns:TableColumn[] = [
+  const columns: TableColumn[] = [
     { key: "id", label: "ID" },
     { key: "blog", label: "Blog" },
     { key: "user", label: "User Name" },
@@ -149,7 +148,7 @@ const AdminBlog: React.FC = () => {
   console.log(selectedBlog?.status);
 
   return (
-    <AdminLayout selected="4">
+    <>
       <AdminPageTitle
         title="Blogs"
         description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"
@@ -167,8 +166,9 @@ const AdminBlog: React.FC = () => {
         blocked={blocked}
         setBlocked={setBlocked}
       /> */}
+      
       <div className="flex flex-col  h-full pb-16 ">
-        <div className="flex items-center justify-between max-sm:flex-col max-sm:items-end">
+        <div className="flex items-center  justify-between max-sm:flex-col max-sm:items-end">
           {options && (
             <SelectionBox
               buttonLabel={
@@ -181,46 +181,53 @@ const AdminBlog: React.FC = () => {
           )}
           <SearchForm search={search} setSearch={setSearch} />
         </div>
-        <div className="overflow-x-auto no-scrollbar">
-          <div className="min-w-full inline-block align-middle">
-            <div className="border  border-gray-300  min-h-[350px]">
-              <table className="min-w-full relative">
-                <thead>
-                  <tr className="bg-gray-50">
-                    {columns.map((column) => (
-                      <th
-                        key={column.key}
-                        className="p-5 text-left text-xs leading-6 font-semibold text-gray-900 capitalize "
-                      >
+        <div className="overflow-x-auto bg-white  no-scrollbar border-b">
+        <div className="min-w-full inline-block align-middle">
+          <div className="min-h-[350px] relative">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  {columns.map((column) => (
+                    <th
+                      key={column.key}
+                      className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                    >
+                      <div className="flex items-center">
                         {column.label}
-                      </th>
-                    ))}
+                        <ChevronDown className="ml-1 h-4 w-4" />
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {data.length > 0 ? (
+                  data.map((row: TableRow, rowIndex) => (
+                    <tr
+                      key={rowIndex}
+                      className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
+                    >
+                      {columns.map((column) => (
+                        <td key={column.key} className="px-4 py-4">
+                          {row[column.key]}
+                        </td>
+                      ))}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={columns.length} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                      <div className="flex flex-col items-center justify-center space-y-2">
+                        <p>No data available</p>
+                      </div>
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-300">
-                  {data.length > 0 ? (
-                    data.map((row:TableRow, rowIndex) => (
-                      <tr
-                        key={rowIndex}
-                        className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
-                      >
-                        {columns.map((column) => (
-                          <td key={column.key} className="px-4 py-4">
-                            {row[column.key]}
-                          </td>
-                        ))}
-                      </tr>
-                    ))
-                  ) : (
-                    <div className=" w-full absolute flex justify-center items-center min-h-[250px]   text-gray-500 text-xs">
-                      no data available
-                    </div>
-                  )}
-                </tbody>
-              </table>
-            </div>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
+      </div>
         <Pagination
           nextButton={handleNextPage}
           previousButton={handlePreviousPage}
@@ -247,7 +254,7 @@ const AdminBlog: React.FC = () => {
         onConfirm={confirmToggleIsListed}
         onCancel={() => setIsModalOpen(false)}
       />
-    </AdminLayout>
+    </>
   );
 };
 

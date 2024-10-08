@@ -179,14 +179,14 @@ console.log(readingBlog,'this is the reading blog');
 
   return (
     <>
-      <section className="mx-auto pb-10 dark:bg-dark lg:pb-20">
+      <section className=" pb-10 dark:bg-dark lg:pb-20">
         <PageTitle
           title="BLOGS"
           description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
         />
-        <div className="px-6 mx-auto w-full sm:max-w-xl md:max-w-full md:px-24 lg:px-8 xl:px-20">
+        <div className="">
           {blogData.length > 0 ? (
-            <div className="grid gap-5 2xl:grid-cols-4 xl:grid-cols-3 sm:grid-cols-2 sm:mx-auto lg:max-w-full">
+            <div className="grid 2xl:grid-cols-4 max-sm:p-2 md:grid-cols-2 justify-center sm:grid-cols-1 sm:max-w-[350px] md:max-w-[710px] xl:grid-cols-3 xl:max-w-[1070px]  2xl:max-w-[1430px] gap-3 mx-auto">
               {blogData.map((blog, index) => (<>
                 
                 <BlogCard
@@ -200,8 +200,9 @@ console.log(readingBlog,'this is the reading blog');
                   title={blog.title}
                   author={blog.author}
                   authorImage={blog.authorImage}
+                  description={blog.description}
                 />  
-                </>
+                  </>
               ))}
             </div>
           ) : (

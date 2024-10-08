@@ -2,9 +2,11 @@ import React from 'react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className=" shadow-inner pt-10 3xl:container  mx-auto pb-20 bg-cover" style={{
-      backgroundImage: "url('/Animated Shape.svg')"
-    }}>
+    <footer className=" shadow-inner pt-10 3xl:container  mx-auto pb-20 bg-cover"
+    //  style={{
+    //   backgroundImage: "url('/Animated Shape.svg')"
+    // }}
+    >
   <div className="mx-auto flex  max-lg:flex-col justify-between items-center  px-4   sm:px-6 lg:px-8 2xl:px-10" >
     <div className=' 2xl:flex justify-center items-center 2xl:space-x-18'>
     <div className="flex 2xl:mt-5 justify-center text-black">

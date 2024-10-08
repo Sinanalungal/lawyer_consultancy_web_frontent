@@ -3,6 +3,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { logout } from '../../redux/slice/LoginActions';
+import { SidebarDemoAdmin } from '../../pages/Sidebar/SidebarComponentAdmin';
 
 const AdminPrivateRoute: React.FC = () => {
   const dispatch = useDispatch();
@@ -15,7 +16,7 @@ const AdminPrivateRoute: React.FC = () => {
     }
   }, [authTokens, isAuthenticated, dispatch]);
 
-  return isAuthenticated && role === 'admin' && authTokens ? <Outlet /> : <Navigate to="/" replace />;
+  return isAuthenticated && role === 'admin' && authTokens ?<SidebarDemoAdmin><Outlet /> </SidebarDemoAdmin> : <Navigate to="/" replace />;
 };
 
 export default AdminPrivateRoute;

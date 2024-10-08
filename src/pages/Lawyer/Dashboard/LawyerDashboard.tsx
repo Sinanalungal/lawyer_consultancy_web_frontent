@@ -3,6 +3,7 @@ import AdminPageTitle from '../../../components/PageTitle/AdminPageTitle';
 import { Bar } from 'react-chartjs-2';
 import { LawyerDashboardFunctionalities } from '../../../services/Dashboard';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import { Briefcase, Calendar, DollarSign } from 'lucide-react';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -36,7 +37,7 @@ const LawyerDashboard: React.FC = () => {
       {
         label: 'Booked Sessions',
         data: data?.sessions_count,
-        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+        backgroundColor: 'rgba(59, 130, 246, 0.6)',
       },
     ],
   };
@@ -47,7 +48,7 @@ const LawyerDashboard: React.FC = () => {
       {
         label: 'Completed Cases',
         data: data?.case_count,
-        backgroundColor: 'rgba(153, 102, 255, 0.6)',
+        backgroundColor: 'rgba(16, 185, 129, 0.6)',
       },
     ],
   };
@@ -76,40 +77,51 @@ const LawyerDashboard: React.FC = () => {
   };
 
   return (
-    <>
+    <div className="bg-gray-100 min-h-screen">
       <AdminPageTitle
-        title="Dashboard"
-        description="Overview of growth of your website is in here."
+        title="Lawyer Dashboard"
+        description="Overview of your performance and growth."
       />
-      <div className="grid px-2 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 my-6">
-        <div className="p-6 border-2 border-gray-200 hover:border-gray-100 rounded-lg hover:bg-slate-600 hover:text-white text-center transition-transform transform hover:scale-105 duration-300 ease-in-out">
-          <h3 className="text-xl font-semibold"><i>Total Completed Cases</i></h3>
-          <p className="text-3xl mt-4 font-bold"><i>{data?.total_completed_cases}</i></p>
-        </div>
-        <div className="p-6 border-2 border-gray-200 hover:border-gray-100 hover:bg-slate-600 hover:text-white rounded-lg text-center transition-transform transform hover:scale-105 duration-300 ease-in-out">
-          <h3 className="text-xl font-semibold"><i>Total Completed Sessions</i></h3>
-          <p className="text-3xl mt-4 font-bold"><i>{data?.total_completed_sessions}</i></p>
-        </div>
-        <div className="p-6 border-2 border-gray-200 hover:border-gray-100 hover:bg-slate-600 hover:text-white rounded-lg text-center transition-transform transform hover:scale-105 duration-300 ease-in-out">
-          <h3 className="text-xl font-semibold"><i>Total Revenue</i></h3>
-          <p className="text-3xl mt-4 font-bold"><i>₹{data?.total_revenue}</i></p>
-        </div>
-      </div>
-      <div className="xl:flex max-xl:flex-col">
-        <div className="px-2 xl:w-[50%] overflow-x-scroll no-scrollbar gap-6 my-6">
-          <h1 className="font-bold pl-3 my-3 text-center"><i>Completed Sessions</i></h1>
-          <div className="col-span-2">
-            <Bar data={sessionChartData} options={chartOptions} />
+      <div className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-gray-800">Completed Cases</h3>
+              <Briefcase className="text-blue-500 w-8 h-8" />
+            </div>
+            <p className="text-3xl font-bold text-blue-600 mt-4">{data?.total_completed_cases}</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-gray-800">Completed Sessions</h3>
+              <Calendar className="text-green-500 w-8 h-8" />
+            </div>
+            <p className="text-3xl font-bold text-green-600 mt-4">{data?.total_completed_sessions}</p>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xl font-semibold text-gray-800">Total Revenue</h3>
+              <DollarSign className="text-yellow-500 w-8 h-8" />
+            </div>
+            <p className="text-3xl font-bold text-yellow-600 mt-4">₹{data?.total_revenue}</p>
           </div>
         </div>
-        <div className="px-2 xl:w-[50%] overflow-x-scroll no-scrollbar gap-6 my-6">
-          <h1 className="font-bold pl-3 my-3 text-center"><i>Completed Cases</i></h1>
-          <div className="col-span-2">
-            <Bar data={caseChartData} options={chartOptions} />
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Completed Sessions</h2>
+            <div className="overflow-x-auto">
+              <Bar data={sessionChartData} options={chartOptions} />
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Completed Cases</h2>
+            <div className="overflow-x-auto">
+              <Bar data={caseChartData} options={chartOptions} />
+            </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

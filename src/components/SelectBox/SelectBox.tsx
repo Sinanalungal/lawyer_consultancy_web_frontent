@@ -18,7 +18,7 @@ const SelectionBox: React.FC<SelectionBoxProps> = ({
 }) => {
   
   return (
-    <Menu as="div" className="relative bg-slate-100 rounded-md inline-block text-left">
+    <Menu as="div" className="relative bg-white rounded-md inline-block text-left">
       <div>
         <MenuButton className="inline-flex  w-[140px] justify-between gap-x-1.5  bg-transparent px-3 py-2 text-xs items-center font-semibold text-gray-900   ring-gray-300 hover:bg-gray-50">
           {buttonLabel}

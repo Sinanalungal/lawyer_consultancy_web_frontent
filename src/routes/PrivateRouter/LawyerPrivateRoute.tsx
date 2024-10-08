@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { LoginState, logout } from '../../redux/slice/LoginActions';
 import LawyerLayout from '../../layouts/LawyerLayout/LawyerLayout';
+import { SidebarDemo } from '../../pages/Sidebar/SidebarComponentLawyer';
 
 const LawyerPrivateRoute: React.FC = () => {
   const dispatch = useDispatch();
@@ -25,9 +26,9 @@ const LawyerPrivateRoute: React.FC = () => {
   }, [authTokens, isAuthenticated]);
 
   return isAuthenticated && role === "lawyer" && authTokens ? (
-    <LawyerLayout>
+    <SidebarDemo>
       <Outlet />
-    </LawyerLayout>
+    </SidebarDemo>
   ) : (
     <Navigate to="/" replace />
   );

@@ -128,7 +128,7 @@ const AdminUser: React.FC = () => {
   }));
 
   return (
-    <AdminLayout selected="2">
+    <>
       <AdminPageTitle
         title="Lawyers"
         description="Manage user verification statuses and view Lawyer details."
@@ -163,7 +163,7 @@ const AdminUser: React.FC = () => {
           onCancel={handleCancelVerification}
         />
       )}
-    </AdminLayout>
+    </>
   );
 };
 

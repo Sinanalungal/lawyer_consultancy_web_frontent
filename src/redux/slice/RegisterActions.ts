@@ -106,7 +106,7 @@ export const OtpVerification = createAsyncThunk<any, OtpData, AsyncThunkConfig>(
 
       console.log(response.data);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       // const { addToast } = useToast();
       // console.log(error.response.data.message,'from async thunk');
       // console.log(error,'from async thunk');

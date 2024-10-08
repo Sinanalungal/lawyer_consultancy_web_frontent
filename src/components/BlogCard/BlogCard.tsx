@@ -7,6 +7,7 @@ interface BlogCardProps {
   author: string;
   authorImage: string;
   title: string;
+  description?: string;
   calling: () => void;
 }
 
@@ -17,13 +18,15 @@ const BlogCard: React.FC<BlogCardProps> = ({
   author,
   authorImage,
   title,
+  description,
+
 }) => {
   return (
     <motion.div
       onClick={calling}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      className="overflow-hidden cursor-pointer transition-shadow relative duration-300 bg-gray-900 rounded-lg shadow-lg"
+      className="overflow-hidden   sm:w-[350px] max-w-[350px] sm:h-[210px] cursor-pointer transition-shadow relative duration-300 bg-gray-900 rounded-lg shadow-lg"
     >
       <p aria-label="Article">
         <img
@@ -46,6 +49,7 @@ const BlogCard: React.FC<BlogCardProps> = ({
         </div>
         <p aria-label="Article" className="inline-block w-full truncate mb-1">
           <h2 className="text-lg font-bold truncate">{title}</h2>
+          {/* <h2 className="text-[10px]  truncate">{description}</h2> */}
         </p>
       </div>
     </motion.div>

@@ -5,8 +5,6 @@ import ItemTable from "../../../components/Table/ItemTable";
 import { getAllCases } from "../../../services/Case";
 import Modal from "../../../components/Modal/Modal";
 
-
-
 interface Department {
   department_name: string;
 }
@@ -62,8 +60,8 @@ const CaseList: React.FC = () => {
   const [cases, setCases] = useState<CaseItem[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
   const [status, setStatus] = useState<string>("Ongoing");
-  const [viewDetailsModal,setViewDetailsModal]=useState<boolean>(false)
-  const [caseData,setCaseData]=useState<CaseItem | null>(null)
+  const [viewDetailsModal, setViewDetailsModal] = useState<boolean>(false);
+  const [caseData, setCaseData] = useState<CaseItem | null>(null);
 
   useEffect(() => {
     setPageNum(1);
@@ -113,7 +111,17 @@ const CaseList: React.FC = () => {
     lawyer_name: caseItem.selected_case.lawyer.user.full_name,
     userInfo: caseItem.selected_case.case_model.user_email,
     date_created: new Date(caseItem.created_at).toLocaleDateString(),
-    view_details:<div onClick={()=>{setViewDetailsModal(true);setCaseData(caseItem)}} className="text-blue-800">view details</div>
+    view_details: (
+      <div
+        onClick={() => {
+          setViewDetailsModal(true);
+          setCaseData(caseItem);
+        }}
+        className="text-blue-800"
+      >
+        view details
+      </div>
+    ),
   }));
 
   const statusOptions = [
@@ -122,7 +130,8 @@ const CaseList: React.FC = () => {
   ];
 
   return (
-    <AdminLayout selected="5">
+    <>
+    
       <AdminPageTitle
         title="All Cases"
         description="View and manage all allotted cases."
@@ -141,26 +150,47 @@ const CaseList: React.FC = () => {
         setBlocked={(blocked) => setStatus(blocked ? "Completed" : "Ongoing")}
         options={statusOptions}
       />
-      <Modal modalOpen={viewDetailsModal} setModalOpen={() => setViewDetailsModal(false)}>
-          {caseData && (
-            <div className="p-4 space-y-4">
-              <h3 className="text-xl font-semibold text-gray-800">
-                Case Type: {caseData.selected_case.case_model.case_type}
-              </h3>
-              <p className="text-gray-600">Description: {caseData.selected_case.case_model.description}</p>
-              <p className="text-gray-600">Budget: ₹{caseData.selected_case.case_model.budget}</p>
-              <p className="text-gray-600">Status: {caseData.status}</p>
-              <h4 className="text-lg font-semibold text-gray-800 mt-4">Lawyer Details:</h4>
-              <p className="text-gray-600">Name: {caseData.selected_case.lawyer.user.full_name}</p>
-              <p className="text-gray-600">Experience: {caseData.selected_case.lawyer.experience} years</p>
-              <h4 className="text-lg font-semibold text-gray-800 mt-4">User Details:</h4>
-              <p className="text-gray-600">User Email: {caseData.selected_case.case_model.user_email}</p>
-              <p className="text-gray-600">User Phone: {caseData.selected_case.case_model.user_phone} </p>
-              <p className="text-gray-600">State Name: {caseData.selected_case.case_model.state_name} </p>
-            </div>
-          )}
-        </Modal>
-    </AdminLayout>
+      <Modal
+        modalOpen={viewDetailsModal}
+        setModalOpen={() => setViewDetailsModal(false)}
+      >
+        {caseData && (
+          <div className="p-4 space-y-4">
+            <h3 className="text-xl font-semibold text-gray-800">
+              Case Type: {caseData.selected_case.case_model.case_type}
+            </h3>
+            <p className="text-gray-600">
+              Description: {caseData.selected_case.case_model.description}
+            </p>
+            <p className="text-gray-600">
+              Budget: ₹{caseData.selected_case.case_model.budget}
+            </p>
+            <p className="text-gray-600">Status: {caseData.status}</p>
+            <h4 className="text-lg font-semibold text-gray-800 mt-4">
+              Lawyer Details:
+            </h4>
+            <p className="text-gray-600">
+              Name: {caseData.selected_case.lawyer.user.full_name}
+            </p>
+            <p className="text-gray-600">
+              Experience: {caseData.selected_case.lawyer.experience} years
+            </p>
+            <h4 className="text-lg font-semibold text-gray-800 mt-4">
+              User Details:
+            </h4>
+            <p className="text-gray-600">
+              User Email: {caseData.selected_case.case_model.user_email}
+            </p>
+            <p className="text-gray-600">
+              User Phone: {caseData.selected_case.case_model.user_phone}{" "}
+            </p>
+            <p className="text-gray-600">
+              State Name: {caseData.selected_case.case_model.state_name}{" "}
+            </p>
+          </div>
+        )}
+      </Modal>
+    </>
   );
 };
 

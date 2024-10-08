@@ -4,12 +4,14 @@ import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import CustomInputFullSized from "../../../components/Input/InputFullSize";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import Select from 'react-select';
+import Select from "react-select";
 import LawyerProfileAdding from "../../../components/LawyerProfileAdding/LawyerProfileAdding";
-import { addLawyer, fetchDepartmentsAndLanguagesAndStates } from "../../../services/AddLawyerServices";
+import {
+  addLawyer,
+  fetchDepartmentsAndLanguagesAndStates,
+} from "../../../services/AddLawyerServices";
 import { Link } from "react-router-dom";
 import { useToast } from "../../../components/Toast/ToastManager";
-
 
 interface DepartmentOption {
   value: string;
@@ -36,20 +38,29 @@ const AddLawyer: React.FC = () => {
     const loadData = async () => {
       try {
         const data = await fetchDepartmentsAndLanguagesAndStates();
-        setDepartments(data.departments.map((dept: any) => ({
-          value: dept.id,
-          label: dept.department_name,
-        })));
-        setLanguages(data.languages.map((lang: any) => ({
-          value: lang.id,
-          label: lang.name,
-        })));
-        setStates(data.states.map((state: any) => ({
-          value: state.id,
-          label: state.name,
-        })));
+        setDepartments(
+          data.departments.map((dept: any) => ({
+            value: dept.id,
+            label: dept.department_name,
+          }))
+        );
+        setLanguages(
+          data.languages.map((lang: any) => ({
+            value: lang.id,
+            label: lang.name,
+          }))
+        );
+        setStates(
+          data.states.map((state: any) => ({
+            value: state.id,
+            label: state.name,
+          }))
+        );
       } catch (error) {
-        console.error("Failed to fetch departments, languages, and states:", error);
+        console.error(
+          "Failed to fetch departments, languages, and states:",
+          error
+        );
       }
     };
 
@@ -68,7 +79,7 @@ const AddLawyer: React.FC = () => {
       address: "",
       city: "",
       state: null as StateOption | null,
-      postal_code: ""
+      postal_code: "",
     },
     validationSchema: Yup.object({
       full_name: Yup.string().required("Full Name is required"),
@@ -85,36 +96,42 @@ const AddLawyer: React.FC = () => {
       address: Yup.string().required("Address is required"),
       city: Yup.string().required("City is required"),
       state: Yup.object().nullable().required("State is required"),
-      postal_code: Yup.string().required("Postal Code is required")
+      postal_code: Yup.string().required("Postal Code is required"),
     }),
     onSubmit: async (values, { resetForm }) => {
       const formData = new FormData();
-      formData.append('full_name', values.full_name);
-      formData.append('email', values.email);
-      formData.append('phone_number', values.phone_number);
-      formData.append('experience', values.experience.toString());
-      formData.append('description', values.description);
-      formData.append('department', JSON.stringify(values.department.map(d => d.value)));
-      formData.append('language', JSON.stringify(values.language.map(l => l.value)));
-      formData.append('address', values.address);
-      formData.append('city', values.city);
-      formData.append('state', values.state ? values.state.label : '');
-      formData.append('postal_code', values.postal_code);
+      formData.append("full_name", values.full_name);
+      formData.append("email", values.email);
+      formData.append("phone_number", values.phone_number);
+      formData.append("experience", values.experience.toString());
+      formData.append("description", values.description);
+      formData.append(
+        "department",
+        JSON.stringify(values.department.map((d) => d.value))
+      );
+      formData.append(
+        "language",
+        JSON.stringify(values.language.map((l) => l.value))
+      );
+      formData.append("address", values.address);
+      formData.append("city", values.city);
+      formData.append("state", values.state ? values.state.label : "");
+      formData.append("postal_code", values.postal_code);
 
       if (adminProfile) {
-        formData.append('profile_image', adminProfile, 'profile_image.jpg'); 
+        formData.append("profile_image", adminProfile, "profile_image.jpg");
       }
 
       try {
         const response = await addLawyer(formData);
-        console.log('Lawyer added successfully:', response);
-        addToast('success',  'Lawyer added successfully!' );
+        console.log("Lawyer added successfully:", response);
+        addToast("success", "Lawyer added successfully!");
         // Reset the form after successful submission
         resetForm();
-        setAdminProfile(null);  // Reset profile image
+        setAdminProfile(null); // Reset profile image
       } catch (error) {
-        addToast('danger',  'Failed to add lawyer. Please try again.' );
-        console.error('Error adding lawyer:', error);
+        addToast("danger", "Failed to add lawyer. Please try again.");
+        console.error("Error adding lawyer:", error);
       }
     },
   });
@@ -137,31 +154,37 @@ const AddLawyer: React.FC = () => {
   const customSelectStyles = {
     control: (provided: any, state: any) => ({
       ...provided,
-      minHeight: '50px',
-      height: '50px',
-      borderColor: state.isFocused ? 'rgba(0, 123, 255, 0.8)' : 'rgba(108, 117, 125, 0.1)',
-      boxShadow: state.isFocused ? '0 0 0 1px rgba(0, 123, 255, 0.8)' : provided.boxShadow,
-      '&:hover': {
-        borderColor: state.isFocused ? 'rgba(0, 123, 255, 0.1)' : 'rgba(108, 117, 125, 0.1)',
+      minHeight: "50px",
+      height: "50px",
+      borderColor: state.isFocused
+        ? "rgba(0, 123, 255, 0.8)"
+        : "rgba(108, 117, 125, 0.1)",
+      boxShadow: state.isFocused
+        ? "0 0 0 1px rgba(0, 123, 255, 0.8)"
+        : provided.boxShadow,
+      "&:hover": {
+        borderColor: state.isFocused
+          ? "rgba(0, 123, 255, 0.1)"
+          : "rgba(108, 117, 125, 0.1)",
       },
     }),
     valueContainer: (provided: any) => ({
       ...provided,
-      height: '50px',
-      padding: '0 6px',
+      height: "50px",
+      padding: "0 6px",
     }),
     input: (provided: any) => ({
       ...provided,
-      margin: '0px',
+      margin: "0px",
     }),
     indicatorsContainer: (provided: any) => ({
       ...provided,
-      height: '50px',
+      height: "50px",
     }),
   };
 
   return (
-    <AdminLayout selected="2">
+    <>
       <AdminPageTitle
         title="ADD LAWYER"
         description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
@@ -179,7 +202,7 @@ const AddLawyer: React.FC = () => {
               value={formik.values.full_name}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.errors.full_name as string ?? ""}
+              error={(formik.errors.full_name as string) ?? ""}
               required
             />
             <CustomInputFullSized
@@ -190,7 +213,7 @@ const AddLawyer: React.FC = () => {
               value={formik.values.email}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={formik.errors.email as string ?? ""}
+              error={(formik.errors.email as string) ?? ""}
               required
             />
           </div>
@@ -203,7 +226,7 @@ const AddLawyer: React.FC = () => {
             value={formik.values.phone_number}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.errors.phone_number as string ?? ""}
+            error={(formik.errors.phone_number as string) ?? ""}
             required
           />
           <CustomInputFullSized
@@ -214,7 +237,7 @@ const AddLawyer: React.FC = () => {
             value={formik.values.experience}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.errors.experience as string ?? ""}
+            error={(formik.errors.experience as string) ?? ""}
             required
           />
           <CustomInputFullSized
@@ -224,7 +247,7 @@ const AddLawyer: React.FC = () => {
             value={formik.values.address}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.errors.address as string ?? ""}
+            error={(formik.errors.address as string) ?? ""}
             required
           />
           <CustomInputFullSized
@@ -234,7 +257,7 @@ const AddLawyer: React.FC = () => {
             value={formik.values.city}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.errors.city as string ?? ""}
+            error={(formik.errors.city as string) ?? ""}
             required
           />
           <div className="flex flex-col md:pt-1 pb-2 justify-center space-y-1">
@@ -244,7 +267,7 @@ const AddLawyer: React.FC = () => {
                 id="state"
                 name="state"
                 options={stateOptions}
-                onChange={(selected) => formik.setFieldValue('state', selected)}
+                onChange={(selected) => formik.setFieldValue("state", selected)}
                 onBlur={formik.handleBlur}
                 value={formik.values.state}
                 className="block w-full rounded-md text-xs mt-1"
@@ -264,7 +287,7 @@ const AddLawyer: React.FC = () => {
             value={formik.values.postal_code}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.errors.postal_code as string ?? ""}
+            error={(formik.errors.postal_code as string) ?? ""}
             required
           />
           <div className="flex flex-col md:pt-1 pb-2 justify-center space-y-1">
@@ -275,7 +298,9 @@ const AddLawyer: React.FC = () => {
                 name="department"
                 options={departmentOptions}
                 isMulti
-                onChange={(selected) => formik.setFieldValue('department', selected)}
+                onChange={(selected) =>
+                  formik.setFieldValue("department", selected)
+                }
                 onBlur={formik.handleBlur}
                 value={formik.values.department}
                 className="block w-full rounded-md text-xs mt-1"
@@ -296,7 +321,9 @@ const AddLawyer: React.FC = () => {
                 name="language"
                 options={languageOptions}
                 isMulti
-                onChange={(selected) => formik.setFieldValue('language', selected)}
+                onChange={(selected) =>
+                  formik.setFieldValue("language", selected)
+                }
                 onBlur={formik.handleBlur}
                 value={formik.values.language}
                 className="block w-full rounded-md text-xs mt-1"
@@ -316,20 +343,27 @@ const AddLawyer: React.FC = () => {
             value={formik.values.description}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
-            error={formik.errors.description as string ?? ""}
+            error={(formik.errors.description as string) ?? ""}
             required
           />
         </div>
         <div className="flex justify-end max-w-5xl xl:px-8 mx-auto mt-4">
           <div className="flex max-[400px]:hidden text-xs p-2 space-x-1">
-            <Link to={'../../../../../../admin/lawyers'}>
-              <button type="button" className="bg-white border p-2 rounded-md">Cancel</button>
+            <Link to={"../../../../../../admin/lawyers"}>
+              <button type="button" className="bg-white border p-2 rounded-md">
+                Cancel
+              </button>
             </Link>
-            <button type="submit" className="bg-slate-700 border px-2 p-1 text-white rounded-md">Add</button>
+            <button
+              type="submit"
+              className="bg-slate-700 border px-2 p-1 text-white rounded-md"
+            >
+              Add
+            </button>
           </div>
         </div>
       </form>
-    </AdminLayout>
+    </>
   );
 };
 

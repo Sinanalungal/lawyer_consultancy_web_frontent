@@ -1,19 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import useRole from "../../../hooks/useRole";
-import Services from "../../../components/Common/Services";
 import { logout } from "../../../redux/slice/LoginActions";
-import HeroSection from "./Checking";
+import HeroSection from "./Hero";
 import UserLayout from "../../../layouts/UserLayout/UserLayout";
-import ThirdLayer from "./ThirdLayer";
-import Statistic from "../../../components/Statistics/Statistics";
-import TestimonalCarousel from "../../../components/Carousel/TestimonalCarousel";
+import ServicesGrid from "../../../components/ServicesProviding/ServiceGrid";
+import LawyerFirmSection from "./Delivering";
+import LandingAccordion from "./Accordition";
+
 
 const LandingPage: React.FC = () => {
   const { registered } = useSelector((state: any) => state.register);
   const { isAuthenticated } = useSelector((store: any) => store.login);
-  const [lawyers, setLawyers] = useState<any[]>([]);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const authTokens = localStorage.getItem("authTokens");
@@ -32,17 +31,9 @@ const LandingPage: React.FC = () => {
       dispatch(logout());
     }
 
-    // fetchLawyerData();
-  },[dispatch, isAuthenticated, navigate, registered, authTokens, role]);
-  
-  // const fetchLawyerData = async () => {
-  //   try {
-  //     const lawyerData = await fetchLawyerList();
-  //     setLawyers(lawyerData);
-  //   } catch (error) {
-  //     console.error("Error fetching lawyers:", error);
-  //   }
-  // };
+  }, [dispatch, isAuthenticated, navigate, registered, authTokens, role]);
+
+
 
   const handleRoleRedirect = (role: string) => {
     switch (role) {
@@ -60,78 +51,43 @@ const LandingPage: React.FC = () => {
     }
   };
 
-  const teamMembers = lawyers?.map((member) => ({
-    name: member.full_name,
-    experience: `${member.experience} years`,
-    language:'english',
-    image: `${process.env.VITE_BASE_URL}${member.profile}`,
-    
-  }));
-  
-  const statsData = [
-    { value: "144", label: "Users" },
-    { value: "12.9", label: "Lawyers" },
-    { value: "27.3", label: "Consultation" },
-    
-  ];
-  const slides = [
+  const content = [
     {
-      id: 1,
-      image: 'https://pagedone.io/asset/uploads/1696229969.png',
-      text: 'Pagedone has made it possible for me to stay on top of my portfolio and make informed decisions quickly and easily.',
-      author: 'Jane D',
+      title: "The first rule of Apple club is that you boast about Apple club.",
+      description:
+        "Keep a journal, quickly jot down a grocery list, and take amazing class notes. Want to convert those notes to text? No problem. Langotiya jeetu ka mara hua yaar is ready to capture every thought.",
     },
     {
-      id: 2,
-      image: 'https://pagedone.io/asset/uploads/1696229994.png',
-      text: 'Thanks to pagedone, I feel more informed and confident about my investment decisions than ever before.',
-      author: 'Harsh P.',
+      title: "Stay productive and organized.",
+      description:
+        "Manage your daily tasks efficiently and keep track of your appointments with ease. We bring the tools to enhance your workflow and help you stay on top of everything.",
     },
     {
-      id: 3,
-      image: 'https://www.befunky.com/images/wp/wp-2021-01-linkedin-profile-picture-after.jpg?auto=avif,webp&format=jpg&width=944',
-      text: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetimply dummy text of the printing and typesetting industry.Lorem Ipsum is simply dummy text of the printing and typesetting industry..',
-      author: 'Janniey',
+      title: "Seamless integration with all your devices.",
+      description:
+        "Whether you're at home or on the go, access all your files and notes from any device. Stay connected, stay efficient, and never miss a beat.",
     },
-    // Add more slides as needed
   ];
 
   return (
     <>
-      
-      {/* <Hero /> */}
-      {isAuthenticated?(
+      {isAuthenticated ? (
         <>
-      <HeroSection
-        title="Legal Advice Online"
-        title1="From Online Top Lawyers"
-        subtitle="It is a long established fact that a reader will be distracted by the readable content of a page"
-        buttonText="Explore Lawyers"
-        buttonLink="#"
-        borderText="Lawyer Consultancy Web"
-      />
-      <Statistic stats={statsData} />
-      <Services />
-      {/* <Team teamMembers={teamMembers} /> */}
-      <ThirdLayer/>
-      {/* <StoriesComponent/> */}
-      <TestimonalCarousel slides={slides} /></>
-    ):(<UserLayout>
-      <HeroSection
-        title="Legal Advice Online"
-        title1="From Online Top Lawyers"
-        subtitle="It is a long established fact that a reader will be distracted by the readable content of a page"
-        buttonText="Explore Lawyers"
-        buttonLink="#"
-        borderText="Lawyer Consultancy Web"
-      />
-      <Statistic stats={statsData} />
-      <Services />
-      {/* <Team teamMembers={teamMembers} /> */}
-      <ThirdLayer/>
-      {/* <StoriesComponent/> */}
-      <TestimonalCarousel slides={slides} />
-      </UserLayout>)}
+          <HeroSection />
+          <ServicesGrid />
+          <LawyerFirmSection content={content} />
+          <LandingAccordion />
+    
+        </>
+      ) : (
+        <UserLayout>
+          <HeroSection />
+          <ServicesGrid />
+          <LawyerFirmSection content={content} />
+          <LandingAccordion />
+        
+        </UserLayout>
+      )}
     </>
   );
 };

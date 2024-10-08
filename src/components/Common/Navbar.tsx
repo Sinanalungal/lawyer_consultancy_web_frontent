@@ -8,6 +8,8 @@ import NotificationLayer from "./Notification";
 import { fetchUserSideLawyerList } from "../../services/fetchLawyers";
 import { Lawyer } from "../../types";
 import Drawer from "../Drawer/Drawer";
+import NotificationCountSocket from "./NotificationCountSocket";
+import { useToast } from "../Toast/ToastManager";
 interface LawyerListResponse {
   count?: number;
   next?: any;
@@ -28,6 +30,7 @@ export default function Navbar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [openLawyerListView, setOpenLawyerListView] = useState<boolean>(false);
   const dispatch = useDispatch();
+  const {addToast}=useToast()
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -81,7 +84,9 @@ export default function Navbar() {
       }
     };
 
-    fetchLawyers();
+    if(isAuthenticated){
+      fetchLawyers();
+    } 
   }, [search]);
 
   const handleBlur = () => {
@@ -115,7 +120,7 @@ export default function Navbar() {
   };
   return (
     <>
-      <div className="flex fixed justify-between px-10 z-40 shadow-sm bg-white 3xl:container max-sm:px-3 py-5 items-center w-full">
+      <div className="flex fixed justify-between px-10 z-40 shadow-sm bg-white  3xl:container max-sm:px-3 py-5 items-center w-full">
         <div className="flex items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -219,7 +224,7 @@ export default function Navbar() {
               />
             </svg>
           </div>
-          <div className="w-64  max-md:hidden bg-slate-100 h-12 flex items-center px-4 rounded-full">
+          <div className="w-64  max-xl:hidden bg-slate-100 h-12 flex items-center px-4 rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
@@ -243,26 +248,13 @@ export default function Navbar() {
             />
           </div>
 
-          <div
+         {isAuthenticated && (<> <div
             className="cursor-pointer"
             onClick={() => setNotificationsOpen(!notificationsOpen)}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="size-6"
-            >
-              <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
-              <path
-                fillRule="evenodd"
-                d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <NotificationCountSocket color="black"/>
           </div>
-          {notificationsOpen && <NotificationLayer open={notificationsOpen} />}
-
+          {notificationsOpen &&  <NotificationLayer open={notificationsOpen} />}</>)}
           {!isAuthenticated ? (
             <>
               <Link to={"/login"}>
@@ -429,7 +421,7 @@ export default function Navbar() {
 )}
 
           <div className="flex text-[10px] text-gray-500   justify-end">
-            <p className="py-2 pr-2 cursor-pointer" onClick={()=>handleNextCalling()}>More</p>
+            <p className="py-2 pr-2 cursor-pointer" onClick={()=>isAuthenticated && handleNextCalling()}>More</p>
           </div>
         </div>
       )}

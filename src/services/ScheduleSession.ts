@@ -112,7 +112,7 @@ export const bookAppointmentUsingWallet = async (schedulingUuid: string, selecte
             scheduling_date: selectedDate,  
         });
         console.log("Appointment booked successfully:", response.data);
-        return response.data;
+        return response;
     } catch (error) {
         console.error("Error booking appointment:", error);
         throw error; 

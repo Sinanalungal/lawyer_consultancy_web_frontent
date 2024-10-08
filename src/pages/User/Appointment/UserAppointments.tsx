@@ -9,17 +9,37 @@ import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 import { useToast } from "../../../components/Toast/ToastManager";
 import Modal from "../../../components/Modal/Modal";
 import { useNavigate } from "react-router-dom";
+import isOnline from 'is-online';
 
+
+interface AppointmentManipulated {
+  uuid: string;
+  session_start: string;
+  session_end: string;
+  booked_at:string;
+  scheduling: {
+    start_time: string;
+    end_time: string;
+    lawyer_profile: {
+      user: {
+        full_name: string;
+        profile_image: string | null;
+      };
+    };
+  };
+  isJoinable?:boolean;
+};
 const UserAppointments: React.FC = () => {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<AppointmentManipulated[]>([]);
   const [activeTab, setActiveTab] = useState<"upcoming" | "finished">(
     "upcoming"
   );
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [modalData, setModalData] = useState<Appointment | null>(null);
+  const [modalData, setModalData] = useState<AppointmentManipulated | null>(null);
   const { setLoader } = useLoader();
   const { addToast } = useToast();
   const navigate = useNavigate();
+
   const fetchAppointments = async (tab: "upcoming" | "finished") => {
     setLoader(true);
     try {
@@ -38,28 +58,39 @@ const UserAppointments: React.FC = () => {
       addToast("success", "Appointment cancelled successfully");
       fetchAppointments("upcoming");
     } catch (error) {
-      addToast("danger", "could not cancel appointment");
+      addToast("danger", "Could not cancel appointment");
       console.error("Error cancelling booked sessions:", error);
     }
   };
 
-  // const  viewDetails = async (uuid:string) =>{
-  //   try {
-  //     await cancelAppointment(uuid);
-  //     addToast('success','Appointment cancelled successfully')
-  //     fetchAppointments('upcoming')
-  //   } catch (error) {
-  //     addToast('danger','could not cancel appointment')
-  //     console.error("Error cancelling booked sessions:", error);
-  //   }
-  // }
-  const now = new Date();
-  console.log(now, "this is the date"); // This will print the current date and time
-
-  const OpenModal = (data: Appointment) => {
+  const OpenModal = (data: AppointmentManipulated) => {
     setModalData(data);
     setIsOpen(true);
   };
+
+  // Function to check if an appointment is joinable
+  const checkIfJoinable = (app: AppointmentManipulated) => {
+    const now = new Date();
+    const sessionStart = new Date(
+      app.session_start.replace(" ", "T") + "+05:30"
+    );
+    const sessionEnd = new Date(app.session_end.replace(" ", "T") + "+05:30");
+    return sessionStart <= now && sessionEnd >= now;
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setAppointments((prevAppointments) =>
+        prevAppointments.map((app) => ({
+          ...app,
+          isJoinable: checkIfJoinable(app),
+
+        }))
+      );
+    }, 3000); 
+
+    return () => clearInterval(intervalId); 
+  }, [appointments]);
 
   useEffect(() => {
     fetchAppointments(activeTab);
@@ -77,7 +108,6 @@ const UserAppointments: React.FC = () => {
           <h2 className="text-3xl font-semibold pb-6 pt-10 max-sm:text-xl text-gray-800 text-center">
             MY APPOINTMENTS
           </h2>
-
           <div className="mb-8 flex justify-center">
             <nav className="flex space-x-2 border rounded-full p-1 bg-white">
               <button
@@ -102,7 +132,6 @@ const UserAppointments: React.FC = () => {
               </button>
             </nav>
           </div>
-
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -147,34 +176,16 @@ const UserAppointments: React.FC = () => {
                     <div className="gap-2 flex max-sm:flex-wrap">
                       {activeTab === "upcoming" && (
                         <>
-                          {new Date(
-                            app.session_start.replace(" ", "T") + "+05:30"
-                          ) <= new Date() &&
-                          new Date(
-                            app.session_end.replace(" ", "T") + "+05:30"
-                          ) >= new Date() ? (
-                            <>
-                              <button
-                                onClick={() => {
-                                  navigate(`../../../../../video/${app.uuid}`);
-                                }}
-                                className="px-4 py-2 flex items-center justify-center gap-1 text-xs bg-white text-black font-medium border border-gray-400"
-                              >
-                                {"Join"}
-                                <div className="bg-green-700 h-2 rounded-full w-2"></div>
-                              </button>
-                              <button
-                                onClick={() =>
-                                  addToast(
-                                    "danger",
-                                    "Not able to delete when session is started"
-                                  )
-                                }
-                                className="px-4 py-2 text-xs bg-slate-800 text-white"
-                              >
-                                Cancel
-                              </button>
-                            </>
+                          {app.isJoinable ? (
+                            <button
+                              onClick={async() => {
+                                 await isOnline() ? navigate(`../../../../../video/${app.uuid}`) :addToast('info','check your internet connectivity')
+                              }}
+                              className="px-4 py-2 flex items-center justify-center gap-1 text-xs bg-white text-black font-medium border border-gray-400"
+                            >
+                              {"Join"}
+                              <div className='bg-green-700 h-2 rounded-full w-2'></div>
+                            </button>
                           ) : (
                             <>
                               <button className="px-4 py-2 text-xs bg-gray-300 opacity-60 text-black border border-gray-400">
@@ -191,7 +202,7 @@ const UserAppointments: React.FC = () => {
                         </>
                       )}
 
-                      {activeTab == "finished" && (
+                      {activeTab === "finished" && (
                         <button
                           onClick={() => {
                             OpenModal(app);
@@ -201,14 +212,6 @@ const UserAppointments: React.FC = () => {
                           {"View Details"}
                         </button>
                       )}
-                      {/* {activeTab === "upcoming" && (
-                        <button
-                          onClick={() => cancelBookedSessions(app.uuid)}
-                          className="px-4 py-2 text-xs bg-slate-800 text-white"
-                        >
-                          Cancel
-                        </button>
-                      )} */}
                     </div>
                   </motion.li>
                 ))}
@@ -231,47 +234,49 @@ const UserAppointments: React.FC = () => {
                   <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
                   <line x1="6" x2="6.01" y1="16" y2="16"></line>
                   <line x1="10" x2="10.01" y1="16" y2="16"></line>
-                </svg>
-                <p className="mt-2 text-sm text-gray-800 dark:text-neutral-300">
-                  No {activeTab} appointments
-                </p>
+                </svg>{" "}
+                <p className="text-center text-gray-500">
+                  No appointments found
+                </p>{" "}
               </div>
-            )}
-          </motion.div>
-        </motion.div>
-        <Modal
-          modalOpen={isOpen}
-          setModalOpen={() => setIsOpen(!isOpen)}
-          children={
-            <>
-              <h2 className="text-xl flex justify-center mb-4 font-bold underline underline-offset-4">
-                Appointment Details
-              </h2>
-              {modalData && (
-                <div className="flex flex-col items-center gap-2">
-                  <p>
-                    <strong>Session Date:</strong> {modalData.session_start}
-                  </p>
-                  <p>
-                    <strong>Session Time:</strong>{" "}
-                    {modalData.scheduling.start_time} -{" "}
-                    {modalData.scheduling.end_time}
-                  </p>
-                  <p>
-                    <strong>Booked At:</strong> {modalData.booked_at}
-                  </p>
+            )}{" "}
+          </motion.div>{" "}
+        </motion.div>{" "}
+      </div>{" "}
+      {modalData && (
+       <Modal
+       modalOpen={isOpen}
+       setModalOpen={() => setIsOpen(!isOpen)}
+       children={
+         <>
+           <h2 className="text-xl flex justify-center mb-4 font-bold underline underline-offset-4">
+             Appointment Details
+           </h2>
+           {modalData && (
+             <div className="flex flex-col items-center gap-2">
+               <p>
+                 <strong>Session Date:</strong> {modalData.session_start}
+               </p>
+               <p>
+                 <strong>Session Time:</strong>{" "}
+                 {modalData.scheduling.start_time} -{" "}
+                 {modalData.scheduling.end_time}
+               </p>
+               <p>
+                 <strong>Booked At:</strong> {modalData.booked_at}
+               </p>
 
-                  <h3 className="text-sm font-semibold">Lawyer Details</h3>
-                  <p>
-                    <strong>Selected Lawyer:</strong>{" "}
-                    {modalData.scheduling.lawyer_profile.user.full_name}
-                  </p>
-                </div>
-              )}
-            </>
-          }
-        ></Modal>
-      </div>
+               <h3 className="text-sm font-semibold">Lawyer Details</h3>
+               <p>
+                 <strong>Selected Lawyer:</strong>{" "}
+                 {modalData.scheduling.lawyer_profile.user.full_name}
+               </p>
+             </div>
+           )}
+         </>
+       }
+     ></Modal>
+      )}{" "}
     </>
   );
 };

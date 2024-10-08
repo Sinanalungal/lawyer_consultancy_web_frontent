@@ -73,7 +73,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
         </div>,
         document.getElementById('portal-div') as HTMLElement
       )}
-      <div className="min-h-screen mx-auto justify-center 3xl:container">
+      <div className="min-h-screen mx-auto  justify-center 3xl:container">
         <NotificationSocket/>
         <div className="my-auto">
           <div
@@ -83,7 +83,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
           >
             <Navbar />
           </div>
-         <div className='bg-gray-50'>
+         <div className='bg-gradient-to-b from-gray-100 via-white to-gray-100  overflow-x-hidden'>
          {error ? (
             <div className="w-full h-svh flex justify-center items-center text-xs text-gray-600">
               {error}
