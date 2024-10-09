@@ -132,13 +132,15 @@
 // };
 
 // export default LawyerWalletPage;
+
+
 import React, { useState, useEffect } from "react";
+import { Wallet, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import {
-  Wallet,
-  ArrowUpRight,
-  ArrowDownLeft,
-} from "lucide-react";
-import { addFunds, GetTheWallet, withdrawMoney } from "../../../services/Wallet";
+  addFunds,
+  GetTheWallet,
+  withdrawMoney,
+} from "../../../services/Wallet";
 import { loadStripe } from "@stripe/stripe-js";
 import Modal from "../../../components/Modal/Modal";
 import { useToast } from "../../../components/Toast/ToastManager";
@@ -147,10 +149,10 @@ const LawyerWalletPage: React.FC = () => {
   const [balance, setBalance] = useState<number>(0);
   const [amount, setAmount] = useState("");
   const [transactions, setTransactions] = useState<any[]>([]);
-  const [withdrawAmount, setWithdrawAmount] = useState<number|null>(null);
+  const [withdrawAmount, setWithdrawAmount] = useState<number | null>(null);
   const [withdrawUpi, setWithdrawUpi] = useState("");
   const [withdrawModal, setWithdrawModal] = useState<boolean>(false);
- const {addToast}=useToast()
+  const { addToast } = useToast();
   const handleAddFunds = async () => {
     if (!amount || isNaN(parseFloat(amount))) return;
     try {
@@ -160,20 +162,24 @@ const LawyerWalletPage: React.FC = () => {
         throw new Error("Invalid Stripe key.");
       }
 
-      const stripe = await loadStripe(
-        "pk_test_51PMjrqSD4LlFpJPegNLUNIVDRjJmeaF1jW7lBzhnEQHgvmchbzkNn4pVdStSwROBEnbXvF2BpC4reOqUvHS1L3Yb00sfPbm63y"
-      );
+      if (process.env.VITE_STRIPE_PUBLIC_SECRET_KEY) {
+        const stripe = await loadStripe(
+          process.env.VITE_STRIPE_PUBLIC_SECRET_KEY
+        );
 
-      if (!stripe) {
-        throw new Error("Failed to load Stripe.");
-      }
+        if (!stripe) {
+          throw new Error("Failed to load Stripe.");
+        }
 
-      const { error } = await stripe.redirectToCheckout({
-        sessionId: data.sessionId,
-      });
+        const { error } = await stripe.redirectToCheckout({
+          sessionId: data.sessionId,
+        });
 
-      if (error) {
-        console.error("Stripe checkout error:", error);
+        if (error) {
+          console.error("Stripe checkout error:", error);
+        }
+      } else {
+        addToast("info", "Payment Method Not Available Now");
       }
     } catch (error) {
       console.error("Error adding funds:", error);
@@ -181,27 +187,28 @@ const LawyerWalletPage: React.FC = () => {
   };
 
   const handleWithdraw = async () => {
-    if (withdrawAmount  && withdrawAmount!= null && withdrawUpi){
+    if (withdrawAmount && withdrawAmount != null && withdrawUpi) {
       try {
-       if (withdrawAmount>0){
-        const response = await withdrawMoney(withdrawAmount,withdrawUpi);
-        console.log(`Withdrawing ���${withdrawAmount}`);
-        console.log(response);
-        addToast('success','money withdraw initiated successfully')
-        setWithdrawModal(false);
-       }else{
-        addToast('info','Withdrawal amount should be greater than zero')
-       }
-        
+        if (withdrawAmount > 0) {
+          const response = await withdrawMoney(withdrawAmount, withdrawUpi);
+          console.log(`Withdrawing ���${withdrawAmount}`);
+          console.log(response);
+          addToast("success", "money withdraw initiated successfully");
+          setWithdrawModal(false);
+        } else {
+          addToast("info", "Withdrawal amount should be greater than zero");
+        }
       } catch (error:any) {
         console.error("Error withdrawing funds:", error);
-        addToast('danger',error.response ? error.response.data.error : error.message)
-      }finally{
+        addToast(
+          "danger",
+          error.response ? error.response.data.error : error.message
+        );
+      } finally {
         setWithdrawAmount(0);
         setWithdrawUpi("");
       }
     }
-    
   };
 
   useEffect(() => {
@@ -219,9 +226,9 @@ const LawyerWalletPage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen bg-gray-100 p-8 my-4">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl max-sm:text-2xl font-bold text-gray-800 mb-8">
+        <h1 className="text-3xl max-sm:text-2xl font-bold text-gray-800 mb-4">
           WALLET DASHBOARD
         </h1>
 
@@ -252,7 +259,10 @@ const LawyerWalletPage: React.FC = () => {
                   >
                     <ArrowUpRight className="mr-2" /> Add Funds
                   </button>
-                  <button onClick={() => setWithdrawModal(true)} className="w-full border border-gray-400 text-gray-700 py-2 rounded flex items-center justify-center">
+                  <button
+                    onClick={() => setWithdrawModal(true)}
+                    className="w-full border border-gray-400 text-gray-700 py-2 rounded flex items-center justify-center"
+                  >
                     <ArrowDownLeft className="mr-2" /> Withdraw
                   </button>
                 </div>
@@ -279,27 +289,39 @@ const LawyerWalletPage: React.FC = () => {
                   <tbody>
                     {transactions.length === 0 ? (
                       <tr>
-                        <td colSpan={3} className="text-center text-gray-500 py-4">
+                        <td
+                          colSpan={3}
+                          className="text-center text-gray-500 py-4"
+                        >
                           No transactions available.
                         </td>
                       </tr>
                     ) : (
-                      transactions.map((tx,index) => (
-                        <tr key={index} className="border-b text-[13px] hover:bg-gray-50">
+                      transactions.map((tx, index) => (
+                        <tr
+                          key={index}
+                          className="border-b text-[13px] hover:bg-gray-50"
+                        >
                           <td className="p-2">
                             {tx.transaction_type === "credit" ? (
                               <span className="text-green-600 flex items-center">
-                                <ArrowUpRight className="mr-1" size={16} /> Credit
+                                <ArrowUpRight className="mr-1" size={16} />{" "}
+                                Credit
                               </span>
                             ) : (
                               <span className="text-red-600 flex items-center">
-                                <ArrowDownLeft className="mr-1" size={16} /> Debit
+                                <ArrowDownLeft className="mr-1" size={16} />{" "}
+                                Debit
                               </span>
                             )}
                           </td>
                           <td className="p-2">
                             <span
-                              className={tx.transaction_type === "credit" ? "text-green-600" : "text-red-600"}
+                              className={
+                                tx.transaction_type === "credit"
+                                  ? "text-green-600"
+                                  : "text-red-600"
+                              }
                             >
                               ₹{tx.amount}
                             </span>
@@ -316,22 +338,25 @@ const LawyerWalletPage: React.FC = () => {
         </div>
 
         {/* Withdrawal Modal */}
-        <Modal modalOpen={withdrawModal} setModalOpen={() => setWithdrawModal(!withdrawModal)}>
+        <Modal
+          modalOpen={withdrawModal}
+          setModalOpen={() => setWithdrawModal(!withdrawModal)}
+        >
           <div className="p-4">
             <h2 className="text-lg font-semibold">Withdraw Money</h2>
             <div className="mt-4">
               <label className="block mb-2">Amount:</label>
-              <input 
-                type="number" 
-                value={withdrawAmount!=null ?withdrawAmount:''}
+              <input
+                type="number"
+                value={withdrawAmount != null ? withdrawAmount : ""}
                 min={0}
                 onChange={(e) => setWithdrawAmount(parseFloat(e.target.value))}
                 className="border p-2 rounded w-full"
                 max={balance.toFixed(2)}
               />
               <label className="block mb-2">Upi:</label>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={withdrawUpi}
                 onChange={(e) => setWithdrawUpi(e.target.value)}
                 className="border p-2 rounded w-full"
@@ -359,4 +384,3 @@ const LawyerWalletPage: React.FC = () => {
 };
 
 export default LawyerWalletPage;
-

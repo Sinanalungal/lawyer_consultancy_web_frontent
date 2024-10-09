@@ -37,7 +37,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ setSearchOpen, onSear
   // Handle Enter key press
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      onSearch(searchQuery); // Call immediately on Enter key
+      onSearch(searchQuery); 
       setSearchOpen(false);
     }
   };
@@ -49,7 +49,7 @@ const SearchComponent: React.FC<SearchComponentProps> = ({ setSearchOpen, onSear
         className="input border text-xs focus:border-2 border-gray-300 px-5 py-3 rounded-xl max-w-56 md:min-w-64 transition-all duration-500 ease-in-out sm:focus:w-72 outline-none transform-gpu sm:hover:scale-105"
         name="search"
         type="search"
-        value={searchQuery} // Keep input value controlled
+        value={searchQuery}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
       />

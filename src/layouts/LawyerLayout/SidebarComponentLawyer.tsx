@@ -239,7 +239,7 @@ export function SidebarDemo({ children }: LawyerLayoutProps) {
       </Sidebar>
 
       <div className="grid flex-1 overflow-hidden">
-        {notificationsOpen && <NotificationLayer open={notificationsOpen} />}
+        {notificationsOpen && <NotificationLayer onClose={()=>setNotificationsOpen(false)} open={notificationsOpen} />}
         <div className="p-2 bg-gray-100 2xl:px-10 md:px-10 md:py-20 rounded-tl-2xl border border-neutral-200 dark:border-neutral-700 w-full mx-auto dark:bg-neutral-900 flex flex-col gap-2 h-full overflow-y-auto  no-scrollbar">
           <NotificationSocket />
           {error ? (
@@ -261,13 +261,15 @@ export const Logo = () => {
       className="font-normal  space-x-6 space-y-1 items-center text-sm text-black py-1 relative z-20"
     >
       <div className=" flex items-center justify-start space-x-2 w-full">
-        <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
+        <div className="h-5 w-6  dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" >
+        <img src="/logo_icon.png" alt="logo-of-lawyer-consultancy website" className="object-contain"/>
+        </div>
         <motion.span
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="font-medium text-black dark:text-white whitespace-pre"
         >
-          Acet Labs
+          Legal Link
         </motion.span>
       </div>
       <div className="px- py-1  flex justify-center items-center text-xs max-w-[70px] bg-white rounded-md shadow-sm">
@@ -279,10 +281,12 @@ export const Logo = () => {
 export const LogoIcon = () => {
   return (
     <Link
-      to="#"
-      className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
-    >
-      <div className="h-5 w-6 bg-black dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" />
-    </Link>
+    to="#"
+    className="font-normal flex space-x-2 items-center text-sm text-black py-1 relative z-20"
+  >
+    <div className="h-5 w-6  dark:bg-white rounded-br-lg rounded-tr-sm rounded-tl-lg rounded-bl-sm flex-shrink-0" >
+    <img src="/logo_icon.png" alt="logo-of-lawyer-consultancy website" className="object-contain"/>
+    </div>
+  </Link>
   );
 };

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import EditProfileTabs from "../../../components/TabComponents/EditProfileTab";
-import UserLayout from "../../../layouts/UserLayout/UserLayout";
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import ProfileForm from "../../../components/ProfileForm/ProfileForm";
 import EditPassword from "../../../components/ProfileForm/EditPassword";
@@ -13,7 +12,6 @@ const EditProfilePage: React.FC = () => {
   const tabs = ["Edit Profile", "Change Password"];
 
   return (
-    // <UserLayout>
     <div className="pb-16 max-w-7xl mx-auto">
       <PageTitle
         title="EDIT PROFILE"
@@ -23,8 +21,6 @@ const EditProfilePage: React.FC = () => {
         <UserProfilePicture
           profileImage={userDetail?.profile_image ?? ""}
           fullName={userDetail?.full_name ?? ""}
-          // onUploadClick={handleUploadClick}
-          // onDeleteClick={handleDeleteClick}
         />
       </div>
       <div className="px-10 max-w-8xl mx-auto  sm:flex  ">
@@ -49,7 +45,6 @@ const EditProfilePage: React.FC = () => {
         </div>
       </div>
     </div>
-    // </UserLayout>
   );
 };
 

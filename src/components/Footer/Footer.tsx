@@ -7,7 +7,7 @@ const Footer: React.FC = () => {
         <div className=" 2xl:flex justify-center items-center 2xl:space-x-18">
           <div className="flex 2xl:mt-5 justify-center text-black">
             <img
-              src="https://www.creativefabrica.com/wp-content/uploads/2018/11/Vector-of-Simple-Logo-Letter-A-by-gasemraya-2.png"
+              src="/logo.png"
               className="h-10"
               alt=""
             />
@@ -41,7 +41,7 @@ const Footer: React.FC = () => {
               </a>
             </li>
 
-            <li>
+            {/* <li>
               <a
                 className="text-gray-700 transition hover:text-gray-800/75"
                 href="#"
@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
                 {" "}
                 Appointments{" "}
               </a>
-            </li>
+            </li> */}
 
             <li>
               <a

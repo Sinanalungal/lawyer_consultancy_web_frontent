@@ -6,9 +6,9 @@ interface ProfileProps {}
 const Profile: React.FC<ProfileProps> = () => {
   return (
     <>
-        <div className="w-full min-h-[400px] bg-white">
-          <ProfileSection />
-        </div>
+      <div className="w-full min-h-[400px] bg-white">
+        <ProfileSection />
+      </div>
     </>
   );
 };

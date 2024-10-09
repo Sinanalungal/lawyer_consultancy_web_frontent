@@ -6,14 +6,17 @@ import { cn } from "../../utils/cn";
 import { AnimatedList } from "../Ui/animated-list-components";
 import { HiMiniInboxArrowDown } from "react-icons/hi2";
 
-
 interface Notification {
   title: string;
   description: string;
   time: string;
 }
 
-const NotificationSocket: React.FC = ({className}:{className?:string}) => {
+const NotificationSocket: React.FC = ({
+  className,
+}: {
+  className?: string;
+}) => {
   const [notification, setNotification] = useState<Notification | null>(null);
   const [error, setError] = useState<string | null>(null);
   const { value } = useAppSelector((state) => state.login);
@@ -29,11 +32,13 @@ const NotificationSocket: React.FC = ({className}:{className?:string}) => {
   useEffect(() => {
     if (value) {
       const connectWebSocket = () => {
-        const socket = new WebSocket(`ws://localhost:8000/notifications/${value}/`);
+        const socket = new WebSocket(
+          `ws://localhost:8000/notifications/${value}/`
+        );
 
         socket.onopen = (event) => {
-          console.log('notification socket is opened ');
-          
+          console.log("notification socket is opened ");
+
           console.log("WebSocket connection established:", event);
         };
 
@@ -49,7 +54,10 @@ const NotificationSocket: React.FC = ({className}:{className?:string}) => {
           };
 
           // Persist the notification in localStorage
-          localStorage.setItem("latestNotification", JSON.stringify(newNotification));
+          localStorage.setItem(
+            "latestNotification",
+            JSON.stringify(newNotification)
+          );
           setNotification(newNotification);
 
           // Clear notification after 3 seconds
@@ -65,8 +73,10 @@ const NotificationSocket: React.FC = ({className}:{className?:string}) => {
         };
 
         socket.onclose = (event) => {
-          console.log("WebSocket connection closed. Attempting to reconnect...");
-          setTimeout(connectWebSocket, 5000); // Try to reconnect after 5 seconds
+          console.log(
+            "WebSocket connection closed. Attempting to reconnect..."
+          );
+          setTimeout(connectWebSocket, 5000);
         };
 
         return () => {
@@ -95,42 +105,25 @@ const NotificationSocket: React.FC = ({className}:{className?:string}) => {
           transition={{ duration: 0.3 }}
         >
           <div
-        className={cn(
-          "relative  flex   w-full flex-col  overflow-hidden ",
-          className,
-        )}
-      >
-        <AnimatedList>
-          {/* {notification.map((item, idx) => (
-            <Notification {...item} key={idx} />
-          ))} */}
-          {notification &&  <Notification {...notification}  />}
-        </AnimatedList>
-      </div>
+            className={cn(
+              "relative  flex   w-full flex-col  overflow-hidden ",
+              className
+            )}
+          >
+            <AnimatedList>
+              {notification && <Notification {...notification} />}
+            </AnimatedList>
+          </div>
         </motion.div>
-      //   <motion.div
-      //   className="fixed sm:top-3 z-50 sm:right-4 right-0 flex items-center bg-white border border-gray-200 shadow-md rounded-lg p-4 gap-4"
-      //   initial={{ opacity: 0, y: 20 }}
-      //   animate={{ opacity: 1, y: 0 }}
-      //   exit={{ opacity: 0, y: 20 }}
-      //   transition={{ duration: 0.3 }}
-      // >
-       
-      // </motion.div>
       )}
-    </AnimatePresence>
-    ,
+    </AnimatePresence>,
     document.getElementById("notification-root")!
   );
 };
 
 export default NotificationSocket;
 
-
-
-
-
-const Notification = ({ title, description,   time }: Notification) => {
+const Notification = ({ title, description, time }: Notification) => {
   return (
     <figure
       className={cn(
@@ -140,17 +133,18 @@ const Notification = ({ title, description,   time }: Notification) => {
         // light styles
         "bg-white [box-shadow:0_0_0_1px_rgba(0,0,0,.03),0_2px_4px_rgba(0,0,0,.05),0_12px_24px_rgba(0,0,0,.05)]",
         // dark styles
-        "transform-gpu dark:bg-transparent dark:backdrop-blur-md dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]",
+        "transform-gpu dark:bg-transparent dark:backdrop-blur-md dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]"
       )}
     >
       <div className="flex flex-row items-center gap-3">
         <div
           className="flex size-10 items-center justify-center rounded-2xl"
           style={{
-            backgroundColor: '#1e266e',
+            backgroundColor: "#1e266e",
           }}
         >
-          <span className="text-lg p-3"><HiMiniInboxArrowDown color="white"/>
+          <span className="text-lg p-3">
+            <HiMiniInboxArrowDown color="white" />
           </span>
         </div>
         <div className="flex flex-col overflow-hidden">

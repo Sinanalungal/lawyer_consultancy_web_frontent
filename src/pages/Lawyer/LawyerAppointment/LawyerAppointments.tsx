@@ -85,23 +85,7 @@ const LawyerAppointments: React.FC = () => {
           ))}
         </nav>
       </div>
-      {/* <div className="bg-white mx-auto md:max-w-[250px] shadow-md rounded-lg p-2">
-        <div className="flex flex-wrap gap-2 md:flex-nowrap justify-between">
-          {["upcoming", "completed"].map((tab) => (
-            <button
-              key={tab}
-              className={`w-full md:w-auto py-3 text-xs px-4 text-center rounded-lg transition-all duration-300 ${
-                activeTab === tab
-                  ? "bg-slate-700 text-white font-semibold shadow-md"
-                  : "text-gray-500 hover:bg-gray-100"
-              }`}
-              onClick={() => setActiveTab(tab)}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-            </button>
-          ))}
-        </div>
-      </div> */}
+      
       <div className="mt-6 bg-transparent rounded-lg">{renderContent()}</div>
     </div>
   );

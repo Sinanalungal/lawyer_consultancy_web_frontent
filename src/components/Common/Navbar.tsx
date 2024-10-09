@@ -23,14 +23,14 @@ export default function Navbar() {
   const [isHoveringMenu, setIsHoveringMenu] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
   const [notificationsOpen, setNotificationsOpen] = useState<boolean>(false);
-  const [lawyersList, setLawyersList] = useState<Lawyer[] >([]);
+  const [lawyersList, setLawyersList] = useState<Lawyer[]>([]);
   const [next, setNext] = useState<string | null>(null); // Total number of pages
   const [search, setSearch] = useState<string>("");
   const [drawerData, setDrawerData] = useState<Lawyer | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [openLawyerListView, setOpenLawyerListView] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const {addToast}=useToast()
+  const { addToast } = useToast();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -39,7 +39,7 @@ export default function Navbar() {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-
+  
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
 
@@ -84,9 +84,9 @@ export default function Navbar() {
       }
     };
 
-    if(isAuthenticated){
+    if (isAuthenticated) {
       fetchLawyers();
-    } 
+    }
   }, [search]);
 
   const handleBlur = () => {
@@ -136,7 +136,7 @@ export default function Navbar() {
             />
           </svg>
           <img
-            src="https://www.creativefabrica.com/wp-content/uploads/2018/11/Vector-of-Simple-Logo-Letter-A-by-gasemraya-2.png"
+            src="/logo.png"
             className="w-20 h-12 max-sm:hidden object-contain"
             alt=""
           />
@@ -248,13 +248,20 @@ export default function Navbar() {
             />
           </div>
 
-         {isAuthenticated && (<> <div
-            className="cursor-pointer"
-            onClick={() => setNotificationsOpen(!notificationsOpen)}
-          >
-            <NotificationCountSocket color="black"/>
-          </div>
-          {notificationsOpen &&  <NotificationLayer open={notificationsOpen} />}</>)}
+          {isAuthenticated && (
+            <>
+              {" "}
+              <div
+                className="cursor-pointer"
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
+              >
+                <NotificationCountSocket color="black" />
+              </div>
+              {notificationsOpen && (
+                <NotificationLayer onClose={()=>setNotificationsOpen(false)} open={notificationsOpen} />
+              )}
+            </>
+          )}
           {!isAuthenticated ? (
             <>
               <Link to={"/login"}>
@@ -363,65 +370,72 @@ export default function Navbar() {
             e.preventDefault();
           }}
         >
-          <p className="flex justify-center p-2 text-sm font-semibold ">Lawyers</p>
+          <p className="flex justify-center p-2 text-sm font-semibold ">
+            Lawyers
+          </p>
           {lawyersList && lawyersList.length > 0 ? (
-  lawyersList.map((lawyer, index) => (
-    <div
-      onClick={() => {
-        setDrawerData(lawyer);
-        setIsDrawerOpen(true);
-      }}
-      key={index}
-      className="p-2 bg-slate-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-slate-100 flex items-start space-x-2"
-    >
-      <img
-        src={
-          lawyer.user_profile_image ??
-          "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
-        }
-        alt="Lawyer Profile"
-        className="w-10 my-auto rounded-md h-10 object-cover"
-      />
+            lawyersList.map((lawyer, index) => (
+              <div
+                onClick={() => {
+                  setDrawerData(lawyer);
+                  setIsDrawerOpen(true);
+                }}
+                key={index}
+                className="p-2 bg-slate-50 border border-gray-200 rounded-lg cursor-pointer hover:bg-slate-100 flex items-start space-x-2"
+              >
+                <img
+                  src={
+                    lawyer.user_profile_image ??
+                    "https://tse1.mm.bing.net/th?q=blank%20pfp%20icon"
+                  }
+                  alt="Lawyer Profile"
+                  className="w-10 my-auto rounded-md h-10 object-cover"
+                />
 
-      <div className="flex flex-col truncate">
-        <span className="font-semibold text-sm truncate text-gray-900">
-          {lawyer.user_full_name}
-        </span>
+                <div className="flex flex-col truncate">
+                  <span className="font-semibold text-sm truncate text-gray-900">
+                    {lawyer.user_full_name}
+                  </span>
 
-        <span className="text-[10px] text-gray-600 truncate">
-          Department:{" "}
-          {lawyer?.departments.map((department, index) => (
-            <span key={index}>
-              {department.department_name}
-              {index < lawyer.departments.length - 1 && ", "}
-            </span>
-          ))}
-        </span>
+                  <span className="text-[10px] text-gray-600 truncate">
+                    Department:{" "}
+                    {lawyer?.departments.map((department, index) => (
+                      <span key={index}>
+                        {department.department_name}
+                        {index < lawyer.departments.length - 1 && ", "}
+                      </span>
+                    ))}
+                  </span>
 
-        <span className="text-[10px] text-gray-600 truncate">
-          Language:{" "}
-          {lawyer?.languages.map((language, index) => (
-            <span key={index}>
-              {language.name}
-              {index < lawyer.languages.length - 1 && ", "}
-            </span>
-          ))}
-        </span>
+                  <span className="text-[10px] text-gray-600 truncate">
+                    Language:{" "}
+                    {lawyer?.languages.map((language, index) => (
+                      <span key={index}>
+                        {language.name}
+                        {index < lawyer.languages.length - 1 && ", "}
+                      </span>
+                    ))}
+                  </span>
 
-        <span className="text-[10px] text-gray-600">
-          Experience: {lawyer.experience} Yr
-        </span>
-      </div>
-    </div>
-  ))
-) : (
-  <div className="flex justify-center items-center text-gray-500">
-    <p className="text-[10px]">No lawyer data found</p>
-  </div>
-)}
+                  <span className="text-[10px] text-gray-600">
+                    Experience: {lawyer.experience} Yr
+                  </span>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="flex justify-center items-center text-gray-500">
+              <p className="text-[10px]">No lawyer data found</p>
+            </div>
+          )}
 
           <div className="flex text-[10px] text-gray-500   justify-end">
-            <p className="py-2 pr-2 cursor-pointer" onClick={()=>isAuthenticated && handleNextCalling()}>More</p>
+            <p
+              className="py-2 pr-2 cursor-pointer"
+              onClick={() => isAuthenticated && handleNextCalling()}
+            >
+              More
+            </p>
           </div>
         </div>
       )}
@@ -457,7 +471,7 @@ export default function Navbar() {
                   onClick={() => setIsHoveringMenu(!isHoveringMenu)}
                   className="text-base flex gap-1  items-center w-full font-semibold"
                 >
-                  Services{" "}
+                  Cases{" "}
                   {isHoveringMenu ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -489,23 +503,18 @@ export default function Navbar() {
                 {isHoveringMenu && (
                   <div className=" top-full  mt-4   w-48 bg-white  border-l-8 border-gray-200 ">
                     <Link
-                      to="/"
+                      to="../../../../../../user/ongoing-cases"
                       className="block px-4 py-2 text-sm font-semibold hover:bg-gray-100"
                     >
-                      Service 1
+                      Ongoing Cases
                     </Link>
                     <Link
-                      to="/"
+                      to="../../../../../../user/post-cases"
                       className="block px-4 py-2 text-sm font-semibold hover:bg-gray-100"
                     >
-                      Service 2
+                      Apply new cases
                     </Link>
-                    <Link
-                      to="/"
-                      className="block px-4 py-2 text-sm font-semibold hover:bg-gray-100"
-                    >
-                      Service 3
-                    </Link>
+                 
                   </div>
                 )}
               </div>
@@ -524,18 +533,19 @@ export default function Navbar() {
                 Blogs
               </Link>
               <Link
-                to="/"
+                to="../../../../user/appointments"
                 className="text-base font-semibold"
                 onClick={toggleSidebar}
               >
                 Appoinments
               </Link>
-              <div
+              <Link
+                to={"../../../../../chat"}
                 className="text-base sm:hidden font-semibold"
                 onClick={toggleSidebar}
               >
-                Search
-              </div>
+                Chat
+              </Link>
               <hr />
               {isAuthenticated ? (
                 <div

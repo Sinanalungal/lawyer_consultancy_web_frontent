@@ -129,30 +129,35 @@ const SessionScheduler: React.FC = () => {
           selectedSession.uuid,
           selectedDateStr
         );
+
         if (!process?.env.VITE_CLIENT_ID) {
           throw new Error("Something wrong with stripe key");
         }
-        const stripe = await loadStripe(
-          "pk_test_51PMjrqSD4LlFpJPegNLUNIVDRjJmeaF1jW7lBzhnEQHgvmchbzkNn4pVdStSwROBEnbXvF2BpC4reOqUvHS1L3Yb00sfPbm63y"
-        );
-        if (!stripe) {
-          throw new Error("Failed to load Stripe.");
-        }
+        if (process.env.VITE_STRIPE_PUBLIC_SECRET_KEY) {
+          const stripe = await loadStripe(
+            process.env.VITE_STRIPE_PUBLIC_SECRET_KEY
+          );
+          if (!stripe) {
+            throw new Error("Failed to load Stripe.");
+          }
 
-        const { error } = await stripe.redirectToCheckout({
-          sessionId: result.sessionId,
-        });
+          const { error } = await stripe.redirectToCheckout({
+            sessionId: result.sessionId,
+          });
 
-        if (error) {
-          console.error("Error redirecting to checkout:", error);
-          alert("Failed to redirect to checkout. Please try again.");
+          if (error) {
+            console.error("Error redirecting to checkout:", error);
+            alert("Failed to redirect to checkout. Please try again.");
+          }
+        } else {
+          addToast('info','Payment Method Not Available Now')
         }
       } catch (error) {
         console.error("Error booking appointment:", error);
         alert("Failed to book appointment. Please try again.");
       }
     } else {
-      alert("Please select a session and date.");
+      addToast("info", "Please select a session and date.");
     }
   };
 
@@ -166,7 +171,6 @@ const SessionScheduler: React.FC = () => {
       try {
         const selectedDateStr = format(selectedDate, "yyyy-MM-dd");
 
-        // Specify the type for Axios response
         const result: AxiosResponse<WalletApiResponse> = await bookAppointmentUsingWallet(
           selectedSession.uuid,
           selectedDateStr
@@ -174,32 +178,31 @@ const SessionScheduler: React.FC = () => {
 
         console.log(result, "this is the result");
 
-        // Check if the status is 202
         if (result.status === 202) {
           addToast("success", "idea is working");
 
-          // Check Stripe Client ID
           if (!process?.env.VITE_CLIENT_ID) {
             throw new Error("Something wrong with Stripe key");
           }
 
-          // Initialize Stripe with your public key
-          const stripe = await loadStripe(
-            "pk_test_51PMjrqSD4LlFpJPegNLUNIVDRjJmeaF1jW7lBzhnEQHgvmchbzkNn4pVdStSwROBEnbXvF2BpC4reOqUvHS1L3Yb00sfPbm63y"
-          );
+          if (process?.env.VITE_STRIPE_PUBLIC_SECRET_KEY) {
+            const stripe = await loadStripe(
+              process?.env.VITE_STRIPE_PUBLIC_SECRET_KEY
+            );
+            if (!stripe) {
+              throw new Error("Failed to load Stripe.");
+            }
 
-          if (!stripe) {
-            throw new Error("Failed to load Stripe.");
-          }
+            const { error } = await stripe.redirectToCheckout({
+              sessionId: result.data.checkout_id,
+            });
 
-          // Redirect to checkout
-          const { error } = await stripe.redirectToCheckout({
-            sessionId: result.data.checkout_id, // Accessing checkout ID correctly
-          });
-
-          if (error) {
-            console.error("Error redirecting to checkout:", error);
-            alert("Failed to redirect to checkout. Please try again.");
+            if (error) {
+              console.error("Error redirecting to checkout:", error);
+              alert("Failed to redirect to checkout. Please try again.");
+            }
+          } else {
+            addToast('info','Payment Method Not Available Now')
           }
         } else {
           navigate(
@@ -279,7 +282,6 @@ const SessionScheduler: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, ease: "easeOut" }}
       >
-        {/* Calendar */}
         <motion.div
           className="p-6 lg:p-8 w-full lg:w-1/2 xl:w-1/3 bg-gray-50"
           initial={{ opacity: 0, x: -20 }}
