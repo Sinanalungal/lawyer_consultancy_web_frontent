@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
 import ItemTable from "../../../components/Table/ItemTable";
 import { getAllCases } from "../../../services/Case";

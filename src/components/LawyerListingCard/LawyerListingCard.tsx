@@ -11,9 +11,8 @@ const LawyerListingCard: React.FC<LawyerProps> = ({ lawyer }) => (
     initial={{ opacity: 0, x: -50 }}
     animate={{ opacity: 1, x: 0 }}
     transition={{ duration: 0.3 }}
-    className="flex flex-col items-center cursor-pointer mx-auto p-4 max-sm:w-full mb-12  sm:w-[400px] transition-all duration-300"
+    className="flex flex-col items-center   cursor-pointer mx-auto p-4 max-sm:w-full mb-12  sm:w-[400px] transition-all duration-300"
   >
-    {/* Circular Profile Image */}
     <div className="mb-4 flex justify-center items-center rounded-full overflow-hidden border border-gray-300 w-[220px] h-[220px]">
       {lawyer.user_profile_image ? (
         <img

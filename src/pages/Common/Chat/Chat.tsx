@@ -4,11 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { FiSmile, FiPaperclip, FiMic, FiSend } from "react-icons/fi";
 import EmojiPicker, { EmojiStyle } from "emoji-picker-react";
 import { fetchThreadMessages, fetchThreads } from "../../../services/Chat";
-import ClipLoader from "react-spinners/ClipLoader";
 import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
 import { AppDispatch, RootState, useAppSelector } from "../../../redux/store";
 import { fetchUserAsync } from "../../../redux/slice/UserDataFetch";
 import { motion, AnimatePresence } from "framer-motion";
+// import ClipLoader from "react-spinners/ClipLoader";
 
 interface Message {
   id: number;

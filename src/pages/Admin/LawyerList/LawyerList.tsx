@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
 import ItemTable from "../../../components/Table/ItemTable";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { User, UserResponse } from "../../../types";
 import { fetchLawyer, updateLawyerVerification } from "../../../services/fetchLawyers";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
@@ -18,7 +17,7 @@ const AdminUser: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string | null>(`${process.env.VITE_BASE_URL}/api/filter-lawyer/?page=${pageNum}`);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const handleToggleVerification = (user: User) => {
     setSelectedUser(user); // Set the selected user
@@ -42,7 +41,7 @@ const AdminUser: React.FC = () => {
   const handleConfirmVerification = async () => {
     if (selectedUser) {
       try {
-        const updatedUser = await updateLawyerVerification(selectedUser.pk, !selectedUser.is_verified);
+        await updateLawyerVerification(selectedUser.pk, !selectedUser.is_verified);
         // setLawyers((prevLawyers) =>
         //   prevLawyers.map((user) =>
         //     user.pk === selectedUser.pk

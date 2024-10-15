@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
-import ItemTable from "../../../components/Table/ItemTable";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { fetchBlogs, updateBlogIsListed } from "../../../services/Blogs";
 import { Blog, BlogResponse } from "../../../types";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
@@ -33,25 +31,29 @@ const AdminBlog: React.FC = () => {
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
-  const fetchData = async () => {
-    if (currentUrl) {
+  // Fetch data function
+  const fetchData = async (url: string | null) => {
+    if (url) {
       try {
-        const data: BlogResponse = await fetchBlogs(currentUrl, search, status);
+        const data: BlogResponse = await fetchBlogs(url, search, status);
         setBlogs(data.results);
         setNextPage(data.next);
         setPrevPage(data.previous);
-        setTotalCount(data.count);
+        setTotalCount(Math.ceil(data.count / 10)); // total number of pages
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     }
   };
+
+  // Effect to fetch data on URL, search, or status change
   useEffect(() => {
-    fetchData();
+    fetchData(currentUrl);
   }, [currentUrl, search, status]);
 
+  // Handle next page
   const handleNextPage = () => {
     if (nextPage) {
       setCurrentUrl(nextPage);
@@ -59,37 +61,33 @@ const AdminBlog: React.FC = () => {
     }
   };
 
+  // Handle previous page
   const handlePreviousPage = () => {
     if (prevPage) {
-      setCurrentUrl(prevPage);
+      setCurrentUrl(prevPage); 
       setPageNum((prev) => prev - 1);
     }
   };
 
+  // Modal handling for updating blog status
   const handleToggleIsListed = (blog: Blog) => {
     setSelectedBlog(blog);
     setIsModalOpen(true);
   };
 
+  // Confirm action to toggle blog status
   const confirmToggleIsListed = async () => {
     if (selectedBlog) {
       try {
-        const updatedBlog = await updateBlogIsListed(
+        await updateBlogIsListed(
           selectedBlog.id,
-          selectedBlog?.status == "Pending"
+          selectedBlog?.status === "Pending"
             ? "Listed"
-            : selectedBlog?.status == "Listed"
+            : selectedBlog?.status === "Listed"
             ? "Blocked"
             : "Listed"
         );
-        fetchData();
-        // setBlogs((prevBlogs) =>
-        //   prevBlogs.map((blog) =>
-        //     blog.id === selectedBlog.id
-        //       ? { ...blog, status: updatedBlog.status }
-        //       : blog
-        //   )
-        // );
+        fetchData(currentUrl); 
       } catch (error) {
         console.error("Failed to update blog:", error);
       } finally {
@@ -98,6 +96,7 @@ const AdminBlog: React.FC = () => {
       }
     }
   };
+
   const options = [
     { label: "Listed", action: () => setStatus("Listed") },
     { label: "Pending", action: () => setStatus("Pending") },
@@ -129,23 +128,22 @@ const AdminBlog: React.FC = () => {
     actions: (
       <button
         className={`px-3 py-2 ${
-          blog?.status == "Pending"
+          blog?.status === "Pending"
             ? "bg-green-500"
-            : blog?.status == "Listed"
+            : blog?.status === "Listed"
             ? "bg-red-500"
             : "bg-green-500"
         }  text-white`}
         onClick={() => handleToggleIsListed(blog)}
       >
-        {blog?.status == "Pending"
+        {blog?.status === "Pending"
           ? "List"
-          : blog?.status == "Listed"
+          : blog?.status === "Listed"
           ? "Block"
           : "List"}
       </button>
     ),
   }));
-  console.log(selectedBlog?.status);
 
   return (
     <>
@@ -153,28 +151,15 @@ const AdminBlog: React.FC = () => {
         title="Blogs"
         description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"
       />
-      {/* <ItemTable
-        columns={columns}
-        data={data}
-        itemsPerPage={10}
-        search={search}
-        setSearch={setSearch}
-        nextButton={handleNextPage}
-        previousButton={handlePreviousPage}
-        pageNum={pageNum}
-        total={totalCount}
-        blocked={blocked}
-        setBlocked={setBlocked}
-      /> */}
       
       <div className="flex flex-col  h-full pb-16 ">
         <div className="flex items-center  justify-between max-sm:flex-col max-sm:items-end">
           {options && (
             <SelectionBox
               buttonLabel={
-                (status == "Listed" && "Listed") ||
-                (status == "Pending" && "Pending") ||
-                (status == "Blocked" && "Blocked")
+                (status === "Listed" && "Listed") ||
+                (status === "Pending" && "Pending") ||
+                (status === "Blocked" && "Blocked")
               }
               options={options}
             />
@@ -182,52 +167,55 @@ const AdminBlog: React.FC = () => {
           <SearchForm search={search} setSearch={setSearch} />
         </div>
         <div className="overflow-x-auto bg-white  no-scrollbar border-b">
-        <div className="min-w-full inline-block align-middle">
-          <div className="min-h-[350px] relative">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
-                <tr>
-                  {columns.map((column) => (
-                    <th
-                      key={column.key}
-                      className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                    >
-                      <div className="flex items-center">
-                        {column.label}
-                        <ChevronDown className="ml-1 h-4 w-4" />
-                      </div>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {data.length > 0 ? (
-                  data.map((row: TableRow, rowIndex) => (
-                    <tr
-                      key={rowIndex}
-                      className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
-                    >
-                      {columns.map((column) => (
-                        <td key={column.key} className="px-4 py-4">
-                          {row[column.key]}
-                        </td>
-                      ))}
-                    </tr>
-                  ))
-                ) : (
+          <div className="min-w-full inline-block align-middle">
+            <div className="min-h-[350px] relative">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
                   <tr>
-                    <td colSpan={columns.length} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                      <div className="flex flex-col items-center justify-center space-y-2">
-                        <p>No data available</p>
-                      </div>
-                    </td>
+                    {columns.map((column) => (
+                      <th
+                        key={column.key}
+                        className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                      >
+                        <div className="flex items-center">
+                          {column.label}
+                          <ChevronDown className="ml-1 h-4 w-4" />
+                        </div>
+                      </th>
+                    ))}
                   </tr>
-                )}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {data.length > 0 ? (
+                    data.map((row: TableRow, rowIndex) => (
+                      <tr
+                        key={rowIndex}
+                        className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
+                      >
+                        {columns.map((column) => (
+                          <td key={column.key} className="px-4 py-4">
+                            {row[column.key]}
+                          </td>
+                        ))}
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td
+                        colSpan={columns.length}
+                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"
+                      >
+                        <div className="flex flex-col items-center justify-center space-y-2">
+                          <p>No data available</p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
         <Pagination
           nextButton={handleNextPage}
           previousButton={handlePreviousPage}

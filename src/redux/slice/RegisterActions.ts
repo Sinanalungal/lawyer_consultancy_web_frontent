@@ -174,13 +174,13 @@ const userSlice = createSlice({
       .addCase(OtpVerification.pending, (state) => {
         state.loading = true;
       })
-      .addCase(OtpVerification.fulfilled, (state, action) => {
+      .addCase(OtpVerification.fulfilled, (state) => {
         state.loading = false;
         state.registered = false;
         state.error = null;
         state.user = null;
       })
-      .addCase(OtpVerification.rejected, (state, action) => {
+      .addCase(OtpVerification.rejected, (state) => {
         state.loading = false;
       })
       .addCase(ResendOtp.pending, (state) => {
@@ -190,7 +190,7 @@ const userSlice = createSlice({
         state.loading = false;
         state.timer = action.payload.timer;
       })
-      .addCase(ResendOtp.rejected, (state, action) => {
+      .addCase(ResendOtp.rejected, (state) => {
         state.loading = false;
         state.registered = false;
         state.error = null;

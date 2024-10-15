@@ -18,10 +18,10 @@ import { useToast } from "../../../components/Toast/ToastManager";
 const Blog: React.FC = () => {
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
   const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [search, setSearch] = useState<string>("");
+  const [search, _setSearch] = useState<string>("");
   const [readingBlog, setReadingBlog] = useState<ReadingBlog | null>(null);
   const [nextPage, setNextPage] = useState<string | null>(null);
-  const [prevPage, setPrevPage] = useState<string | null>(null);
+  const [_prevPage, setPrevPage] = useState<string | null>(null);
   const [fetchedBlogIds, setFetchedBlogIds] = useState<Set<number>>(new Set());
   const [isReportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
@@ -83,6 +83,7 @@ const Blog: React.FC = () => {
       } finally {
         setReportNote(""); 
         setReportModalOpen(false); 
+        window.location.reload(); 
       }
     } else {
       console.log("Please provide a note to report.");

@@ -26,6 +26,7 @@ const VideoCallComponent = lazy(() =>
   import("./pages/Common/VideoCall/VideoCall")
 );
 
+// Lazy load route components
 const UserRoutes = lazy(() => import("./routes/UserRoutes"));
 const AdminRoutes = lazy(() => import("./routes/AdminRoutes"));
 const LawyerRoutes = lazy(() => import("./routes/LawyerRoutes"));
@@ -70,6 +71,7 @@ function App() {
               }
             >
               <Routes>
+                {/* Lazy load all routes */}
                 <Route path="/" element={<LandingPage />} />
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />

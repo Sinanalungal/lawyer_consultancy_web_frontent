@@ -31,11 +31,15 @@ const EditPassword: React.FC = () => {
           "New password must contain at least 8 characters, one letter, one number, and one special character"
         ),
       confirm_password: Yup.string()
-        .oneOf(
-          [Yup.ref("new_password"), null || undefined],
-          "Passwords must match"
-        )
+        .oneOf([Yup.ref("new_password")], "Passwords must match")
         .required("Confirm password is required"),
+
+      // confirm_password: Yup.string()
+      //   .oneOf(
+      //     [Yup.ref("new_password"), null || undefined],
+      //     "Passwords must match"
+      //   )
+      //   .required("Confirm password is required"),
     }),
     onSubmit: async (values: FormValues) => {
       try {
@@ -46,7 +50,7 @@ const EditPassword: React.FC = () => {
         });
         addToast("success", "Password Changed Successfully");
         console.log("Password changed successfully:", response);
-        dispatch(logout())
+        dispatch(logout());
         // Optionally show a success message
       } catch (error) {
         console.error("Password change error:", error);

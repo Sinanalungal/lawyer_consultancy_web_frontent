@@ -160,20 +160,20 @@ const ProfileCrop: React.FC<ImageCropProps> = ({
     setAspectRatio(value);
   };
 
-  const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+  const onCropComplete = (croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
-  const createImage = (url: string): Promise<HTMLImageElement> => {
-    return new Promise((resolve, reject) => {
-      const image = new Image();
-      image.addEventListener("load", () => resolve(image));
-      image.addEventListener("error", (error) => reject(error));
-      image.src = url;
-    });
-  };
+  // const createImage = (url: string): Promise<HTMLImageElement> => {
+  //   return new Promise((resolve, reject) => {
+  //     const image = new Image();
+  //     image.addEventListener("load", () => resolve(image));
+  //     image.addEventListener("error", (error) => reject(error));
+  //     image.src = url;
+  //   });
+  // };
 
-  const onCropDone = (croppedArea: any) => {
+  const onCropDone = () => {
     if (!selectedFile || !croppedAreaPixels) {
       addToast("danger", "Please upload an image .");
       return;

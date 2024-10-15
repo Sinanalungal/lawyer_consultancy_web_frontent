@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   isToday,
   isBefore,
-  isAfter,
+  // isAfter,
   format,
   addDays,
   endOfMonth,
@@ -11,7 +11,7 @@ import {
   getDaysInMonth,
   getDay,
 } from "date-fns";
-import { loadStripe, Stripe } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   bookAppointment,
@@ -34,7 +34,7 @@ const SessionScheduler: React.FC = () => {
   const [availableTimes, setAvailableTimes] = useState<any[]>([]);
   const [lawyerId, setLawyerId] = useState<number | null>(null);
   const [selectedSession, setSelectedSession] = useState<any | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
+  const [_modalOpen, setModalOpen] = useState(false);
   const [paymentModal, setPaymentModal] = useState<boolean>(false);
   const [walletPayment, setWalletPayment] = useState<number>(0);
   const { setLoader } = useLoader();
@@ -206,7 +206,7 @@ const SessionScheduler: React.FC = () => {
           }
         } else {
           navigate(
-            `../../../../user/available-sessions/success?checkout_id=${result.data.checkout_id}`
+            `../../../../user/success?checkout_id=${result.data.checkout_id}`
           );
         }
       } catch (error) {

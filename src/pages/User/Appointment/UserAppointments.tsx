@@ -68,7 +68,6 @@ const UserAppointments: React.FC = () => {
     setIsOpen(true);
   };
 
-  // Function to check if an appointment is joinable
   const checkIfJoinable = (app: AppointmentManipulated) => {
     const now = new Date();
     const sessionStart = new Date(
@@ -87,7 +86,7 @@ const UserAppointments: React.FC = () => {
 
         }))
       );
-    }, 3000); 
+    }, 1000); 
 
     return () => clearInterval(intervalId); 
   }, [appointments]);

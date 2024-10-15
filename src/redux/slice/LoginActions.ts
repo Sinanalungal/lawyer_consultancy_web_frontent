@@ -109,7 +109,7 @@ const loginSlice = createSlice({
     // setAccess(state, value) {
     //   state.user = value;
     // },
-    loginSuccess(state, action: PayloadAction<Record<string, any>>) {
+    loginSuccess(state) {
       state.loader = false;
       state.isAuthenticated = true;
       state.error = null;

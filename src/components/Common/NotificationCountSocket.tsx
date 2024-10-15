@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useAppSelector } from "../../redux/store";
 import { getUserNotificationsCount } from "../../services/Notifications";
 import { IconBellRingingFilled } from "@tabler/icons-react";
 
-const NotificationCountSocket = ({ size = 6, background = false, color = 'white' }) => {
+const NotificationCountSocket = ({ background = false }) => {
   const [notification_count, setNotificationCount] = useState<number>(0);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
   const { value } = useAppSelector((state) => state.login);
   const socketRef = useRef<WebSocket | null>(null); // WebSocket instance
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null); // For reconnection timer

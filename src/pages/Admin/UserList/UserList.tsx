@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
 import ItemTable from "../../../components/Table/ItemTable";
-import { useNavigate } from "react-router-dom";
 import { fetchUsers, updateUserVerification } from "../../../services/fetchUserData";
 import { User, UserResponse } from "../../../types";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
+// import { useNavigate } from "react-router-dom";
 
 const AdminUser: React.FC = () => {
   const [search, setSearch] = useState<string>("");
@@ -18,7 +17,7 @@ const AdminUser: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<string | null>(`${process.env.VITE_BASE_URL}/api/filter-user/?page=${pageNum}`);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
 
   const fetchData = async () => {
@@ -42,7 +41,7 @@ const AdminUser: React.FC = () => {
   const handleToggleVerification = async () => {
     if (selectedUser) {
       try {
-        const updatedUser = await updateUserVerification(selectedUser.pk, !selectedUser.is_verified);
+        await updateUserVerification(selectedUser.pk, !selectedUser.is_verified);
         // setUsers((prevUsers) =>
         //   prevUsers.map((user) =>
         //     user.pk === selectedUser.pk

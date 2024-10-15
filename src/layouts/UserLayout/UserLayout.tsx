@@ -1,5 +1,5 @@
 // components/UserLayout.tsx
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect,  useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import Navbar from '../../components/Common/Navbar';
@@ -16,10 +16,10 @@ interface UserLayoutProps {
 const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
   const { isAuthenticated } = useAppSelector((state) => state.login);
   const { error } = useAppSelector((state) => state.userData);
-  const [isVisible, setIsVisible] = useState<boolean>(true);
+  const [isVisible, _setIsVisible] = useState<boolean>(true);
   
   const dispatch = useAppDispatch();
-  const lastScrollTop = useRef(0);
+  // const lastScrollTop = useRef(0);
 
   const { loader } = useLoader(); 
   

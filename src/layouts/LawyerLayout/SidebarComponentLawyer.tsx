@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   IconArrowLeft,
-  IconBellRingingFilled,
+  // IconBellRingingFilled,
   IconBrandHipchat,
   IconBrandTabler,
   IconCalendarClock,
@@ -9,7 +9,7 @@ import {
   IconClock2,
   IconGavel,
   IconNews,
-  IconSettings,
+  // IconSettings,
   IconUserBolt,
   IconWallet,
 } from "@tabler/icons-react";

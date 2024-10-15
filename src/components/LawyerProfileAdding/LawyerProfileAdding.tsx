@@ -117,7 +117,7 @@ const ProfileCropLawyer: React.FC<ImageCropProps> = ({
     setAspectRatio(value);
   };
 
-  const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+  const onCropComplete = (croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 

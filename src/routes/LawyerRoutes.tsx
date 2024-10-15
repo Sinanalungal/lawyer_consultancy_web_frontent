@@ -4,6 +4,8 @@ import LawyerPrivateRoute from './PrivateRouter/LawyerPrivateRoute';
 import { RingLoader } from 'react-spinners';
 
 // Lazy load components
+const FailPage = lazy(() => import('../pages/User/SuccessFailPages/FailPage'));
+const SuccessPage = lazy(() => import('../pages/User/SuccessFailPages/SuccessPage'));
 const Blog = lazy(() => import('../pages/User/Blog/Blog'));
 const LawyerSessionManage = lazy(() => import('../pages/Lawyer/LawyerSession/LawyerSessionManage'));
 const BlogManage = lazy(() => import('../pages/Common/BlogManage/BlogManage'));
@@ -24,31 +26,30 @@ function LawyerRoutes() {
   };
 
   return (
-    <>
-      <Suspense
-        fallback={
-          <div style={spinnerStyle}>
-            <RingLoader color="#36d7b7" />
-          </div>
-        }
-      >
-        <Routes>
-          <Route path="*" element={<LawyerPrivateRoute />}>
-            <Route path="" element={<LawyerDashboard />} />
-            <Route path="profile" element={<LawyerProfile />} />
-            {/* <Route path="edit-profile" element={<EditProfilePage />} /> */}
-            <Route path="blog" element={<Blog />} />
-            <Route path="sessions" element={<LawyerSessionManage />} />
-            <Route path="appointments" element={<LawyerAppointments />} />
-            <Route path="cases" element={<LawyerCaseManagement />} />
-            <Route path="available-cases" element={<AvailableCases />} />
-            <Route path="self-blog" element={<BlogManage />} />
-            <Route path="blog/add-blog" element={<AddBlog />} />
-            <Route path="wallet" element={<LawyerWalletPage />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </>
+    <Suspense
+      fallback={
+        <div style={spinnerStyle}>
+          <RingLoader color="#36d7b7" />
+        </div>
+      }
+    >
+      <Routes>
+        <Route path="*" element={<LawyerPrivateRoute />}>
+          <Route path="" element={<LawyerDashboard />} />
+          <Route path="profile" element={<LawyerProfile />} />
+          <Route path="blog" element={<Blog />} />
+          <Route path="sessions" element={<LawyerSessionManage />} />
+          <Route path="appointments" element={<LawyerAppointments />} />
+          <Route path="cases" element={<LawyerCaseManagement />} />
+          <Route path="available-cases" element={<AvailableCases />} />
+          <Route path="self-blog" element={<BlogManage />} />
+          <Route path="blog/add-blog" element={<AddBlog />} />
+          <Route path="wallet" element={<LawyerWalletPage />} />
+          <Route path="success" element={<SuccessPage />} />
+          <Route path="fail" element={<FailPage />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 

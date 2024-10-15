@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import { AxiosInstance } from 'axios';
 import AccessTokenManager from '../redux/slice/interceptor';
 import { BASE_URL } from '../constants';
 

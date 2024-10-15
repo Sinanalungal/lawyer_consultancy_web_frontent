@@ -18,7 +18,7 @@ const NotificationSocket: React.FC = ({
   className?: string;
 }) => {
   const [notification, setNotification] = useState<Notification | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
   const { value } = useAppSelector((state) => state.login);
 
   // Store notifications persistently
@@ -69,10 +69,10 @@ const NotificationSocket: React.FC = ({
 
         socket.onerror = (error) => {
           console.error("WebSocket error:", error);
-          setError("WebSocket error occurred. Please try again.");
+          // setError("WebSocket error occurred. Please try again.");
         };
 
-        socket.onclose = (event) => {
+        socket.onclose = () => {
           console.log(
             "WebSocket connection closed. Attempting to reconnect..."
           );
@@ -89,10 +89,10 @@ const NotificationSocket: React.FC = ({
     }
   }, [value]);
 
-  const onDismiss = () => {
-    setNotification(null);
-    localStorage.removeItem("latestNotification");
-  };
+  // const onDismiss = () => {
+  //   setNotification(null);
+  //   localStorage.removeItem("latestNotification");
+  // };
 
   return ReactDOM.createPortal(
     <AnimatePresence>

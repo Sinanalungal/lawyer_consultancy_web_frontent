@@ -57,149 +57,148 @@ const LawyerSessionManage: React.FC = () => {
 
 export default LawyerSessionManage;
 
-import Calendar from "react-calendar";
+// import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import {
   addSchedule,
   cancelSchedule,
   getActiveSchedules,
-  getSchedules,
+  // getSchedules,
 } from "../../../services/ScheduleSession";
 import { useToast } from "../../../components/Toast/ToastManager";
 import { Schedule } from "../../../types";
-import { AxiosError } from "axios";
 
-type ValuePiece = Date | null;
-type Value = ValuePiece | [ValuePiece, ValuePiece];
+// type ValuePiece = Date | null;
+// type Value = ValuePiece | [ValuePiece, ValuePiece];
 
-const Schedules: React.FC = () => {
-  const [value, onChange] = useState<Value>(new Date());
-  const [schedules, setSchedules] = useState<Schedule[]>([]);
-  const [filteredSchedules, setFilteredSchedules] = useState<Schedule[]>([]);
-  const { addToast } = useToast();
+// const Schedules: React.FC = () => {
+//   const [value, onChange] = useState<Value>(new Date());
+//   const [schedules, setSchedules] = useState<Schedule[]>([]);
+//   const [filteredSchedules, setFilteredSchedules] = useState<Schedule[]>([]);
+//   const { addToast } = useToast();
 
-  useEffect(() => {
-    const fetchSchedules = async () => {
-      try {
-        const data = await getSchedules();
-        if (Array.isArray(data)) {
-          setSchedules(data);
-        } else {
-          console.error("Unexpected data format:", data);
-          addToast("danger", "Unexpected data format.");
-        }
-      } catch (error) {
-        console.error("Failed to fetch schedules:", error);
-        addToast("danger", "Failed to fetch schedules.");
-      }
-    };
-    fetchSchedules();
-  }, []);
+//   useEffect(() => {
+//     const fetchSchedules = async () => {
+//       try {
+//         const data = await getSchedules();
+//         if (Array.isArray(data)) {
+//           setSchedules(data);
+//         } else {
+//           console.error("Unexpected data format:", data);
+//           addToast("danger", "Unexpected data format.");
+//         }
+//       } catch (error) {
+//         console.error("Failed to fetch schedules:", error);
+//         addToast("danger", "Failed to fetch schedules.");
+//       }
+//     };
+//     fetchSchedules();
+//   }, []);
 
-  useEffect(() => {
-    if (value) {
-      const selectedDate = (Array.isArray(value)
-        ? value[0]
-        : value
-      )?.toLocaleDateString("en-CA");
+//   useEffect(() => {
+//     if (value) {
+//       const selectedDate = (Array.isArray(value)
+//         ? value[0]
+//         : value
+//       )?.toLocaleDateString("en-CA");
 
-      if (selectedDate) {
-        const filtered = schedules.filter((schedule) => {
-          const startDate = new Date(schedule.date).toISOString().split("T")[0];
-          const endDate = schedule.reference_until
-            ? new Date(schedule.reference_until).toISOString().split("T")[0]
-            : startDate;
+//       if (selectedDate) {
+//         const filtered = schedules.filter((schedule) => {
+//           const startDate = new Date(schedule.date).toISOString().split("T")[0];
+//           const endDate = schedule.reference_until
+//             ? new Date(schedule.reference_until).toISOString().split("T")[0]
+//             : startDate;
 
-          return selectedDate >= startDate && selectedDate <= endDate;
-        });
-        setFilteredSchedules(filtered);
-      }
-    }
-  }, [value, schedules]);
+//           return selectedDate >= startDate && selectedDate <= endDate;
+//         });
+//         setFilteredSchedules(filtered);
+//       }
+//     }
+//   }, [value, schedules]);
 
-  const getColorForSchedule = (schedule: Schedule) => {
-    const hash = (str: string) => {
-      let hash = 0;
-      for (let i = 0; i < str.length; i++) {
-        hash = (hash << 5) - hash + str.charCodeAt(i);
-        hash |= 0;
-      }
-      return hash;
-    };
+//   const getColorForSchedule = (schedule: Schedule) => {
+//     const hash = (str: string) => {
+//       let hash = 0;
+//       for (let i = 0; i < str.length; i++) {
+//         hash = (hash << 5) - hash + str.charCodeAt(i);
+//         hash |= 0;
+//       }
+//       return hash;
+//     };
 
-    const colorIndex = Math.abs(hash(String(schedule.uuid))) % 5; // Use modulus for variety
-    const colors = [
-      { background: "bg-blue-100", border: "border-blue-300" },
-      { background: "bg-green-100", border: "border-green-300" },
-      { background: "bg-yellow-100", border: "border-yellow-300" },
-      { background: "bg-red-100", border: "border-red-300" },
-      { background: "bg-purple-100", border: "border-purple-300" },
-    ];
+//     const colorIndex = Math.abs(hash(String(schedule.uuid))) % 5; // Use modulus for variety
+//     const colors = [
+//       { background: "bg-blue-100", border: "border-blue-300" },
+//       { background: "bg-green-100", border: "border-green-300" },
+//       { background: "bg-yellow-100", border: "border-yellow-300" },
+//       { background: "bg-red-100", border: "border-red-300" },
+//       { background: "bg-purple-100", border: "border-purple-300" },
+//     ];
 
-    return colors[colorIndex];
-  };
+//     return colors[colorIndex];
+//   };
 
-  return (
-    <div className="mx-auto max-w-3xl">
-      <section className="relative border rounded-xl py-24">
-        <div className="w-full max-w-7xl mx-auto px-6 overflow-x-auto">
-          <div className="flex flex-col lg:flex-row max-lg:gap-3 items-center justify-between mb-5">
-            <div className="flex items-center gap-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                {/* SVG Path */}
-              </svg>
-              <h6 className="text-sm leading-5 font-semibold text-gray-900">
-                Appointment based on date
-              </h6>
-            </div>
-          </div>
-          <div className="relative max-w-3xl mx-auto">
-            <div className="mx-auto flex max-lg:grid gap-1">
-              <div>
-                <Calendar
-                  onChange={onChange}
-                  value={value}
-                  className="rounded-lg border mx-auto border-gray-300 shadow-md"
-                />
-              </div>
-              <div className="flex rounded-xl w-full border-gray-200 items-w-full">
-                <div className="w-full">
-                  <div className="w-full space-y-1 border-gray-200 p-1.5">
-                    {filteredSchedules.map((schedule) => {
-                      const { background, border } = getColorForSchedule(
-                        schedule
-                      );
-                      return (
-                        <div
-                          key={schedule.uuid}
-                          className={`w-full h-full rounded p-2.5 ${background} ${border} border-l-4`}
-                        >
-                          <p className="text-xs font-normal text-gray-900 mb-1 overflow-hidden text-ellipsis whitespace-nowrap">
-                            Session at {schedule.start_time} -{" "}
-                            {schedule.end_time}
-                          </p>
-                          <p className="text-xs font-semibold text-gray-600">
-                            Price: {schedule.price}
-                          </p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-  );
-};
+//   return (
+//     <div className="mx-auto max-w-3xl">
+//       <section className="relative border rounded-xl py-24">
+//         <div className="w-full max-w-7xl mx-auto px-6 overflow-x-auto">
+//           <div className="flex flex-col lg:flex-row max-lg:gap-3 items-center justify-between mb-5">
+//             <div className="flex items-center gap-4">
+//               <svg
+//                 xmlns="http://www.w3.org/2000/svg"
+//                 width="24"
+//                 height="24"
+//                 viewBox="0 0 24 24"
+//                 fill="none"
+//               >
+//                 {/* SVG Path */}
+//               </svg>
+//               <h6 className="text-sm leading-5 font-semibold text-gray-900">
+//                 Appointment based on date
+//               </h6>
+//             </div>
+//           </div>
+//           <div className="relative max-w-3xl mx-auto">
+//             <div className="mx-auto flex max-lg:grid gap-1">
+//               <div>
+//                 <Calendar
+//                   onChange={onChange}
+//                   value={value}
+//                   className="rounded-lg border mx-auto border-gray-300 shadow-md"
+//                 />
+//               </div>
+//               <div className="flex rounded-xl w-full border-gray-200 items-w-full">
+//                 <div className="w-full">
+//                   <div className="w-full space-y-1 border-gray-200 p-1.5">
+//                     {filteredSchedules.map((schedule) => {
+//                       const { background, border } = getColorForSchedule(
+//                         schedule
+//                       );
+//                       return (
+//                         <div
+//                           key={schedule.uuid}
+//                           className={`w-full h-full rounded p-2.5 ${background} ${border} border-l-4`}
+//                         >
+//                           <p className="text-xs font-normal text-gray-900 mb-1 overflow-hidden text-ellipsis whitespace-nowrap">
+//                             Session at {schedule.start_time} -{" "}
+//                             {schedule.end_time}
+//                           </p>
+//                           <p className="text-xs font-semibold text-gray-600">
+//                             Price: {schedule.price}
+//                           </p>
+//                         </div>
+//                       );
+//                     })}
+//                   </div>
+//                 </div>
+//               </div>
+//             </div>
+//           </div>
+//         </div>
+//       </section>
+//     </div>
+//   );
+// };
 
 const Scheduling: React.FC = () => {
   const { addToast } = useToast();
@@ -411,7 +410,6 @@ const Scheduling: React.FC = () => {
                 ) : null}
               </div>
             </div>
-            
           </div>
 
           <div>
@@ -460,41 +458,45 @@ const Scheduled: React.FC = () => {
   return (
     <>
       <div className="py-5 rounded-xl">
-        {schedules.length > 0? schedules.map((schedule) => (
-          <div
-            key={schedule.uuid}
-            className="max-w-md mx-auto border bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-3"
-          >
-            <div className="md:flex">
-              <div className="p-8 w-full sm:flex justify-between items-center">
-                <div>
-                  <p className="block mt-1 text-sm leading-tight font-medium text-gray-800">
-                    Time: {schedule.start_time} - {schedule.end_time}
-                  </p>
+        {schedules.length > 0 ? (
+          schedules.map((schedule) => (
+            <div
+              key={schedule.uuid}
+              className="max-w-md mx-auto border bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-3"
+            >
+              <div className="md:flex">
+                <div className="p-8 w-full sm:flex justify-between items-center">
+                  <div>
+                    <p className="block mt-1 text-sm leading-tight font-medium text-gray-800">
+                      Time: {schedule.start_time} - {schedule.end_time}
+                    </p>
 
-                  <p className="block mt-2 leading-tight font-bold text-gray-800">
-                    ₹{schedule.price}
-                  </p>
-                  <p className="mt-2 text-gray-500 text-xs">
-                    <i>Date:&nbsp;{schedule.date}</i>
-                    {/* <i>{schedule.reference_until}</i> */}
-                  </p>
+                    <p className="block mt-2 leading-tight font-bold text-gray-800">
+                      ₹{schedule.price}
+                    </p>
+                    <p className="mt-2 text-gray-500 text-xs">
+                      <i>Date:&nbsp;{schedule.date}</i>
+                      {/* <i>{schedule.reference_until}</i> */}
+                    </p>
+                  </div>
+                  <button
+                    className="max-sm:mt-5 max-sm:w-full px-4 py-3 border border-transparent text-xs font-medium rounded-md text-white bg-red-700 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    onClick={() => {
+                      console.log(schedule.uuid, "this si the uuid");
+                      handleCancel(schedule.id);
+                    }}
+                  >
+                    Cancel Schedule
+                  </button>
                 </div>
-                <button
-                  className="max-sm:mt-5 max-sm:w-full px-4 py-3 border border-transparent text-xs font-medium rounded-md text-white bg-red-700 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                  onClick={() => {
-                    console.log(schedule.uuid, "this si the uuid");
-                    handleCancel(schedule.id);
-                  }}
-                >
-                  Cancel Schedule
-                </button>
               </div>
             </div>
+          ))
+        ) : (
+          <div className="text-xs justify-center w-full min-h-[150px] text-gray-500 items-center flex">
+            <p>No Scheduled Session Available</p>
           </div>
-        )):<div className="text-xs justify-center w-full min-h-[150px] text-gray-500 items-center flex">
-          <p>No Scheduled Session Available</p>
-          </div>}
+        )}
       </div>
     </>
   );

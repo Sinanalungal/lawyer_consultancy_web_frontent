@@ -3,7 +3,6 @@ import { format, isValid } from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
-import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import { GetPdfData, GetSalesReport } from "../../../services/SalesReport";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";

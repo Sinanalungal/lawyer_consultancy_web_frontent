@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { HoverEffect } from "../Ui/card-hover-effect";
 import Particles from "../Ui/Particles-ui";
 
@@ -26,7 +26,7 @@ const services = [
 ];
 
 const ServicesGrid: React.FC = () => {
-  const [color, setColor] = useState("#000000");
+  const [color, _setColor] = useState("#000000");
 
   return (
     <div className="relative">

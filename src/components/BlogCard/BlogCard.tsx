@@ -18,7 +18,6 @@ const BlogCard: React.FC<BlogCardProps> = ({
   author,
   authorImage,
   title,
-  description,
 
 }) => {
   return (

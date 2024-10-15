@@ -28,7 +28,7 @@ interface Case {
 }
 
 const OngoingCases: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"appliedCases" | "applyCase">(
+  const [activeTab, _setActiveTab] = useState<"appliedCases" | "applyCase">(
     "appliedCases"
   );
   const [cases, setCases] = useState<Case[]>([]);

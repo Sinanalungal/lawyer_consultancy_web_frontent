@@ -9,7 +9,9 @@ import { fetchUserSideLawyerList } from "../../services/fetchLawyers";
 import { Lawyer } from "../../types";
 import Drawer from "../Drawer/Drawer";
 import NotificationCountSocket from "./NotificationCountSocket";
-import { useToast } from "../Toast/ToastManager";
+// import { useToast } from "../Toast/ToastManager";
+
+
 interface LawyerListResponse {
   count?: number;
   next?: any;
@@ -30,7 +32,6 @@ export default function Navbar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [openLawyerListView, setOpenLawyerListView] = useState<boolean>(false);
   const dispatch = useDispatch();
-  const { addToast } = useToast();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -255,7 +256,7 @@ export default function Navbar() {
                 className="cursor-pointer"
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
               >
-                <NotificationCountSocket color="black" />
+                <NotificationCountSocket /> {/*   color="black"  */}
               </div>
               {notificationsOpen && (
                 <NotificationLayer onClose={()=>setNotificationsOpen(false)} open={notificationsOpen} />

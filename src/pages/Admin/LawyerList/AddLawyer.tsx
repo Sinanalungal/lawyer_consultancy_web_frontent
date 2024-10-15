@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
-import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import CustomInputFullSized from "../../../components/Input/InputFullSize";
 import { useFormik } from "formik";
 import * as Yup from "yup";

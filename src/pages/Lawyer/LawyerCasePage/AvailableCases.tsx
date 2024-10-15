@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import CustomInputFullSized from "../../../components/Input/InputFullSize";
 import { createSelectedCase, fetchCasesForLawyer, fetchStates } from "../../../services/Case";
-import Modal from "../../../components/Modal/Modal"; // Ensure you have a Modal component
+import Modal from "../../../components/Modal/Modal";
 import { useToast } from "../../../components/Toast/ToastManager";
 
 const AvailableCases: React.FC = () => {

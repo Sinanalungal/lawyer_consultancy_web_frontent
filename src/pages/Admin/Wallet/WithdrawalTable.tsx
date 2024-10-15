@@ -4,7 +4,7 @@ import { useToast } from "../../../components/Toast/ToastManager";
 
 const WithdrawalRequests = () => {
   const [data, setData] = useState([]);
-  const [search, setSearch] = useState("");
+  // const [search, setSearch] = useState("");
   const [pageNum, setPageNum] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [status, setStatus] = useState<string>("pending");

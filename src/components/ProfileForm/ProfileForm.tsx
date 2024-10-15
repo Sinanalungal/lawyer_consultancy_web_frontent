@@ -1,22 +1,22 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { AppDispatch, RootState, useAppSelector } from "../../redux/store";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { updateUserDatas } from "../../redux/slice/UserDataFetch";
 import { useToast } from "../Toast/ToastManager";
+// import { useNavigate } from "react-router-dom";
 
 interface FormValues {
   full_name: string;
 }
 
 const ProfileForm: React.FC = () => {
-  const { userDetail, error, status } = useAppSelector(
+  const { userDetail, error } = useAppSelector(
     (state: RootState) => state.userData
   );
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { addToast } = useToast();
 
   const formik = useFormik<FormValues>({

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 // import { GiSuitcase } from "react-icons/gi";
 import { Lawyer } from "../../types";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaMessage } from "react-icons/fa6";
 // import { IoCall } from "react-icons/io5";
 import { FaVideo } from "react-icons/fa6";

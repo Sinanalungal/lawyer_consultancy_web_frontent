@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import PageTitle from "../../../components/PageTitle/PageTitle";
 import Modal from "../../../components/Modal/Modal";
 import {
-  fetchCaseDetails,
+  // fetchCaseDetails,
   fetchCases,
   submitCase,
   fetchStates,
@@ -40,13 +40,13 @@ const ClientCaseManagement: React.FC = () => {
     "appliedCases"
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [caseDetails, setCaseDetails] = useState<any>({});
+  const [_caseDetails, _setCaseDetails] = useState<any>({});
   const [cases, setCases] = useState<any[]>([]);
   const [states, setStates] = useState<any[]>([]);
   const [selectedLawyers, setSelectedLawyers] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalCases, setTotalCases] = useState(0);
+  const [_totalCases, setTotalCases] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [caseToDelete, setCaseToDelete] = useState<number | null>(null);

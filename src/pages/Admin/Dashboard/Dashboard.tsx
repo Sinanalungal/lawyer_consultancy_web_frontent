@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
 import { Bar, Pie } from "react-chartjs-2";
 import { FetchTheUserAndLawyerGrowth } from "../../../services/Dashboard";

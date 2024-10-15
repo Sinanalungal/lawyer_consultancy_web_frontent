@@ -2,8 +2,6 @@ import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AdminPrivateRoute from './PrivateRouter/AdminPrivateRoute';
 import { RingLoader } from 'react-spinners';
-// import AdminWalletPage from '../pages/Admin/Wallet/Wallet';
-import WithdrawalRequests from '../pages/Admin/Wallet/WithdrawalTable';
 
 // Lazy load components
 const Dashboard = lazy(() => import('../pages/Admin/Dashboard/Dashboard'));
@@ -17,6 +15,7 @@ const CaseList = lazy(() => import('../pages/Admin/ListedCases/CaseList'));
 const ScheduleList = lazy(() => import('../pages/Admin/ScheduleList/ScheduleList'));
 const BlogManage = lazy(() => import('../pages/Common/BlogManage/BlogManage'));
 const SalesReportTable = lazy(() => import('../pages/Admin/SalesReport/SalesReport'));
+const WithdrawalRequests = lazy(() => import('../pages/Admin/Wallet/WithdrawalTable'));
 
 function AdminRoutes() {
   const spinnerStyle = {
@@ -27,33 +26,30 @@ function AdminRoutes() {
   };
 
   return (
-    <>
-      <Suspense
-        fallback={
-          <div style={spinnerStyle}>
-            <RingLoader color="#36d7b7" />
-          </div>
-        }
-      >
-        <Routes>
-          <Route path="*" element={<AdminPrivateRoute />}>
-            <Route path="" element={<Dashboard />} />
-            <Route path="lawyers" element={<LawyerList />} />
-            <Route path="lawyers/add-lawyer" element={<AddLawyer />} />
-            <Route path="users" element={<UserList />} />
-            <Route path="blog" element={<AdminBlog />} />
-            <Route path="profile" element={<AdminProfile />} />
-            <Route path="blog/add-blog" element={<AddBlog />} />
-            <Route path="case-list" element={<CaseList />} />
-            <Route path="self-blog" element={<BlogManage />} />
-            <Route path="schedule-list" element={<ScheduleList />} />
-            <Route path="sales-report" element={<SalesReportTable />} />
-            {/* <Route path="wallet" element={<AdminWalletPage />} /> */}
-            <Route path="withdrawal" element={<WithdrawalRequests />} />
-          </Route>
-        </Routes>
-      </Suspense>
-    </>
+    <Suspense
+      fallback={
+        <div style={spinnerStyle}>
+          <RingLoader color="#36d7b7" />
+        </div>
+      }
+    >
+      <Routes>
+        <Route path="*" element={<AdminPrivateRoute />}>
+          <Route path="" element={<Dashboard />} />
+          <Route path="lawyers" element={<LawyerList />} />
+          <Route path="lawyers/add-lawyer" element={<AddLawyer />} />
+          <Route path="users" element={<UserList />} />
+          <Route path="blog" element={<AdminBlog />} />
+          <Route path="profile" element={<AdminProfile />} />
+          <Route path="blog/add-blog" element={<AddBlog />} />
+          <Route path="case-list" element={<CaseList />} />
+          <Route path="self-blog" element={<BlogManage />} />
+          <Route path="schedule-list" element={<ScheduleList />} />
+          <Route path="sales-report" element={<SalesReportTable />} />
+          <Route path="withdrawal" element={<WithdrawalRequests />} />
+        </Route>
+      </Routes>
+    </Suspense>
   );
 }
 

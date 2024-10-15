@@ -19,7 +19,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({
   setCroppedImageUrl,
 }) => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [dragActive, setDragActive] = useState(false);
+  const [dragActive, _setDragActive] = useState(false);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
   const [zoom, setZoom] = useState(1);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -69,60 +69,60 @@ const ImageCrop: React.FC<ImageCropProps> = ({
     setAspectRatio(value);
   };
 
-  const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+  const onCropComplete = (croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
-  const createImage = (url: string): Promise<HTMLImageElement> => {
-    return new Promise((resolve, reject) => {
-      const image = new Image();
-      image.addEventListener("load", () => resolve(image));
-      image.addEventListener("error", (error) => reject(error));
-      image.src = url;
-    });
-  };
+  // const createImage = (url: string): Promise<HTMLImageElement> => {
+  //   return new Promise((resolve, reject) => {
+  //     const image = new Image();
+  //     image.addEventListener("load", () => resolve(image));
+  //     image.addEventListener("error", (error) => reject(error));
+  //     image.src = url;
+  //   });
+  // };
 
-  const getCroppedImg = async () => {
-    if (!selectedFile || !croppedAreaPixels) {
-      addToast("danger", "Please upload an image.");
-      return;
-    }
-    const image = await createImage(selectedFile);
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
+  // const getCroppedImg = async () => {
+  //   if (!selectedFile || !croppedAreaPixels) {
+  //     addToast("danger", "Please upload an image.");
+  //     return;
+  //   }
+  //   const image = await createImage(selectedFile);
+  //   const canvas = document.createElement("canvas");
+  //   const ctx = canvas.getContext("2d");
 
-    if (!ctx) {
-      return null;
-    }
+  //   if (!ctx) {
+  //     return null;
+  //   }
 
-    canvas.width = croppedAreaPixels.width;
-    canvas.height = croppedAreaPixels.height;
+  //   canvas.width = croppedAreaPixels.width;
+  //   canvas.height = croppedAreaPixels.height;
 
-    ctx.drawImage(
-      image,
-      croppedAreaPixels.x,
-      croppedAreaPixels.y,
-      croppedAreaPixels.width,
-      croppedAreaPixels.height,
-      0,
-      0,
-      croppedAreaPixels.width,
-      croppedAreaPixels.height
-    );
+  //   ctx.drawImage(
+  //     image,
+  //     croppedAreaPixels.x,
+  //     croppedAreaPixels.y,
+  //     croppedAreaPixels.width,
+  //     croppedAreaPixels.height,
+  //     0,
+  //     0,
+  //     croppedAreaPixels.width,
+  //     croppedAreaPixels.height
+  //   );
 
-    return new Promise<string>((resolve, reject) => {
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const url = URL.createObjectURL(blob);
-          resolve(url);
-        } else {
-          reject(new Error("Canvas is empty"));
-        }
-      }, "image/jpeg");
-    });
-  };
+  //   return new Promise<string>((resolve, reject) => {
+  //     canvas.toBlob((blob) => {
+  //       if (blob) {
+  //         const url = URL.createObjectURL(blob);
+  //         resolve(url);
+  //       } else {
+  //         reject(new Error("Canvas is empty"));
+  //       }
+  //     }, "image/jpeg");
+  //   });
+  // };
 
-  const onCropDone = (croppedArea: any) => {
+  const onCropDone = () => {
     if (!selectedFile || !croppedAreaPixels) {
       addToast("danger", "Please upload an image .");
       return;

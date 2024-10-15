@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import AdminLayout from "../../../layouts/AdminLayout/AdminLayout";
 import EditPassword from "../../../components/ProfileForm/EditPassword";
 import ProfileForm from "../../../components/ProfileForm/ProfileForm";
 import EditProfileTabs from "../../../components/TabComponents/EditProfileTab";

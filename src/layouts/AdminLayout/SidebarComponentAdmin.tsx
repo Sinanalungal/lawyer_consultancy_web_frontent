@@ -2,21 +2,21 @@ import { useEffect, useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from '../../components/Sidebar/Sidebar'
 import {
   IconArrowLeft,
-  IconBellRingingFilled,
-  IconBrandHipchat,
+  // IconBellRingingFilled,
+  // IconBrandHipchat,
   IconBrandTabler,
-  IconCalendarClock,
+  // IconCalendarClock,
   IconChevronRight,
   IconClock2,
   IconGavel,
   IconNews,
   IconReportAnalytics,
   IconScale,
-  IconSettings,
+  // IconSettings,
   IconCreditCardRefund,
   IconUserBolt,
   IconUsers,
-  IconWallet,
+  // IconWallet,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { cn } from "../../utils/cn";
