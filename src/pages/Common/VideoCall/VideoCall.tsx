@@ -3,6 +3,7 @@ import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 import { useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState, useAppSelector } from "../../../redux/store";
+import { useToast } from "../../../components/Toast/ToastManager";
 
 const OneToOneVideoCall = () => {
   const [hasJoinedRoom, setHasJoinedRoom] = useState(false);
@@ -11,40 +12,45 @@ const OneToOneVideoCall = () => {
   );
   const { registered } = useSelector((state: any) => state.register);
   const { userDetail } = useAppSelector((state: RootState) => state.userData);
-
+  const {addToast} = useToast()
   const navigate = useNavigate();
   const { uuid } = useParams();
 
   const startCall = () => {
-    const appID = 1885863562;
-    const serverSecret = "1b64fc31dbcaf6ca1bfea884c5af3923";
-    const roomID = `${uuid}`;
-    const userID = `user_${value}`;
-    const userName = `${userDetail.full_name}`;
+    if (!process?.env.VITE_SERVER_SECRET_FOR_ZEGO_CLOUD || !process?.env.VITE_APP_ID) {
+      addToast('danger','something wrong with the credentials')
+    }else{
+      const appID = Number(process?.env.VITE_APP_ID);
+      const serverSecret = process?.env.VITE_SERVER_SECRET_FOR_ZEGO_CLOUD;
+      const roomID = `${uuid}`;
+      const userID = `user_${value}`;
+      const userName = `${userDetail.full_name}`;
 
-    const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
-      appID,
-      serverSecret,
-      roomID,
-      userID,
-      userName
-    );
+      const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
+        appID,
+        serverSecret,
+        roomID,
+        userID,
+        userName
+      );
 
-    const zp = ZegoUIKitPrebuilt.create(kitToken);
+      const zp = ZegoUIKitPrebuilt.create(kitToken);
 
-    zp.joinRoom({
-      container: document.getElementById("video-container"),
-      sharedLinks: [],
-      scenario: {
-        mode: ZegoUIKitPrebuilt.OneONoneCall,
-      },
-      showLeavingView: false,
-      showPreJoinView: false,
+      zp.joinRoom({
+        container: document.getElementById("video-container"),
+        sharedLinks: [],
+        scenario: {
+          mode: ZegoUIKitPrebuilt.OneONoneCall,
+        },
+        showLeavingView: false,
+        showPreJoinView: false,
 
-      onLeaveRoom: () => {
-        navigate(`../../../../../${role}/appointments`);
-      },
-    });
+        onLeaveRoom: () => {
+          navigate(`../../../../../${role}/appointments`);
+        },
+      });
+    }
+    
   };
 
   useEffect(() => {
