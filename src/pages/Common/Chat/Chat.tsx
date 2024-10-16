@@ -8,7 +8,6 @@ import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
 import { AppDispatch, RootState, useAppSelector } from "../../../redux/store";
 import { fetchUserAsync } from "../../../redux/slice/UserDataFetch";
 import { motion, AnimatePresence } from "framer-motion";
-// import ClipLoader from "react-spinners/ClipLoader";
 
 interface Message {
   id: number;

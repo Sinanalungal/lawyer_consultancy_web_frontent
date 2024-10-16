@@ -1,139 +1,3 @@
-// import React, { useEffect, useState } from "react";
-// import PageTitle from "../../../components/PageTitle/PageTitle";
-// import { addFunds, GetTheWallet } from "../../../services/Wallet";
-// import { loadStripe } from "@stripe/stripe-js";
-
-// const LawyerWalletPage: React.FC = () => {
-//   const [value, setValue] = useState<number | undefined>(undefined);
-//   const [transaction, setTransactions] = useState<any[]>([]);
-//   const [balance, setBalance] = useState<number>(0);
-
-//   const transactions = transaction.map((obj) => ({
-//     id: obj.pk,
-//     type: obj.transaction_type,
-//     amount: obj.amount,
-//     date: obj.created_at,
-//   }));
-
-//   const handleAddFunds = async (amount: number) => {
-//     try {
-//       const data = await addFunds(amount);
-
-//       if (!process?.env.VITE_CLIENT_ID) {
-//         throw new Error("Something wrong with stripe key");
-//       }
-//       const stripe = await loadStripe(
-//         "pk_test_51PMjrqSD4LlFpJPegNLUNIVDRjJmeaF1jW7lBzhnEQHgvmchbzkNn4pVdStSwROBEnbXvF2BpC4reOqUvHS1L3Yb00sfPbm63y"
-//       );
-//       if (!stripe) {
-//         throw new Error("Failed to load Stripe.");
-//       }
-
-//       const { error } = await stripe.redirectToCheckout({
-//         sessionId: data.sessionId,
-//       });
-
-//       if (error) {
-//         console.error("Error redirecting to checkout:", error);
-//         alert("Failed to redirect to checkout. Please try again.");
-//       }
-//     } catch (error) {
-//       console.error("Error adding funds:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const data = await GetTheWallet();
-//         setTransactions(data.balance_history);
-//         setBalance(data.balance);
-//       } catch (error) {
-//         console.error("Error fetching wallet data:", error);
-//       }
-//     };
-
-//     fetchData();
-//   }, []);
-
-//   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const newValue = e.target.valueAsNumber;
-//     setValue(newValue);
-//   };
-
-//   return (
-//     <div className="min-h-screen flex flex-col items-center bg-transparent text-gray-900">
-//       <PageTitle
-//         description="Manage your finances effortlessly with a clear overview of transactions and balances."
-//         title="WALLET"
-//       />
-
-//       <div className="w-full mb-10 border border-gray-300 max-w-6xl xl:h-[400px] bg-gray-100 shadow-md rounded-lg p-4 flex flex-col xl:flex-row gap-4">
-//         {/* Wallet Balance Section */}
-//         <div className="xl:w-1/3 p-6 bg-white shadow-lg rounded-lg flex flex-col justify-between">
-//           <div className="flex flex-col items-center gap-10">
-//             <p className="text-lg font-medium text-gray-500 max-[400px]:text-base text-center max-sm:text-lg">Available Balance</p>
-//             <p className="text-5xl max-sm:text-3xl font-bold text-black mt-4">₹{balance}</p>
-//           </div>
-//           <div className="space-y-4  flex flex-col items-center mt-6">
-//             <input
-//               type="number"
-//               onChange={handleChange}
-//               className="w-full border max-w-xl  text-sm max-sm:text-xs border-gray-300 p-3 rounded-md text-gray-700"
-//               placeholder="Enter Value"
-//             />
-//             <div className="flex max-[400px]:flex-col max-[400px]:gap-2 gap-4 justify-center">
-//               <button
-//                 className="bg-black text-sm max-sm:text-xs text-white py-2 px-4 rounded-md hover:bg-gray-800 transition"
-//                 onClick={() => value && handleAddFunds(value)}
-//               >
-//                 Add Funds
-//               </button>
-//               <button className="bg-gray-200 text-sm max-sm:text-xs text-gray-600 py-2 px-4 rounded-md hover:bg-gray-300 transition">
-//                 Withdraw
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-
-//         {/* Recent Transactions Section */}
-//         <div className="xl:w-2/3 max-h-[370px] overflow-y-auto no-scrollbar bg-white shadow-lg rounded-lg p-4">
-//           <h2 className="text-xl font-semibold text-gray-700 text-center mb-4">Recent Transactions</h2>
-//           {transactions.length === 0 ? (
-//             <p className="text-gray-500 text-center">No transactions available.</p>
-//           ) : (
-//             <ul className="space-y-4">
-//               {transactions.map((transaction) => (
-//                 <li
-//                   key={transaction.id}
-//                   className="p-4 max-[400px]:flex-col max-[400px]:text-center bg-gray-50 border border-gray-200 rounded-lg flex justify-between items-center"
-//                 >
-//                   <div className="flex-1">
-//                     <p className="font-medium text-gray-700">{transaction.type}</p>
-//                     <p className="text-xs text-gray-500">{transaction.date}</p>
-//                   </div>
-//                   <div className="text-right mt-2">
-//                     <p
-//                       className={`text-lg font-semibold ${
-//                         transaction.type === "credit" ? "text-green-500" : "text-red-500"
-//                       }`}
-//                     >
-//                       {transaction.type === "credit" ? "+" : "-"}₹{transaction.amount}
-//                     </p>
-//                   </div>
-//                 </li>
-//               ))}
-//             </ul>
-//           )}
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default LawyerWalletPage;
-
-
 import React, { useState, useEffect } from "react";
 import { Wallet, ArrowUpRight, ArrowDownLeft } from "lucide-react";
 import {
@@ -157,14 +21,14 @@ const LawyerWalletPage: React.FC = () => {
     if (!amount || isNaN(parseFloat(amount))) return;
     try {
       const data = await addFunds(parseFloat(amount));
-
-      if (!process.env.VITE_CLIENT_ID) {
+      
+      if (!import.meta.env.VITE_CLIENT_ID) {
         throw new Error("Invalid Stripe key.");
       }
-
-      if (process.env.VITE_STRIPE_PUBLIC_SECRET_KEY) {
+      
+      if (import.meta.env.VITE_STRIPE_PUBLIC_SECRET_KEY) {
         const stripe = await loadStripe(
-          process.env.VITE_STRIPE_PUBLIC_SECRET_KEY
+          import.meta.env.VITE_STRIPE_PUBLIC_SECRET_KEY
         );
 
         if (!stripe) {

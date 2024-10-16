@@ -11,7 +11,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onAudioRecorded, audioSta
   const [isPaused, setIsPaused] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
-  const streamRef = useRef<MediaStream | null>(null); // Reference to the media stream
+  const streamRef = useRef<MediaStream | null>(null);
 
   const startRecording = async () => {
     try {
@@ -26,8 +26,7 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onAudioRecorded, audioSta
       mediaRecorderRef.current.onstop = () => {
         const recordedBlob = new Blob(chunksRef.current, { type: 'audio/wav' });
         onAudioRecorded(recordedBlob);
-        chunksRef.current = []; // Clear the chunks for the next recording
-        // Stop the stream and release the microphone
+        chunksRef.current = [];
         streamRef.current?.getTracks().forEach(track => track.stop());
         streamRef.current = null;
       };
@@ -37,7 +36,6 @@ const VoiceRecorder: React.FC<VoiceRecorderProps> = ({ onAudioRecorded, audioSta
       audioStart(true);
     } catch (error) {
       console.error('Error accessing microphone:', error);
-      // Optionally add error handling UI/logic here
       alert('Microphone access is required to record audio.');
     }
   };

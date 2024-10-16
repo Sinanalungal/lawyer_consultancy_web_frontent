@@ -130,12 +130,12 @@ const SessionScheduler: React.FC = () => {
           selectedDateStr
         );
 
-        if (!process?.env.VITE_CLIENT_ID) {
+        if (!import.meta.env.VITE_CLIENT_ID) {
           throw new Error("Something wrong with stripe key");
         }
-        if (process.env.VITE_STRIPE_PUBLIC_SECRET_KEY) {
+        if (import.meta.env.VITE_STRIPE_PUBLIC_SECRET_KEY) {
           const stripe = await loadStripe(
-            process.env.VITE_STRIPE_PUBLIC_SECRET_KEY
+            import.meta.env.VITE_STRIPE_PUBLIC_SECRET_KEY
           );
           if (!stripe) {
             throw new Error("Failed to load Stripe.");
@@ -180,14 +180,14 @@ const SessionScheduler: React.FC = () => {
 
         if (result.status === 202) {
           addToast("success", "idea is working");
-
-          if (!process?.env.VITE_CLIENT_ID) {
+          
+          if (!import.meta.env.VITE_CLIENT_ID) {
             throw new Error("Something wrong with Stripe key");
           }
 
-          if (process?.env.VITE_STRIPE_PUBLIC_SECRET_KEY) {
+          if (import.meta.env.VITE_STRIPE_PUBLIC_SECRET_KEY) {
             const stripe = await loadStripe(
-              process?.env.VITE_STRIPE_PUBLIC_SECRET_KEY
+              import.meta.env?.VITE_STRIPE_PUBLIC_SECRET_KEY
             );
             if (!stripe) {
               throw new Error("Failed to load Stripe.");

@@ -17,11 +17,11 @@ const OneToOneVideoCall = () => {
   const { uuid } = useParams();
 
   const startCall = () => {
-    if (!process?.env.VITE_SERVER_SECRET_FOR_ZEGO_CLOUD || !process?.env.VITE_APP_ID) {
+    if (!import.meta.env.VITE_SERVER_SECRET_FOR_ZEGO_CLOUD || !import.meta.env.VITE_APP_ID) {
       addToast('danger','something wrong with the credentials')
     }else{
-      const appID = Number(process?.env.VITE_APP_ID);
-      const serverSecret = process?.env.VITE_SERVER_SECRET_FOR_ZEGO_CLOUD;
+      const appID = Number(import.meta.env.VITE_APP_ID);
+      const serverSecret = import.meta.env.VITE_SERVER_SECRET_FOR_ZEGO_CLOUD;
       const roomID = `${uuid}`;
       const userID = `user_${value}`;
       const userName = `${userDetail.full_name}`;

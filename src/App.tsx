@@ -62,7 +62,7 @@ function App() {
         </Suspense>
       ) : (
         <Router>
-          <GoogleOAuthProvider clientId={process?.env.VITE_CLIENT_ID || ""}>
+          <GoogleOAuthProvider clientId={import.meta.env.VITE_CLIENT_ID || ""}>
             <Suspense
               fallback={
                 <div style={spinnerStyle}>
