@@ -98,3 +98,28 @@ export const WalletBalanceApi = async () => {
         throw error;
     }
 };
+
+
+export const WalletDetailsOfAllUsers = async (page = 1, search = '') => {
+    const axiosInstance = await getAxiosInstance();
+    try {
+      const response = await axiosInstance.get(`wallet/user-wallet-details/?page=${page}&search=${search}`);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching wallet balance:", error);
+      throw error;
+    }
+};
+  
+
+
+export const WalletTransactionHistoryApi = async (userId:number, page = 1) => {
+    const axiosInstance = await getAxiosInstance();
+    try {
+        const response = await axiosInstance.get(`wallet/user-wallet-history/${userId}/?page=${page}`);
+        return response.data; 
+    } catch (error) {
+        console.error("Error fetching wallet transaction history:", error);
+        throw error;  
+    }
+};

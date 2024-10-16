@@ -2,6 +2,7 @@ import { Suspense, lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AdminPrivateRoute from './PrivateRouter/AdminPrivateRoute';
 import { RingLoader } from 'react-spinners';
+import UserWalletDetails from '../pages/Admin/UserWalletDetails/UserWalletDetails';
 
 // Lazy load components
 const Dashboard = lazy(() => import('../pages/Admin/Dashboard/Dashboard'));
@@ -47,6 +48,7 @@ function AdminRoutes() {
           <Route path="schedule-list" element={<ScheduleList />} />
           <Route path="sales-report" element={<SalesReportTable />} />
           <Route path="withdrawal" element={<WithdrawalRequests />} />
+          <Route path="user-wallet" element={<UserWalletDetails />} />
         </Route>
       </Routes>
     </Suspense>
