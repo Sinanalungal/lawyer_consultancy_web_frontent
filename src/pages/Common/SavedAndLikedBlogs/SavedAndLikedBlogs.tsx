@@ -10,7 +10,6 @@ import {
   updateBlogSave,
 } from "../../../services/Blogs";
 import { Blog } from "../../../types";
-import { BASE_URL } from "../../../constants";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
 import Modal from "../../../components/Modal/Modal";
 import CommentSection from "../../../components/Comments/Comments";
@@ -56,7 +55,7 @@ const SavedAndLikedBlogs: React.FC = () => {
       setBlogs(response.results);
       console.log(response, "this is the response");
       setTotalPages(Math.ceil(response.count / 10));
-    } catch (error) {
+    } catch (error:any) {
       setError("Error fetching blogs.");
     } finally {
       setIsLoading(false);
@@ -129,7 +128,7 @@ const SavedAndLikedBlogs: React.FC = () => {
           (prevBlog) => prevBlog && { ...prevBlog, is_saved: result.saved }
         );
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error saving blog:", error);
     }
   };
@@ -154,7 +153,7 @@ const SavedAndLikedBlogs: React.FC = () => {
           (prevBlog) => prevBlog && { ...prevBlog, is_liked: result.like }
         );
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error liking blog:", error);
     }
   };
@@ -209,7 +208,7 @@ const SavedAndLikedBlogs: React.FC = () => {
             return (
               <BlogCard
                 key={index}
-                imageUrl={`${BASE_URL}${blog.blog.image}`} 
+                imageUrl={`${import.meta.env.VITE_BASE_URL}${blog.blog.image}`} 
                 date={formatDate(blog.blog.created_at)}
                 title={blog.blog.title}
                 author={blog.blog.user.full_name}
@@ -365,7 +364,7 @@ const SavedAndLikedBlogs: React.FC = () => {
         </div>
         <div className="rounded-xl mt-6 h-[500px]">
           <img
-            src={`${BASE_URL}${readingBlog?.image}`}
+            src={`${import.meta.env.VITE_BASE_URL}${readingBlog?.image}`}
             alt="Blog Image"
             className="h-[500px] object-cover w-full rounded-xl"
           />

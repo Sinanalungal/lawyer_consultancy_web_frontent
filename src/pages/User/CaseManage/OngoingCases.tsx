@@ -250,7 +250,6 @@ const OngoingCases: React.FC = () => {
           )}
         </Modal>
 
-        {/* Confirmation Modal for Marking Case as Finished */}
         <ConfirmationModal
           isOpen={modalOpen}
           title="Mark Case as Finished?"

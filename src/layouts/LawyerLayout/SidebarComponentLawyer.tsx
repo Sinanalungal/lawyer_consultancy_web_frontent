@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import {
   IconArrowLeft,
-  // IconBellRingingFilled,
   IconBrandHipchat,
   IconBrandTabler,
   IconCalendarClock,
@@ -9,7 +8,6 @@ import {
   IconClock2,
   IconGavel,
   IconNews,
-  // IconSettings,
   IconUserBolt,
   IconWallet,
 } from "@tabler/icons-react";
@@ -115,14 +113,7 @@ export function SidebarDemo({ children }: LawyerLayoutProps) {
       dispatch(fetchUserAsync());
     }
   }, [isAuthenticated, dispatch]);
-  // const transition = {
-  //   type: "spring",
-  //   mass: 0.5,
-  //   damping: 11.5,
-  //   stiffness: 100,
-  //   restDelta: 0.001,
-  //   restSpeed: 0.001,
-  // };
+
 
   return (
     <div

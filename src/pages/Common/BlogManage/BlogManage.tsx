@@ -29,7 +29,7 @@ const BlogManage: React.FC = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [status, setStatus] = useState<string>("Listed");
   const [currentUrl, setCurrentUrl] = useState<string | null>(
-    `${process.env.VITE_BASE_URL}/blogsession/personal-blogs/`
+    `${import.meta.env.VITE_BASE_URL}/blogsession/personal-blogs/`
   );
   const navigate = useNavigate();
   const { addToast } = useToast();
@@ -156,22 +156,7 @@ const BlogManage: React.FC = () => {
           Add Blog
         </p>
       </div>
-      {/* <ItemTable
-        columns={columns}
-        data={data}
-        itemsPerPage={10}
-        search={search}
-        setSearch={setSearch}
-        nextButton={handleNextPage}
-        previousButton={handlePreviousPage}
-        pageNum={pageNum}
-        total={totalCount}
-        blocked={blocked}
-        setBlocked={setBlocked}
-        options={[{ label: 'Listed', action: () => setBlocked?.(true) },{ label: 'Unlisted', action: () => setBlocked?.(false) }]
 
-      }
-      /> */}
       <div className="flex flex-col  h-full pb-16 ">
         <div className="flex items-center justify-between max-sm:flex-col max-sm:items-end">
           {options && (

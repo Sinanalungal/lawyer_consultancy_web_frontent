@@ -91,7 +91,7 @@ const ChatComponent: React.FC = () => {
   }, [selectedUser]);
   useEffect(() => {
     let loc = window.location;
-    const url = "localhost:8000";
+    const url = `${import.meta.env.VITE_WEBSOCKET_URL}`;
     let wsStart = "ws://";
 
     if (loc.protocol === "https:") {
@@ -105,11 +105,11 @@ const ChatComponent: React.FC = () => {
     const newSocket = new WebSocket(endpoint);
     setSocket(newSocket);
 
-    newSocket.onopen = (e) => {
+    newSocket.onopen = (e:any) => {
       console.log("WebSocket connected:", e);
     };
 
-    newSocket.onmessage = (e) => {
+    newSocket.onmessage = (e:any) => {
       const receivedMessage = JSON.parse(e.data);
       if (receivedMessage.type == 'chat_message'){
         const receivedMessage_data = JSON.parse(receivedMessage.data);
@@ -122,11 +122,11 @@ const ChatComponent: React.FC = () => {
       }
     };
 
-    newSocket.onerror = (e) => {
+    newSocket.onerror = (e:any) => {
       console.error("WebSocket error:", e);
     };
 
-    newSocket.onclose = (e) => {
+    newSocket.onclose = (e:any) => {
       console.log("WebSocket closed:", e);
     };
 
@@ -136,7 +136,7 @@ const ChatComponent: React.FC = () => {
         console.log(result, "these are the users");
 
         setUsers(result);
-      } catch (error) {
+      } catch (error:any) {
         console.error("Something went wrong with thread fetching.");
       }
     };
@@ -181,7 +181,7 @@ const ChatComponent: React.FC = () => {
             send_to: Number(selectedUser.other_user.id),
             thread: selectedUser.id,
             content_type: contentType,
-            audio: base64Data, // Add the blob as base64
+            audio: base64Data, 
           };
 
           // Send the data with the base64-encoded blob

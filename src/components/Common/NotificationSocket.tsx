@@ -33,7 +33,7 @@ const NotificationSocket: React.FC = ({
     if (value) {
       const connectWebSocket = () => {
         const socket = new WebSocket(
-          `ws://localhost:8000/notifications/${value}/`
+          `ws://${import.meta.env.VITE_WEBSOCKET_URL}/notifications/${value}/`
         );
 
         socket.onopen = (event) => {

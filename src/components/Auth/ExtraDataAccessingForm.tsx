@@ -3,7 +3,6 @@ import { useFormik, FormikProps } from "formik";
 import * as Yup from "yup";
 import { FaArrowDown } from "react-icons/fa";
 import axios from "axios";
-import { BASE_URL } from "../../constants";
 import { useDispatch, useSelector } from "react-redux";
 import { modaloff } from "../../redux/slice/LoginActions";
 import CustomInput from "../Input/Input";
@@ -94,7 +93,7 @@ const ExtraDataAccessingForm: React.FC = () => {
     onSubmit: async (values) => {
       if (!openPassword) {
         try {
-          const res = await axios.post(`${BASE_URL}/api/save-data-request/`, {
+          const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/save-data-request/`, {
             email: userEmail,
             phone_number: values.phone_number,
             otp: values.otp,
@@ -106,7 +105,7 @@ const ExtraDataAccessingForm: React.FC = () => {
         }
       } else {
         try {
-          const res = await axios.post(`${BASE_URL}/api/save-data-request/`, {
+          const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/save-data-request/`, {
             email: userEmail,
             phone_number: values.phone_number,
             password: values.password,
@@ -138,7 +137,7 @@ const ExtraDataAccessingForm: React.FC = () => {
   const sendOTP = async () => {
     if (formik.isValid && formik.values.phone_number && userEmail) {
       try {
-        const res = await axios.post(`${BASE_URL}/api/otpsend/`, {
+        const res = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/otpsend/`, {
           phone_number: formik.values.phone_number,
           email: userEmail,
         });

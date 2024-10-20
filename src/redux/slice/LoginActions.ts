@@ -22,7 +22,6 @@ const initialState: LoginState = {
   loader: false,
   isAuthenticated: false,
   error: null,
-  // user: null,
   role: null,
   dataRequired: false,
   value: null
@@ -36,7 +35,7 @@ export const GoogleLoginAsync = createAsyncThunk<{
   'login/GoogleLoginAsync',
   async (code: string, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${process.env.VITE_BASE_URL}/api/login-with-google/`, { code });
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/login-with-google/`, { code });
       var token = response.data.access_token;
       console.log(token);
       const registering = response?.data.registering;
@@ -72,7 +71,7 @@ export const loginAsync = createAsyncThunk<{
   'login/loginAsync',
   async (loginData: { username: string, password: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${process.env.VITE_BASE_URL}/token/userdata/`, loginData);
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/token/userdata/`, loginData);
       var token = response.data;
       console.log(token.access);
 
@@ -104,28 +103,22 @@ const loginSlice = createSlice({
       state.loader = true;
       state.isAuthenticated = false;
       state.error = null;
-      // state.user = null;
     },
-    // setAccess(state, value) {
-    //   state.user = value;
-    // },
+
     loginSuccess(state) {
       state.loader = false;
       state.isAuthenticated = true;
       state.error = null;
-      // state.user = action.payload;
     },
     loginFailure(state, action: PayloadAction<string>) {
       state.loader = false;
       state.isAuthenticated = false;
       state.error = action.payload;
-      // state.user = null;
     },
     logout(state) {
       state.loader = false;
       state.isAuthenticated = false;
       state.error = null;
-      // state.user = null;
       state.role = null;
       state.value = null;
       localStorage.removeItem('authTokens');
@@ -143,7 +136,6 @@ const loginSlice = createSlice({
         state.loader = false;
         state.isAuthenticated = true;
         state.error = null;
-        // state.user = action.payload.data;
         state.role = action.payload.role;
         state.dataRequired = action.payload.registering;
         state.value = action.payload.id;
@@ -153,7 +145,6 @@ const loginSlice = createSlice({
         state.loader = false;
         state.isAuthenticated = false;
         state.error = action.payload?.message as any;
-        // state.user = null;
         state.role = null;
       })
       .addCase(GoogleLoginAsync.pending, (state) => {
@@ -163,7 +154,6 @@ const loginSlice = createSlice({
         state.loader = false;
         state.isAuthenticated = true;
         state.error = null;
-        // state.user = action.payload.data;
         state.role = action.payload.role;
         state.dataRequired = action.payload.registering;
         state.value = action.payload.id;
@@ -172,7 +162,6 @@ const loginSlice = createSlice({
         state.loader = false;
         state.isAuthenticated = false;
         state.error = action.payload as any;
-        // state.user = null;
         state.role = null;
       });
   },

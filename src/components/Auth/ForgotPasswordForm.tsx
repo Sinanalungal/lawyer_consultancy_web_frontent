@@ -1,7 +1,6 @@
 import React, { useState, FormEvent } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { BASE_URL } from "../../constants";
 import CustomInput from "../Input/Input";
 import CustomButton from "../Button/Button";
 import { useToast } from "../Toast/ToastManager";
@@ -18,7 +17,7 @@ const ForgotPasswordForm: React.FC = () => {
     setLoading(true);
     try {
       const response = await axios.post<{ message: string }>(
-        `${BASE_URL}/api/forgotpassword/`,
+        `${import.meta.env.VITE_BASE_URL}/api/forgotpassword/`,
         { email }
       );
       addToast("success", response.data.message);

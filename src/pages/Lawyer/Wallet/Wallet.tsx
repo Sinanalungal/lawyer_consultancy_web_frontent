@@ -45,7 +45,7 @@ const LawyerWalletPage: React.FC = () => {
       } else {
         addToast("info", "Payment Method Not Available Now");
       }
-    } catch (error) {
+    } catch (error:any) {
       console.error("Error adding funds:", error);
     }
   };
@@ -81,7 +81,7 @@ const LawyerWalletPage: React.FC = () => {
         const data = await GetTheWallet();
         setTransactions(data.balance_history);
         setBalance(data.balance);
-      } catch (error) {
+      } catch (error:any) {
         console.error("Error fetching wallet data:", error);
       }
     };

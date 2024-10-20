@@ -247,11 +247,11 @@ const ClientCaseManagement: React.FC = () => {
                     <th className="py-3 px-4 text-center text-gray-600 font-medium"></th>
                   </tr> */}
                   <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                      <th className="px-6 py-3">Case Type</th>
-                      <th className="px-6 py-3">Status</th>
-                      <th className="px-6 py-3">Reference Until</th>
-                      <th className="px-6 py-3">Actions</th>
-                    </tr>
+                    <th className="px-6 py-3">Case Type</th>
+                    <th className="px-6 py-3">Status</th>
+                    <th className="px-6 py-3">Reference Until</th>
+                    <th className="px-6 py-3">Actions</th>
+                  </tr>
                 </thead>
                 <tbody>
                   {cases.length > 0 ? (

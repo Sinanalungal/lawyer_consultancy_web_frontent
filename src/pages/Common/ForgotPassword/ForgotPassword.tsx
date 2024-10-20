@@ -9,7 +9,6 @@ const ForgotPassword: React.FC = () => {
   const { isAuthenticated, role } = useSelector(
     (state: any) => state.login
   );
-  // const { lawyers, fetchLawyerData } = useFetchLawyerData();
   const navigate = useNavigate();
 
   useEffect(() => {

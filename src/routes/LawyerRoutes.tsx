@@ -1,28 +1,42 @@
-import { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import LawyerPrivateRoute from './PrivateRouter/LawyerPrivateRoute';
-import { RingLoader } from 'react-spinners';
+import { Suspense, lazy } from "react";
+import { Routes, Route } from "react-router-dom";
+import LawyerPrivateRoute from "./PrivateRouter/LawyerPrivateRoute";
+import { RingLoader } from "react-spinners";
 
 // Lazy load components
-const FailPage = lazy(() => import('../pages/User/SuccessFailPages/FailPage'));
-const SuccessPage = lazy(() => import('../pages/User/SuccessFailPages/SuccessPage'));
-const Blog = lazy(() => import('../pages/User/Blog/Blog'));
-const LawyerSessionManage = lazy(() => import('../pages/Lawyer/LawyerSession/LawyerSessionManage'));
-const BlogManage = lazy(() => import('../pages/Common/BlogManage/BlogManage'));
-const AddBlog = lazy(() => import('../pages/Common/BlogManage/AddBlog'));
-const LawyerAppointments = lazy(() => import('../pages/Lawyer/LawyerAppointment/LawyerAppointments'));
-const LawyerProfile = lazy(() => import('../pages/Lawyer/LawyerProfile/LawyerProfile'));
-const LawyerCaseManagement = lazy(() => import('../pages/Lawyer/LawyerCasePage/LawyerCaseManage'));
-const AvailableCases = lazy(() => import('../pages/Lawyer/LawyerCasePage/AvailableCases'));
-const LawyerWalletPage = lazy(() => import('../pages/Lawyer/Wallet/Wallet'));
-const LawyerDashboard = lazy(() => import('../pages/Lawyer/Dashboard/LawyerDashboard'));
+const FailPage = lazy(() => import("../pages/User/SuccessFailPages/FailPage"));
+const SuccessPage = lazy(() =>
+  import("../pages/User/SuccessFailPages/SuccessPage")
+);
+const Blog = lazy(() => import("../pages/User/Blog/Blog"));
+const LawyerSessionManage = lazy(() =>
+  import("../pages/Lawyer/LawyerSession/LawyerSessionManage")
+);
+const BlogManage = lazy(() => import("../pages/Common/BlogManage/BlogManage"));
+const AddBlog = lazy(() => import("../pages/Common/BlogManage/AddBlog"));
+const LawyerAppointments = lazy(() =>
+  import("../pages/Lawyer/LawyerAppointment/LawyerAppointments")
+);
+const LawyerProfile = lazy(() =>
+  import("../pages/Lawyer/LawyerProfile/LawyerProfile")
+);
+const LawyerCaseManagement = lazy(() =>
+  import("../pages/Lawyer/LawyerCasePage/LawyerCaseManage")
+);
+const AvailableCases = lazy(() =>
+  import("../pages/Lawyer/LawyerCasePage/AvailableCases")
+);
+const LawyerWalletPage = lazy(() => import("../pages/Lawyer/Wallet/Wallet"));
+const LawyerDashboard = lazy(() =>
+  import("../pages/Lawyer/Dashboard/LawyerDashboard")
+);
 
 function LawyerRoutes() {
   const spinnerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
   };
 
   return (

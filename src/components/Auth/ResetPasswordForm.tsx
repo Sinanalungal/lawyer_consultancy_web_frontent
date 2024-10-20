@@ -1,7 +1,6 @@
 import React, { useState, FormEvent, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { BASE_URL } from "../../constants";
 import { useToast } from "../Toast/ToastManager";
 import CustomInput from "../Input/Input";
 import CustomButton from "../Button/Button";
@@ -31,7 +30,7 @@ const ResetPasswordForm: React.FC = () => {
 
     try {
       const response = await axios.post<{ message: string }>(
-        `${BASE_URL}/api/resetpassword/`,
+        `${import.meta.env.VITE_BASE_URL}/api/resetpassword/`,
         {
           token: token,
           password: password,
@@ -50,7 +49,7 @@ const ResetPasswordForm: React.FC = () => {
     const linkValidation = async () => {
       try {
         const response = await axios.post<{ message: string }>(
-          `${BASE_URL}/api/resetvalidation/`,
+          `${import.meta.env.VITE_BASE_URL}/api/resetvalidation/`,
           {
             token: token,
           }

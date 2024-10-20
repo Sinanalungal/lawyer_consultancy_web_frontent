@@ -49,8 +49,7 @@ const LawyerListing: React.FC = () => {
   const [searchOpen, setSearchOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  // const [currentPage, setCurrentPage] = useState<string>(); // For pagination
-  const [next, setNext] = useState<string | null>(null); // Total number of pages
+  const [next, setNext] = useState<string | null>(null);
   const { setLoader } = useLoader();
 
   console.log(searchQuery);
@@ -69,15 +68,9 @@ const LawyerListing: React.FC = () => {
           params as any
         );
 
-        // const newLawyers = fetchedLawyers.results.filter(
-        //   (lawyer) => !lawyers.some((existing) => existing.pk === lawyer.pk)
-        // );
-
         setLawyers(fetchedLawyers?.results);
 
-        // if (fetchedLawyers.next) {
         setNext(fetchedLawyers.next);
-        // }
       } catch (error) {
         console.error("Failed to fetch lawyers:", error);
       } finally {
@@ -94,8 +87,6 @@ const LawyerListing: React.FC = () => {
         const fetchedData = await fetchDepartmentsAndLanguagesAndStates();
         setDepartments(fetchedData?.departments);
         setLanguages(fetchedData?.languages);
-        // setStates(fetchedData?.states);
-        // console.log(fetchedData.states);
       } catch (error) {
         console.error("Failed to fetch departments and languages:", error);
       }
@@ -120,9 +111,7 @@ const LawyerListing: React.FC = () => {
 
         setLawyers([...lawyers, ...fetchedLawyers?.results]);
 
-        // if (fetchedLawyers.next) {
         setNext(fetchedLawyers?.next);
-        // }
       } catch (error) {
         console.error("Failed to fetch lawyers:", error);
       }
@@ -318,7 +307,11 @@ const LawyerListing: React.FC = () => {
         )}
       </div>
 
-      <Drawer isOpen={isDrawerOpen} onClose={toggleDrawer} lawyer={drawerData} />
+      <Drawer
+        isOpen={isDrawerOpen}
+        onClose={toggleDrawer}
+        lawyer={drawerData}
+      />
     </section>
   );
 };

@@ -7,9 +7,9 @@ const NotificationCountSocket = ({ background = false }) => {
   const [notification_count, setNotificationCount] = useState<number>(0);
   const [_error, setError] = useState<string | null>(null);
   const { value } = useAppSelector((state) => state.login);
-  const socketRef = useRef<WebSocket | null>(null); // WebSocket instance
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null); // For reconnection timer
-  const [shouldReconnect, setShouldReconnect] = useState<boolean>(true); // Control reconnect behavior
+  const socketRef = useRef<WebSocket | null>(null); 
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [shouldReconnect, setShouldReconnect] = useState<boolean>(true); 
 
   // Function to fetch initial count
   const fetchCount = async () => {
@@ -24,7 +24,7 @@ const NotificationCountSocket = ({ background = false }) => {
   // Function to initialize WebSocket connection
   const initializeWebSocket = () => {
     if (value) {
-      const socket = new WebSocket(`ws://localhost:8000/notification-count/${value}/`);
+      const socket = new WebSocket(`ws://${import.meta.env.VITE_WEBSOCKET_URL}/notification-count/${value}/`);
       socketRef.current = socket;
 
       socket.onopen = (event) => {
@@ -44,33 +44,28 @@ const NotificationCountSocket = ({ background = false }) => {
 
       socket.onclose = (event) => {
         console.log("WebSocket connection closed:", event);
-        // If closed unexpectedly and we should reconnect, attempt to reconnect
         if (shouldReconnect) {
           console.log("Attempting to reconnect...");
           reconnectTimeoutRef.current = setTimeout(() => {
-            initializeWebSocket(); // Retry connection after delay
-          }, 5000); // 5-second delay before reconnecting
+            initializeWebSocket();
+          }, 5000); 
         }
       };
     }
   };
 
-  // Handle component mount and unmount
   useEffect(() => {
-    // Fetch initial count when the component is mounted
     fetchCount();
 
-    // Establish WebSocket connection
     initializeWebSocket();
 
-    // Cleanup function to close WebSocket on component unmount
     return () => {
-      setShouldReconnect(false); // Prevent reconnection on unmount
+      setShouldReconnect(false); 
       if (socketRef.current) {
-        socketRef.current.close(); // Close the WebSocket connection
+        socketRef.current.close(); 
       }
       if (reconnectTimeoutRef.current) {
-        clearTimeout(reconnectTimeoutRef.current); // Clear any reconnect timeout
+        clearTimeout(reconnectTimeoutRef.current);
       }
     };
   }, [value]);

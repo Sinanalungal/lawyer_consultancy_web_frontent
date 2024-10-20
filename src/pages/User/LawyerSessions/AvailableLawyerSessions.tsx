@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import {
   isToday,
   isBefore,
-  // isAfter,
   format,
   addDays,
   endOfMonth,
@@ -150,7 +149,7 @@ const SessionScheduler: React.FC = () => {
             alert("Failed to redirect to checkout. Please try again.");
           }
         } else {
-          addToast('info','Payment Method Not Available Now')
+          addToast("info", "Payment Method Not Available Now");
         }
       } catch (error) {
         console.error("Error booking appointment:", error);
@@ -180,7 +179,7 @@ const SessionScheduler: React.FC = () => {
 
         if (result.status === 202) {
           addToast("success", "idea is working");
-          
+
           if (!import.meta.env.VITE_CLIENT_ID) {
             throw new Error("Something wrong with Stripe key");
           }
@@ -202,7 +201,7 @@ const SessionScheduler: React.FC = () => {
               alert("Failed to redirect to checkout. Please try again.");
             }
           } else {
-            addToast('info','Payment Method Not Available Now')
+            addToast("info", "Payment Method Not Available Now");
           }
         } else {
           navigate(

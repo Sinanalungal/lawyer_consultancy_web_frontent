@@ -8,7 +8,6 @@ interface HeroSectionProps {}
 const HeroSection: React.FC<HeroSectionProps> = ({}) => {
   return (
     <div className="relative  pb-0 p-4 max-lg:m-3  max-lg:rounded-lg max-lg:pt-20 max-lg:bg-black flex items-end  justify-center">
-      {/* <div className="absolute top-0 left-0 right-0 h-full bg-black opacity-30"></div> */}
 
       <div
         className="text-white xl:w-[1700px] grid-cols-1 lg:bg-black lg:p-10 lg:pb-0  rounded-2xl max-lg:gap-3 lg:grid-cols-2 grid  text-center z-10"

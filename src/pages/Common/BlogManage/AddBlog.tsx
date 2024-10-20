@@ -5,7 +5,6 @@ import CustomInput from "../../../components/Input/Input";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { getAxiosInstance } from "../../../api/axiosInstance";
-import { BASE_URL } from "../../../constants";
 import JoditEditor from "jodit-react";
 import "./AddBlog.css";
 import { useToast } from "../../../components/Toast/ToastManager";
@@ -123,7 +122,7 @@ const AddBlog: React.FC = () => {
           try {
             const axiosInstance = await getAxiosInstance();
             const response = await axiosInstance.post(
-              BASE_URL + "/blogsession/create-blog/",
+              `${import.meta.env.VITE_BASE_URL}` + "/blogsession/create-blog/",
               formData,
               {
                 headers: {

@@ -30,7 +30,7 @@ const Blog: React.FC = () => {
   const { addToast } = useToast();
   const fetchData = async () => {
     setLoader(true);
-    const url = `${process.env.VITE_BASE_URL}/blogsession/blogs/users/`;
+    const url = `${import.meta.env.VITE_BASE_URL}/blogsession/blogs/users/`;
     try {
       const data: BlogResponse = await fetchBlogsUser(url, search);
       const newBlogs = data.results.filter(

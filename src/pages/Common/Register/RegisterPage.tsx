@@ -11,7 +11,6 @@ const RegisterPage: React.FC = () => {
   const [loginWithCredentials, setLoginWithCredentials] = useState<boolean>(
     false
   );
-  // const { lawyers, fetchLawyerData } = useFetchLawyerData();
   const navigate = useNavigate();
 
   useEffect(() => {

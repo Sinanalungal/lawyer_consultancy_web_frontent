@@ -9,7 +9,6 @@ import { fetchUserSideLawyerList } from "../../services/fetchLawyers";
 import { Lawyer } from "../../types";
 import Drawer from "../Drawer/Drawer";
 import NotificationCountSocket from "./NotificationCountSocket";
-// import { useToast } from "../Toast/ToastManager";
 
 
 interface LawyerListResponse {
@@ -185,12 +184,6 @@ export default function Navbar() {
                     >
                       Apply New Case
                     </Link>
-                    {/* <Link
-                      to="/"
-                      className="block p-1 rounded-md text-sm font-semibold hover:bg-gray-100"
-                    >
-                      Service 3
-                    </Link> */}
                   </div>
                 </motion.div>
               )}
@@ -256,7 +249,7 @@ export default function Navbar() {
                 className="cursor-pointer"
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
               >
-                <NotificationCountSocket /> {/*   color="black"  */}
+                <NotificationCountSocket /> 
               </div>
               {notificationsOpen && (
                 <NotificationLayer onClose={()=>setNotificationsOpen(false)} open={notificationsOpen} />

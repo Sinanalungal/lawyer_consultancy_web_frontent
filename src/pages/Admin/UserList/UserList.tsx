@@ -42,13 +42,7 @@ const AdminUser: React.FC = () => {
     if (selectedUser) {
       try {
         await updateUserVerification(selectedUser.pk, !selectedUser.is_verified);
-        // setUsers((prevUsers) =>
-        //   prevUsers.map((user) =>
-        //     user.pk === selectedUser.pk
-        //       ? { ...user, is_verified: updatedUser.is_verified }
-        //       : user
-        //   )
-        // );
+  
         fetchData()
         setIsModalOpen(false);
       } catch (error) {
@@ -116,7 +110,7 @@ const AdminUser: React.FC = () => {
     actions: (
       <button
         className={`px-3 py-2 ${user.is_verified ? "bg-red-500" : "bg-green-500"} text-white`}
-        onClick={() => openModal(user)} // Open the modal instead of directly toggling
+        onClick={() => openModal(user)} 
       >
         {user.is_verified ? "Block" : "Unblock"}
       </button>

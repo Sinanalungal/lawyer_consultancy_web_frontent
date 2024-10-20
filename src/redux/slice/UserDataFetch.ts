@@ -4,7 +4,7 @@ import { getAxiosInstance } from '../../api/axiosInstance';
 
 export interface UserState {
   loader: boolean;
-  userDetail: Record<string, any>; // Replace with actual user detail structure if known
+  userDetail: Record<string, any>; 
   error: string;
 }
 
@@ -15,15 +15,14 @@ const initialState: UserState = {
 };
 
 
-// Define the type of the data returned by the API
-type UserResponse = any; // Replace with actual response type if known
+type UserResponse = any; 
 type UpdateProfileImageResponse = any;
 export const fetchUserAsync: AsyncThunk<UserResponse, void, {}> = createAsyncThunk<UserResponse, void>(
   'userData/fetchUser',
   async () => {
     try {
       const axiosInstance = await getAxiosInstance();
-      const response = await axiosInstance.get(`${process.env.VITE_BASE_URL}/api/user/`);
+      const response = await axiosInstance.get(`${import.meta.env.VITE_BASE_URL}/api/user/`);
       return response.data;
     } catch (error) {
       console.error('Error fetching user data:', error);

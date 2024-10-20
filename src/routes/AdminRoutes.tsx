@@ -1,29 +1,37 @@
-import { Suspense, lazy } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import AdminPrivateRoute from './PrivateRouter/AdminPrivateRoute';
-import { RingLoader } from 'react-spinners';
-import UserWalletDetails from '../pages/Admin/UserWalletDetails/UserWalletDetails';
+import { Suspense, lazy } from "react";
+import { Routes, Route } from "react-router-dom";
+import AdminPrivateRoute from "./PrivateRouter/AdminPrivateRoute";
+import { RingLoader } from "react-spinners";
+import UserWalletDetails from "../pages/Admin/UserWalletDetails/UserWalletDetails";
 
 // Lazy load components
-const Dashboard = lazy(() => import('../pages/Admin/Dashboard/Dashboard'));
-const LawyerList = lazy(() => import('../pages/Admin/LawyerList/LawyerList'));
-const UserList = lazy(() => import('../pages/Admin/UserList/UserList'));
-const AdminBlog = lazy(() => import('../pages/Admin/Blog/AdminBlog'));
-const AdminProfile = lazy(() => import('../pages/Admin/AdminProfile/AdminProfile'));
-const AddBlog = lazy(() => import('../pages/Common/BlogManage/AddBlog'));
-const AddLawyer = lazy(() => import('../pages/Admin/LawyerList/AddLawyer'));
-const CaseList = lazy(() => import('../pages/Admin/ListedCases/CaseList'));
-const ScheduleList = lazy(() => import('../pages/Admin/ScheduleList/ScheduleList'));
-const BlogManage = lazy(() => import('../pages/Common/BlogManage/BlogManage'));
-const SalesReportTable = lazy(() => import('../pages/Admin/SalesReport/SalesReport'));
-const WithdrawalRequests = lazy(() => import('../pages/Admin/Wallet/WithdrawalTable'));
+const Dashboard = lazy(() => import("../pages/Admin/Dashboard/Dashboard"));
+const LawyerList = lazy(() => import("../pages/Admin/LawyerList/LawyerList"));
+const UserList = lazy(() => import("../pages/Admin/UserList/UserList"));
+const AdminBlog = lazy(() => import("../pages/Admin/Blog/AdminBlog"));
+const AdminProfile = lazy(() =>
+  import("../pages/Admin/AdminProfile/AdminProfile")
+);
+const AddBlog = lazy(() => import("../pages/Common/BlogManage/AddBlog"));
+const AddLawyer = lazy(() => import("../pages/Admin/LawyerList/AddLawyer"));
+const CaseList = lazy(() => import("../pages/Admin/ListedCases/CaseList"));
+const ScheduleList = lazy(() =>
+  import("../pages/Admin/ScheduleList/ScheduleList")
+);
+const BlogManage = lazy(() => import("../pages/Common/BlogManage/BlogManage"));
+const SalesReportTable = lazy(() =>
+  import("../pages/Admin/SalesReport/SalesReport")
+);
+const WithdrawalRequests = lazy(() =>
+  import("../pages/Admin/Wallet/WithdrawalTable")
+);
 
 function AdminRoutes() {
   const spinnerStyle = {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
   };
 
   return (

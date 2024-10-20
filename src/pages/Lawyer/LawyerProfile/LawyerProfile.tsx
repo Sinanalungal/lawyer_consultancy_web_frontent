@@ -41,8 +41,7 @@ const LawyerProfile: React.FC = () => {
                 <EditPassword />
               </div>
             )}
-            {/* {selectedTab === "Settings" && <div>Settings Content</div>}
-            {selectedTab === "Invoice" && <div>Invoice Content</div>} */}
+
           </div>
         </div>
       </div>

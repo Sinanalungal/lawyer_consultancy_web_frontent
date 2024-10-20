@@ -2,22 +2,17 @@ import { useEffect, useState } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from '../../components/Sidebar/Sidebar'
 import {
   IconArrowLeft,
-  // IconBellRingingFilled,
-  // IconBrandHipchat,
   IconBrandTabler,
-  // IconCalendarClock,
   IconChevronRight,
   IconClock2,
   IconGavel,
   IconNews,
   IconReportAnalytics,
   IconScale,
-  // IconSettings,
   IconCreditCardRefund,
   IconUserBolt,
   IconUsers,
   IconBuildingBank,
-  // IconWallet,
 } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import { cn } from "../../utils/cn";
@@ -98,20 +93,7 @@ export function SidebarDemoAdmin({ children }: LawyerLayoutProps) {
         <IconBuildingBank className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
-    // {
-    //   label: "Wallet",
-    //   href: "../../../../admin/wallet",
-    //   icon: (
-    //     <IconWallet className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-    //   ),
-    // },
-    // {
-    //   label: "Chat",
-    //   href: "../../../../chat",
-    //   icon: (
-    //     <IconBrandHipchat className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-    //   ),
-    // },
+   
     {
       label: "Profile",
       href: "../../../../admin/profile",
@@ -120,13 +102,7 @@ export function SidebarDemoAdmin({ children }: LawyerLayoutProps) {
       ),
     },
 
-    // {
-    //   label: "Logout",
-    //   href: "#",
-    //   icon: (
-    //     <IconArrowLeft onClick={() => dispatch(logout())} className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
-    //   ),
-    // },
+
   ];
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<boolean>(false);

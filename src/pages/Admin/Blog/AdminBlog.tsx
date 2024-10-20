@@ -27,7 +27,7 @@ const AdminBlog: React.FC = () => {
   const [totalCount, setTotalCount] = useState<number>(0);
   const [status, setStatus] = useState<string>("Listed");
   const [currentUrl, setCurrentUrl] = useState<string | null>(
-    `${process.env.VITE_BASE_URL}/blogsession/blogs/`
+    `${import.meta.env.VITE_BASE_URL}/blogsession/blogs/`
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);

@@ -59,7 +59,7 @@ export const registerUserAsync = createAsyncThunk<any, UserData, AsyncThunkConfi
     console.log(userData);
     
     try {
-      const response = await axios.post(`${process.env.VITE_BASE_URL}/api/register/`, userData, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/register/`, userData, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
@@ -67,15 +67,6 @@ export const registerUserAsync = createAsyncThunk<any, UserData, AsyncThunkConfi
       });
 
       localStorage.setItem('userData', JSON.stringify(response.data.data));
-
-      // const { addToast } = useToast();
-      // if (response.status === 200) {
-      //   if (userData.role !== 'user') {
-      //     addToast('success', 'Successfully Registered!');
-      //   } else {
-      //     addToast('info', 'Proceed to otp verification, OTP sent to your phone number...');
-      //   }
-      // }
 
       console.log(response.data);
       return response.data;
@@ -90,32 +81,26 @@ export const OtpVerification = createAsyncThunk<any, OtpData, AsyncThunkConfig>(
   'user/OtpVerification',
   async (OtpData: OtpData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${process.env.VITE_BASE_URL}/api/otpvalidation/`, OtpData, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/otpvalidation/`, OtpData, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
         },
       });
 
-      // Use useToast hook to trigger your custom toast messages
-      // const { addToast } = useToast();
       if (response.status === 200) {
-        // addToast('success', 'OTP verified successfully!');
         localStorage.removeItem('userData');
       }
 
       console.log(response.data);
       return response.data;
     } catch (error:any) {
-      // const { addToast } = useToast();
-      // console.log(error.response.data.message,'from async thunk');
-      // console.log(error,'from async thunk');
+
       if (error.response.data.message){
         return rejectWithValue({ message: error.response.data.message });
       }else{
         return rejectWithValue({ message: 'Something Went Wrong' });
       }
-      // addToast('danger', 'OTP Timeout, please resend OTP.');
       return rejectWithValue({ message: 'Registration failed' });
     }
   }
@@ -125,7 +110,7 @@ export const ResendOtp = createAsyncThunk<any, ResendData, AsyncThunkConfig>(
   'user/ResendOtp',
   async (ResendData: ResendData, { rejectWithValue }) => {
     try {
-      const response = await axios.post(`${process.env.VITE_BASE_URL}/api/resendotp/`, ResendData, {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/api/resendotp/`, ResendData, {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',

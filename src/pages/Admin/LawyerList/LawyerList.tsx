@@ -20,8 +20,8 @@ const AdminUser: React.FC = () => {
   // const navigate = useNavigate();
 
   const handleToggleVerification = (user: User) => {
-    setSelectedUser(user); // Set the selected user
-    setIsModalOpen(true); // Open the modal
+    setSelectedUser(user); 
+    setIsModalOpen(true);
   };
 
   const fetchData = async () => {
@@ -42,27 +42,21 @@ const AdminUser: React.FC = () => {
     if (selectedUser) {
       try {
         await updateLawyerVerification(selectedUser.pk, !selectedUser.is_verified);
-        // setLawyers((prevLawyers) =>
-        //   prevLawyers.map((user) =>
-        //     user.pk === selectedUser.pk
-        //       ? { ...user, is_verified: updatedUser.is_verified }
-        //       : user
-        //   )
-        // );
-        fetchData(); // Fetch updated data
+  
+        fetchData(); 
         
       } catch (error) {
         console.error("Failed to update user:", error);
       } finally {
-        setIsModalOpen(false); // Close the modal
-        setSelectedUser(null); // Reset the selected user
+        setIsModalOpen(false); 
+        setSelectedUser(null); 
       }
     }
   };
 
   const handleCancelVerification = () => {
-    setIsModalOpen(false); // Close the modal
-    setSelectedUser(null); // Reset the selected user
+    setIsModalOpen(false); 
+    setSelectedUser(null); 
   };
 
   

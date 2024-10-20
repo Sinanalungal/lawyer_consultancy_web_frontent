@@ -57,17 +57,14 @@ const LawyerSessionManage: React.FC = () => {
 
 export default LawyerSessionManage;
 
-// import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import {
   addSchedule,
   cancelSchedule,
   getActiveSchedules,
-  // getSchedules,
 } from "../../../services/ScheduleSession";
 import { useToast } from "../../../components/Toast/ToastManager";
 import { Schedule } from "../../../types";
-
 
 const Scheduling: React.FC = () => {
   const { addToast } = useToast();
@@ -78,7 +75,6 @@ const Scheduling: React.FC = () => {
       time: "",
       endTime: "",
       price: "",
-      // referenceUntil: "",
     },
     validationSchema: Yup.object({
       date: Yup.date()
@@ -133,7 +129,7 @@ const Scheduling: React.FC = () => {
             startTime.setHours(startHours, startMinutes);
             endTime.setHours(endHours, endMinutes);
 
-            return endTime.getTime() - startTime.getTime() >= 30 * 60 * 1000; // 30 minutes in milliseconds
+            return endTime.getTime() - startTime.getTime() >= 30 * 60 * 1000;
           }
         ),
       price: Yup.number()

@@ -48,7 +48,6 @@ const BlogCard: React.FC<BlogCardProps> = ({
         </div>
         <p aria-label="Article" className="inline-block w-full truncate mb-1">
           <h2 className="text-lg font-bold truncate">{title}</h2>
-          {/* <h2 className="text-[10px]  truncate">{description}</h2> */}
         </p>
       </div>
     </motion.div>
