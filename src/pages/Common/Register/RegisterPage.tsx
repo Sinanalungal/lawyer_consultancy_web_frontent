@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import RegisterForm from "../../../components/Auth/RegisterForm";
 import GoogleLoginButton from "../../../components/GoogleLoginButton/GoogleLoginButton";
-
+import { RingLoader } from "react-spinners";
 
 const RegisterPage: React.FC = () => {
   const { loading, registered } = useSelector((state: any) => state.register);
@@ -29,12 +29,22 @@ const RegisterPage: React.FC = () => {
       }
     }
   }, [isAuthenticated, registered]);
+  const spinnerStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+  };
 
   return (
     <>
-      {!loading && (
+      {!loading ? (
         <div className="3xl:container  min-h-screen flex mx-auto">
-            <div className={`w-[600px]  2xl:w-[800px] xl:h-screen  3xl:h-full h-full 3xl:hidden max-lg:hidden bg-slate-500 ${loginWithCredentials && 'md:h-[700px]'}`}>
+          <div
+            className={`w-[600px]  2xl:w-[800px] xl:h-screen  3xl:h-full h-full 3xl:hidden max-lg:hidden bg-slate-500 ${
+              loginWithCredentials && "md:h-[700px]"
+            }`}
+          >
             <img
               src="/pexels-sora-shimazaki-5669602.webp"
               alt=""
@@ -48,7 +58,10 @@ const RegisterPage: React.FC = () => {
                   <h1 className="text-2xl text-center mb-12 font-bold">
                     Sign up to Lawyer Consultancy
                   </h1>
-                  <GoogleLoginButton text="Sign up with google" className="text-sm sm:text-base sm:h-16 bg-black text-white h-14 rounded-full"/>
+                  <GoogleLoginButton
+                    text="Sign up with google"
+                    className="text-sm sm:text-base sm:h-16 bg-black text-white h-14 rounded-full"
+                  />
 
                   <div className="my-5 relative w-[80%] flex justify-center mx-auto border-t border-gray-300 ">
                     <p className="absolute top-0 -mt-3 text-gray-500  bg-white px-5">
@@ -66,14 +79,17 @@ const RegisterPage: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <RegisterForm/>
+                  <RegisterForm />
                 </>
               )}
             </div>
           </div>
         </div>
+      ) : (
+        <div style={spinnerStyle}>
+          <RingLoader color="#36d7b7" />
+        </div>
       )}
-      
     </>
   );
 };
