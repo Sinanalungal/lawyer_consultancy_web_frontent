@@ -70,9 +70,9 @@ export const registerUserAsync = createAsyncThunk<any, UserData, AsyncThunkConfi
 
       console.log(response.data);
       return response.data;
-    } catch (error) {
+    } catch (error:any) {
       console.log(error);
-      return rejectWithValue({ message: 'Registration failed' });
+      return rejectWithValue({ message: error.response.data?.email? error.response.data?.email?.[0] : error.response.data?.phone_number ?error.response.data?.phone_number?.[0] :'something went wrong' });
     }
   }
 );

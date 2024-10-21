@@ -1,7 +1,7 @@
 
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
-import { useToast } from '../../components/Toast/ToastManager';
+// import { useToast } from '../../components/Toast/ToastManager';
 
 export interface LoginState {
   loader: boolean;
@@ -13,9 +13,7 @@ export interface LoginState {
 }
 
 interface AsyncThunkConfig {
-  rejectValue: {
-    message: string;
-  };
+  rejectValue:string | null;
 }
 
 const initialState: LoginState = {
@@ -52,9 +50,7 @@ export const GoogleLoginAsync = createAsyncThunk<{
       return { role: role, registering: registering, id: id };
     } catch (error) {
       console.log(error);
-      const { addToast } = useToast();
-      addToast('danger', 'Something went wrong');
-      return rejectWithValue({ message: 'Login failed' });
+      return rejectWithValue( 'Login failed' );
     }
   }
 );
@@ -84,10 +80,9 @@ export const loginAsync = createAsyncThunk<{
       console.log(registering, 'boolean');
       console.log('worked');
       return {  role: role, registering: registering, id: id };
-    } catch (error) {
+    } catch (error:any) {
       console.log(error);
-      const message = (error as any)?.response?.data || 'An unexpected error occurred';
-      return rejectWithValue({ message });
+      return rejectWithValue(error?.response?.data?.detail || 'something went wrong');
     }
   }
 );
@@ -144,7 +139,7 @@ const loginSlice = createSlice({
         console.log(action, 'this is the action');
         state.loader = false;
         state.isAuthenticated = false;
-        state.error = action.payload?.message as any;
+        state.error = action.payload ?? 'Something went wrong';
         state.role = null;
       })
       .addCase(GoogleLoginAsync.pending, (state) => {

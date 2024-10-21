@@ -2,7 +2,7 @@ import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { AppDispatch } from "../../redux/store";
 import { registerUserAsync } from "../../redux/slice/RegisterActions";
@@ -23,6 +23,9 @@ const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { addToast } = useToast();
+  const {error}=useSelector(
+    (state: any) => state.register
+  );
 
   const formik = useFormik({
     initialValues: {
@@ -76,9 +79,12 @@ const RegisterForm: React.FC = () => {
               "Proceed to OTP verification, OTP sent to your phone number..."
             );
           }
+        }else{
+          addToast("danger", error.message);
         }
-      } catch (error) {
+      } catch (error:any) {
         console.error("Registration error:", error);
+        addToast("danger", 'Something Went Wrong');
       }
     },
   });

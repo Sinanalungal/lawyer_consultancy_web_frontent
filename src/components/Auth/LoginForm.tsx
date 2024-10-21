@@ -14,19 +14,16 @@ interface FormValues {
   password: string;
 }
 
-
 interface LoginResponse {
   meta: {
-    requestStatus: 'fulfilled' | 'rejected';
+    requestStatus: "fulfilled" | "rejected";
   };
 }
 
 const LoginForm = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { addToast } = useToast();
-  const {error} = useSelector(
-    (state: any) => state.login
-  );
+  const { error } = useSelector((state: any) => state.login);
   const validationSchema = Yup.object({
     username: Yup.string()
       .email("Invalid email format")
@@ -46,24 +43,31 @@ const LoginForm = () => {
       password: "",
     },
     validationSchema,
-    onSubmit: async(values: FormValues) => {
+    onSubmit: async (values: FormValues) => {
       console.log("Form values:", values);
       try {
-        const response = await dispatch(loginAsync(values)) as unknown as LoginResponse; // Type assertion to LoginResponse
+        const response = ((await dispatch(
+          loginAsync(values)
+        )) as unknown) as LoginResponse; // Type assertion to LoginResponse
         console.log(response);
-    
-        if (response.meta.requestStatus === 'fulfilled') {
-          addToast('success','User Logged in successfully');
-        } else if (response.meta.requestStatus === 'rejected') {
-          addToast('danger',error?.detail);
+
+        if (response.meta.requestStatus === "fulfilled") {
+          addToast("success", "User Logged in successfully");
+        } else if (response.meta.requestStatus === "rejected") {
+          console.log(error, "this is the  error message");
+          if (error) {
+            addToast("danger", error);
+          } else {
+            addToast("danger", "check your credentials");
+          }
         }
       } catch (error) {
-        console.error('Unexpected error:', error);
-        addToast('danger','An unexpected error occurred.');
+        console.error("Unexpected error:", error);
+        addToast("danger", "An unexpected error occurred.");
       }
     },
   });
- 
+
   return (
     <>
       <h1 className="text-2xl text-center mb-10 font-bold">
@@ -75,7 +79,9 @@ const LoginForm = () => {
         className="bg-white border  font-black text-xs max-w-md mx-auto h-12 rounded-xl"
       />
       <div className="my-8 relative w-[80%] max-w-sm text-xs flex justify-center mx-auto border-t border-gray-300 ">
-        <p className="absolute top-0  -mt-2 text-gray-500 rounded-full border bg-white px-5">or sign in with email</p>
+        <p className="absolute top-0  -mt-2 text-gray-500 rounded-full border bg-white px-5">
+          or sign in with email
+        </p>
       </div>
 
       <form className="my-6" onSubmit={formik.handleSubmit}>
@@ -94,7 +100,7 @@ const LoginForm = () => {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />
-        
+
         <CustomInput
           inputType="password"
           placeholder="Password"
@@ -110,7 +116,9 @@ const LoginForm = () => {
           onChange={formik.handleChange}
           onBlur={formik.handleBlur}
         />
-        <p className="max-w-md text-end  mx-auto text-[10px] px-1 underline"><Link to={'/forgotpassword'}>Forgot Password?</Link></p>
+        <p className="max-w-md text-end  mx-auto text-[10px] px-1 underline">
+          <Link to={"/forgotpassword"}>Forgot Password?</Link>
+        </p>
 
         <CustomButton
           text="Sign In"
@@ -128,6 +136,5 @@ const LoginForm = () => {
     </>
   );
 };
-
 
 export default LoginForm;
