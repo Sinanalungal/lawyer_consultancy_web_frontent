@@ -24,7 +24,12 @@ const NotificationCountSocket = ({ background = false }) => {
   // Function to initialize WebSocket connection
   const initializeWebSocket = () => {
     if (value) {
-      const socket = new WebSocket(`ws://${import.meta.env.VITE_WEBSOCKET_URL}/notification-count/${value}/`);
+      let loc = window.location;
+      let wsStart = 'ws://'
+      if (loc.protocol === "https:") {
+        wsStart = "wss://";
+      }
+      const socket = new WebSocket(`${wsStart}${import.meta.env.VITE_WEBSOCKET_URL}/notification-count/${value}/`);
       socketRef.current = socket;
 
       socket.onopen = (event) => {

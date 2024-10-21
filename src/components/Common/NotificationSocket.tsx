@@ -32,8 +32,13 @@ const NotificationSocket: React.FC = ({
   useEffect(() => {
     if (value) {
       const connectWebSocket = () => {
+        let loc = window.location;
+        let wsStart = 'ws://'
+        if (loc.protocol === "https:") {
+          wsStart = "wss://";
+        }
         const socket = new WebSocket(
-          `ws://${import.meta.env.VITE_WEBSOCKET_URL}/notifications/${value}/`
+          `${wsStart}${import.meta.env.VITE_WEBSOCKET_URL}/notifications/${value}/`
         );
 
         socket.onopen = (event) => {
@@ -53,14 +58,12 @@ const NotificationSocket: React.FC = ({
             time: new Date(notificationData.time).toLocaleTimeString(),
           };
 
-          // Persist the notification in localStorage
           localStorage.setItem(
             "latestNotification",
             JSON.stringify(newNotification)
           );
           setNotification(newNotification);
 
-          // Clear notification after 3 seconds
           setTimeout(() => {
             setNotification(null);
             localStorage.removeItem("latestNotification");
@@ -69,7 +72,6 @@ const NotificationSocket: React.FC = ({
 
         socket.onerror = (error) => {
           console.error("WebSocket error:", error);
-          // setError("WebSocket error occurred. Please try again.");
         };
 
         socket.onclose = () => {
