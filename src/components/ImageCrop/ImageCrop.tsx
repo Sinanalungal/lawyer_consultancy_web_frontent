@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Cropper from "react-easy-crop";
 import { useToast } from "../Toast/ToastManager";
-import { Upload, Crop, X, Check, Image as ImageIcon } from "lucide-react";
+import { Upload,  X } from "lucide-react";
 
 interface Area {
   width: number;
@@ -69,7 +69,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({
     }
   };
 
-  const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
+  const onCropComplete = (_croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
