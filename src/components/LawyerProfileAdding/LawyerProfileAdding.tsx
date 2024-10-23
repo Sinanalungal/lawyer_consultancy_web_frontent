@@ -1,272 +1,256 @@
-import React, { useEffect, useState } from "react";
-import { FaCloudUploadAlt } from "react-icons/fa";
+import React, { useState, useCallback } from "react";
+import { Camera, Upload, X } from "lucide-react";
 import Cropper from "react-easy-crop";
-import { useToast } from "../Toast/ToastManager";
-import Modal from "../Modal/Modal";
+
+interface Point { x: number; y: number }
+interface Area { width: number; height: number; x: number; y: number }
 
 interface LawyerProfileAddingProps {
-  setAdminProfile?: (url: Blob | null) => void;
+  setAdminProfile: (blob: Blob | null) => void;
 }
 
+// Separate Modal Component for Cropping
+const CropModal: React.FC<{
+  image: string;
+  onClose: () => void;
+  onSave: (blob: Blob) => void;
+}> = ({ image, onClose, onSave }) => {
+  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
+  const [zoom, setZoom] = useState(1);
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleCropComplete = useCallback((_: Area, croppedAreaPixels: Area) => {
+    setCroppedAreaPixels(croppedAreaPixels);
+  }, []);
+
+  const getCroppedImage = async (
+    imageSrc: string,
+    pixelCrop: Area
+  ): Promise<Blob> => {
+    const image = await createImage(imageSrc);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      throw new Error("No 2d context");
+    }
+
+    canvas.width = pixelCrop.width;
+    canvas.height = pixelCrop.height;
+
+    ctx.drawImage(
+      image,
+      pixelCrop.x,
+      pixelCrop.y,
+      pixelCrop.width,
+      pixelCrop.height,
+      0,
+      0,
+      pixelCrop.width,
+      pixelCrop.height
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+      }, "image/jpeg", 0.9);
+    });
+  };
+
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      if (!croppedAreaPixels) return;
+
+      const croppedImage = await getCroppedImage(image, croppedAreaPixels);
+      onSave(croppedImage);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+      onClose();
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-30 overflow-y-auto">
+      <div className="fixed inset-0  bg-black bg-opacity-50 transition-opacity" />
+      <div className="flex min-h-full   items-center justify-center p-4">
+        <div className="bg-white z-50 rounded-lg shadow-xl w-full max-w-md p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold">Crop Image</h3>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="relative h-[400px] bg-gray-100 rounded-lg overflow-hidden">
+            <Cropper
+              image={image}
+              crop={crop}
+              zoom={zoom}
+              aspect={1}
+              onCropChange={setCrop}
+              onZoomChange={setZoom}
+              onCropComplete={handleCropComplete}
+            />
+          </div>
+
+          <div className="mt-4 space-y-2">
+            <label className="text-sm text-gray-600">Zoom</label>
+            <input
+              type="range"
+              min={1}
+              max={3}
+              step={0.1}
+              value={zoom}
+              onChange={(e) => setZoom(Number(e.target.value))}
+              className="w-full"
+            />
+          </div>
+
+          <div className="mt-6 flex justify-end gap-2">
+            <button
+              onClick={onClose}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+              disabled={loading}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSave}
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50"
+              disabled={loading}
+            >
+              {loading ? "Saving..." : "Save"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Helper function to create image
+const createImage = (url: string): Promise<HTMLImageElement> => {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+    image.addEventListener("load", () => resolve(image));
+    image.addEventListener("error", reject);
+    image.src = url;
+  });
+};
+
+// Main Component
 const LawyerProfileAdding: React.FC<LawyerProfileAddingProps> = ({
   setAdminProfile,
 }) => {
-  const [croppedImageUrl, setCroppedImageUrl] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [showCropModal, setShowCropModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const ProfileUpdation = async () => {
-      if (croppedImageUrl) {
-        const blob = await dataURItoBlob(croppedImageUrl);
-        if (blob) {
-          setAdminProfile?.(blob);
-        }
-      }
-    };
-    ProfileUpdation();
-  }, [croppedImageUrl, setAdminProfile]);
+  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      setError(null);
+      const file = event.target.files?.[0];
 
-  const dataURItoBlob = (dataURI: string): Blob | null => {
-    if (!dataURI) {
-      return null;
-    }
-    const [header, base64Data] = dataURI.split(",");
-    if (!base64Data) {
-      console.error("Invalid data URI format");
-      return null;
-    }
-    const mimeString = header.split(":")[1].split(";")[0];
-    const byteCharacters = atob(base64Data);
-    const byteArrays = [];
-    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
-      const slice = byteCharacters.slice(offset, offset + 512);
-      const byteNumbers = new Array(slice.length);
-      for (let i = 0; i < slice.length; i++) {
-        byteNumbers[i] = slice.charCodeAt(i);
+      if (!file) return;
+
+      if (!file.type.startsWith("image/")) {
+        setError("Please upload an image file");
+        return;
       }
-      const byteArray = new Uint8Array(byteNumbers);
-      byteArrays.push(byteArray);
+
+      if (file.size > 5 * 1024 * 1024) {
+        setError("File size should be less than 5MB");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        setSelectedImage(result);
+        setShowCropModal(true);
+      };
+      reader.readAsDataURL(file);
+    } catch (err) {
+      setError("Error processing image");
+      console.error(err);
     }
-    return new Blob(byteArrays, { type: mimeString });
+  };
+
+  const handleCropSave = (blob: Blob) => {
+    setAdminProfile(blob);
+    const previewUrl = URL.createObjectURL(blob);
+    setPreviewImage(previewUrl);
+    setShowCropModal(false);
   };
 
   return (
     <div className="w-full">
-      <div className="w-full">
-        {selectedImage && (
-          <img
-            src={selectedImage}
-            className="w-[150px] mx-auto max-sm:w-[130px] max-sm:h-18 h-40 border-4 border-gray-200 rounded object-cover"
-            alt="Profile"
-          />
+      {error && (
+        <div className="flex items-center p-4 mb-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+          <div className="flex-shrink-0">
+            <X className="w-5 h-5 text-red-500" />
+          </div>
+          <div className="ml-3">
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+          <button
+            onClick={() => setError(null)}
+            className="ml-auto -mx-1.5 -my-1.5 p-1.5 hover:bg-red-100 rounded-lg"
+          >
+            <X className="w-4 h-4 text-red-500" />
+          </button>
+        </div>
+      )}
+
+      <div className="space-y-4">
+        {previewImage ? (
+          <div className="relative w-32 h-32 mx-auto">
+            <img
+              src={previewImage}
+              alt="Profile"
+              className="w-full h-full object-cover rounded-full"
+            />
+            <button
+              onClick={() => document.getElementById("profile-upload")?.click()}
+              className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100"
+            >
+              <Camera className="w-4 h-4 text-gray-700" />
+            </button>
+          </div>
+        ) : (
+          <label className="flex flex-col items-center justify-center w-32 h-32 mx-auto border-2 border-dashed border-gray-300 rounded-full cursor-pointer hover:border-gray-400">
+            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+              <Upload className="w-8 h-8 text-gray-400" />
+              <p className="text-xs text-gray-500 mt-2">Upload Photo</p>
+            </div>
+            <input
+              id="profile-upload"
+              type="file"
+              className="hidden"
+              onChange={handleFileSelect}
+              accept="image/*"
+            />
+          </label>
         )}
       </div>
-      <ProfileCropLawyer
-        croppedImageUrl={croppedImageUrl}
-        setCroppedImageUrl={setCroppedImageUrl}
-        setSelectedImage={setSelectedImage}
-      />
+
+      {showCropModal && selectedImage && (
+        <CropModal
+          image={selectedImage}
+          onClose={() => setShowCropModal(false)}
+          onSave={handleCropSave}
+        />
+      )}
     </div>
   );
 };
 
 export default LawyerProfileAdding;
-
-interface Area {
-  width: number;
-  height: number;
-  x: number;
-  y: number;
-}
-
-interface ImageCropProps {
-  croppedImageUrl: string | null;
-  setSelectedImage: (url: string | null) => void;
-  setCroppedImageUrl: (url: string | null) => void;
-}
-
-const ProfileCropLawyer: React.FC<ImageCropProps> = ({
-  croppedImageUrl,
-  setCroppedImageUrl,
-  setSelectedImage,
-}) => {
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [aspectRatio, setAspectRatio] = useState(1 / 1);
-  const [zoom, setZoom] = useState(1);
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const { addToast } = useToast();
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        setSelectedFile(reader.result as string);
-        setSelectedImage(reader.result as string);
-      };
-      setModalVisible(true);
-    } else {
-      addToast("danger", "Please upload an image file.");
-    }
-  };
-
-  const onAspectRatioChange = (value: number) => {
-    setAspectRatio(value);
-  };
-
-  const onCropComplete = (croppedAreaPixels: Area) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  };
-
-  const onCropDone = () => {
-    if (!selectedFile || !croppedAreaPixels) {
-      addToast("danger", "Please upload an image.");
-      return;
-    }
-    const canvas = document.createElement("canvas");
-    const imageObj = new Image();
-    imageObj.src = selectedFile;
-
-    imageObj.onload = () => {
-      canvas.width = croppedAreaPixels.width;
-      canvas.height = croppedAreaPixels.height;
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        return;
-      }
-      ctx.drawImage(
-        imageObj,
-        croppedAreaPixels.x,
-        croppedAreaPixels.y,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height,
-        0,
-        0,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height
-      );
-      const croppedDataURL = canvas.toDataURL("image/jpeg");
-
-      setCroppedImageUrl(croppedDataURL);
-      setSelectedFile(null);
-      setModalVisible(false);
-    };
-  };
-
-  const onCropCancel = () => {
-    setSelectedFile(null);
-    setCroppedImageUrl(null);
-    setModalVisible(false);
-  };
-
-  return (
-    <>
-      <div className="flex items-center">
-        {!croppedImageUrl && (
-          <div>
-            <label
-              htmlFor="dropzone-file"
-              className="flex flex-col items-center justify-center w-full h-full cursor-pointer"
-            >
-              <div className="w-[150px] max-sm:mb-4 max-sm:flex cursor-pointer justify-end rounded-lg max-sm:w-[130px] max-sm:h-18 h-40">
-                <div className="w-full h-full border rounded flex justify-center items-center text-xs gap-1 text-gray-800 flex-col">
-                  <FaCloudUploadAlt size={26} className="text-gray-800" />
-                  <p>Upload Profile</p>
-                </div>
-              </div>
-              <input
-                id="dropzone-file"
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleFileSelect}
-              />
-            </label>
-          </div>
-        )}
-      </div>
-
-      {selectedFile && !croppedImageUrl && (
-        <Modal
-          modalOpen={modalVisible}
-          setModalOpen={() => {
-            setModalVisible(true);
-          }}
-          children={
-            <>
-              <div className="w-full cropper z-50 bg-white rounded-xl p-5 max-[400px]:p-2">
-                <div className="w-full h-[400px] relative">
-                  <Cropper
-                    image={selectedFile}
-                    aspect={aspectRatio}
-                    crop={crop}
-                    zoom={zoom}
-                    onCropChange={setCrop}
-                    onZoomChange={setZoom}
-                    onCropComplete={onCropComplete}
-                    style={{
-                      containerStyle: {
-                        width: "100%",
-                        height: "100%",
-                        backgroundColor: "#fff",
-                        borderRadius: "10px",
-                      },
-                    }}
-                  />
-                </div>
-                <div className="action-btns mx-auto py-4">
-                  <div className="aspect-ratios flex flex-wrap gap-1 justify-center max-[400px]:grid-cols-2 max-sm:gap-2 px-8 items-center">
-                    <label onClick={() => onAspectRatioChange(1 / 1)}>
-                      <button
-                        type="button"
-                        className={`${
-                          aspectRatio === 1 / 1
-                            ? "bg-gray-900"
-                            : "border border-gray-500"
-                        } py-2 items-center rounded px-3 flex justify-center space-x-1`}
-                      >
-                        <div
-                          className={`${
-                            aspectRatio === 1 / 1
-                              ? "border-white"
-                              : "border-gray-700"
-                          } w-[10px] h-[10px] border-2`}
-                        ></div>
-                        <p
-                          className={`${
-                            aspectRatio === 1 / 1
-                              ? "text-white"
-                              : "text-gray-700"
-                          } text-[10px]`}
-                        >
-                          1:1
-                        </p>
-                      </button>
-                    </label>
-                  </div>
-                  <div className="my-4 flex justify-center items-center gap-5">
-                    <div
-                      onClick={onCropDone}
-                      className="px-5 font-semibold text-sm py-2 flex justify-center bg-black text-white rounded cursor-pointer"
-                    >
-                      Save
-                    </div>
-                    <div
-                      onClick={onCropCancel}
-                      className="px-5 font-semibold text-sm py-2 flex justify-center bg-gray-300 rounded cursor-pointer"
-                    >
-                      Cancel
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </>
-          }
-        />
-      )}
-    </>
-  );
-};

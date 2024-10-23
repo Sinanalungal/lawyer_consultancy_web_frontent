@@ -9,7 +9,7 @@ import {
   addLawyer,
   fetchDepartmentsAndLanguagesAndStates,
 } from "../../../services/AddLawyerServices";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "../../../components/Toast/ToastManager";
 
 interface DepartmentOption {
@@ -33,6 +33,8 @@ const AddLawyer: React.FC = () => {
   const [states, setStates] = useState<StateOption[]>([]);
   const [adminProfile, setAdminProfile] = useState<Blob | null>(null);
   const { addToast } = useToast();
+  const navigate = useNavigate()
+  
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -127,7 +129,8 @@ const AddLawyer: React.FC = () => {
         addToast("success", "Lawyer added successfully!");
         // Reset the form after successful submission
         resetForm();
-        setAdminProfile(null); // Reset profile image
+        setAdminProfile(null);
+        navigate(-1)
       } catch (error) {
         addToast("danger", "Failed to add lawyer. Please try again.");
         console.error("Error adding lawyer:", error);

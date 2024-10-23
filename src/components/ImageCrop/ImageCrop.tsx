@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Cropper from "react-easy-crop";
 import { useToast } from "../Toast/ToastManager";
+import { Upload, Crop, X, Check, Image as ImageIcon } from "lucide-react";
 
 interface Area {
   width: number;
@@ -19,7 +20,7 @@ const ImageCrop: React.FC<ImageCropProps> = ({
   setCroppedImageUrl,
 }) => {
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [dragActive, _setDragActive] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
   const [aspectRatio, setAspectRatio] = useState(4 / 3);
   const [zoom, setZoom] = useState(1);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
@@ -42,16 +43,19 @@ const ImageCrop: React.FC<ImageCropProps> = ({
   const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
+    setDragActive(true);
   };
 
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
+    setDragActive(false);
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     event.stopPropagation();
+    setDragActive(false);
 
     const file = event.dataTransfer.files?.[0];
     if (file && file.type.startsWith("image/")) {
@@ -65,92 +69,50 @@ const ImageCrop: React.FC<ImageCropProps> = ({
     }
   };
 
-  const onAspectRatioChange = (value: number) => {
-    setAspectRatio(value);
-  };
-
-  const onCropComplete = (croppedAreaPixels: Area) => {
+  const onCropComplete = (croppedArea: Area, croppedAreaPixels: Area) => {
     setCroppedAreaPixels(croppedAreaPixels);
   };
 
-  // const createImage = (url: string): Promise<HTMLImageElement> => {
-  //   return new Promise((resolve, reject) => {
-  //     const image = new Image();
-  //     image.addEventListener("load", () => resolve(image));
-  //     image.addEventListener("error", (error) => reject(error));
-  //     image.src = url;
-  //   });
-  // };
-
-  // const getCroppedImg = async () => {
-  //   if (!selectedFile || !croppedAreaPixels) {
-  //     addToast("danger", "Please upload an image.");
-  //     return;
-  //   }
-  //   const image = await createImage(selectedFile);
-  //   const canvas = document.createElement("canvas");
-  //   const ctx = canvas.getContext("2d");
-
-  //   if (!ctx) {
-  //     return null;
-  //   }
-
-  //   canvas.width = croppedAreaPixels.width;
-  //   canvas.height = croppedAreaPixels.height;
-
-  //   ctx.drawImage(
-  //     image,
-  //     croppedAreaPixels.x,
-  //     croppedAreaPixels.y,
-  //     croppedAreaPixels.width,
-  //     croppedAreaPixels.height,
-  //     0,
-  //     0,
-  //     croppedAreaPixels.width,
-  //     croppedAreaPixels.height
-  //   );
-
-  //   return new Promise<string>((resolve, reject) => {
-  //     canvas.toBlob((blob) => {
-  //       if (blob) {
-  //         const url = URL.createObjectURL(blob);
-  //         resolve(url);
-  //       } else {
-  //         reject(new Error("Canvas is empty"));
-  //       }
-  //     }, "image/jpeg");
-  //   });
-  // };
-
   const onCropDone = () => {
     if (!selectedFile || !croppedAreaPixels) {
-      addToast("danger", "Please upload an image .");
+      addToast("danger", "Please upload an image.");
       return;
     }
-    const canvas = document.createElement("canvas");
+
     const imageObj = new Image();
     imageObj.src = selectedFile;
 
     imageObj.onload = () => {
-      canvas.width = croppedAreaPixels.width;
-      canvas.height = croppedAreaPixels.height;
+      const canvas = document.createElement("canvas");
       const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        return null;
-      }
+
+      if (!ctx) return;
+
+      const scaleX = imageObj.naturalWidth / imageObj.width;
+      const scaleY = imageObj.naturalHeight / imageObj.height;
+      const pixelCrop = {
+        x: Math.floor(croppedAreaPixels.x * scaleX),
+        y: Math.floor(croppedAreaPixels.y * scaleY),
+        width: Math.floor(croppedAreaPixels.width * scaleX),
+        height: Math.floor(croppedAreaPixels.height * scaleY),
+      };
+
+      canvas.width = pixelCrop.width;
+      canvas.height = pixelCrop.height;
+
       ctx.drawImage(
         imageObj,
-        croppedAreaPixels.x,
-        croppedAreaPixels.y,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height,
+        pixelCrop.x,
+        pixelCrop.y,
+        pixelCrop.width,
+        pixelCrop.height,
         0,
         0,
-        croppedAreaPixels.width,
-        croppedAreaPixels.height
+        pixelCrop.width,
+        pixelCrop.height
       );
-      const croppedDataURL = canvas.toDataURL("image/jpeg");
 
+      const croppedDataURL = canvas.toDataURL("image/jpeg");
       setCroppedImageUrl(croppedDataURL);
       setSelectedFile(null);
     };
@@ -158,21 +120,38 @@ const ImageCrop: React.FC<ImageCropProps> = ({
 
   const onCropCancel = () => {
     setSelectedFile(null);
-    setCroppedImageUrl("");
+    setCroppedImageUrl(null);
   };
 
+  const AspectRatioButton = ({ ratio, label }: { ratio: number; label: string }) => (
+    <button
+      type="button"
+      onClick={() => setAspectRatio(ratio)}
+      className={`
+        px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium
+        ${aspectRatio === ratio 
+          ? "bg-blue-900 text-white shadow-lg" 
+          : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+        }
+      `}
+    >
+      {label}
+    </button>
+  );
+
   return (
-    <div className="max-w-[600px] mx-auto flex flex-col items-center">
+    <div className="w-full max-w-3xl mx-auto">
       {!selectedFile && !croppedImageUrl && (
-        <div className="flex flex-col items-center justify-center w-full">
+        <div className=" rounded-xl shadow mb-4">
           <div
-            className={`flex flex-col max-w-[600px] items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer 
-                    ${
-                      dragActive
-                        ? "bg-gray-100 dark:bg-gray-600"
-                        : "bg-gray-50 dark:bg-gray-700"
-                    } 
-                    dark:hover:bg-gray-800 dark:border-gray-600 dark:hover:border-gray-500`}
+            className={`
+              relative flex flex-col items-center justify-center w-full h-72
+              border-2 border-dashed rounded-xl transition-all duration-200
+              ${dragActive 
+                ? "border-blue-900 bg-blue-50" 
+                : "border-gray-300 hover:border-blue-900 bg-gray-50"
+              }
+            `}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
@@ -181,25 +160,20 @@ const ImageCrop: React.FC<ImageCropProps> = ({
               htmlFor="dropzone-file"
               className="flex flex-col items-center justify-center w-full h-full cursor-pointer"
             >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 16"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                  />
-                </svg>
-                <p className="mb-2 text-xs text-gray-500 dark:text-gray-400">
-                  <span className="font-semibold">Click to upload</span> or drag
-                  and drop
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <div className="p-4 bg-blue-100 rounded-full">
+                  <Upload className="w-8 h-8 text-blue-900" />
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-semibold text-gray-900">
+                    Drop your image here
+                  </p>
+                  <p className="mt-1 text-xs text-center text-gray-500">
+                    or <span className="text-blue-900 hover:underline">browse</span> to choose a file
+                  </p>
+                </div>
+                <p className="text-[10px] text-center text-gray-400">
+                  Support formats: JPG, PNG, GIF (max 10MB)
                 </p>
               </div>
               <input
@@ -213,9 +187,14 @@ const ImageCrop: React.FC<ImageCropProps> = ({
           </div>
         </div>
       )}
+
       {selectedFile && !croppedImageUrl && (
-        <div className="w-full cropper z-50 bg-white rounded-xl p-5 max-[400px]:p-2 ">
-          <div className="w-full h-[400px] relative">
+        <div className="bg-white rounded-xl shadow overflow-hidden mb-4">
+          <div className="p-4 border-b border-gray-100">
+            <h3 className="text-lg font-semibold text-gray-900">Crop Image</h3>
+          </div>
+          
+          <div className="w-full h-[400px] px-1  relative bg-gray-50 ">
             <Cropper
               image={selectedFile}
               aspect={aspectRatio}
@@ -228,87 +207,81 @@ const ImageCrop: React.FC<ImageCropProps> = ({
                 containerStyle: {
                   width: "100%",
                   height: "100%",
-                  backgroundColor: "#fff",
-                  borderRadius: "10px",
+                  backgroundColor: "#fafafa",
                 },
               }}
             />
           </div>
-          <div className="action-btns mx-auto py-4">
-            <div className="aspect-ratios flex flex-wrap gap-1 justify-center max-[400px]:grid-cols-2 max-sm:gap-2 px-8 items-center">
-              <label onClick={() => onAspectRatioChange(1 / 1)}>
-                <button
-                  type="button"
-                  className={`${
-                    aspectRatio === 1 / 1
-                      ? "bg-gray-900"
-                      : "border border-gray-500"
-                  } py-2  items-center rounded px-3 flex justify-center space-x-1`}
-                >
-                  <div
-                    className={`${
-                      aspectRatio === 1 / 1 ? "border-white" : "border-gray-700"
-                    } w-[10px] h-[10px] border-2`}
-                  ></div>
-                  <p
-                    className={`${
-                      aspectRatio === 1 / 1 ? "text-white" : "text-gray-700"
-                    } text-[10px]`}
-                  >
-                    1:1
-                  </p>
-                </button>
-              </label>
-              <label onClick={() => onAspectRatioChange(4 / 3)}>
-                <button
-                  type="button"
-                  className={`${
-                    aspectRatio === 4 / 3
-                      ? "bg-gray-900"
-                      : "border border-gray-500"
-                  } py-2 items-center rounded px-3 flex justify-center space-x-1`}
-                >
-                  <div
-                    className={`${
-                      aspectRatio === 4 / 3 ? "border-white" : "border-gray-700"
-                    } w-[10px] h-[10px] border-2`}
-                  ></div>
-                  <p
-                    className={`${
-                      aspectRatio === 4 / 3 ? "text-white" : "text-gray-700"
-                    } text-[10px]`}
-                  >
-                    4:3
-                  </p>
-                </button>
-              </label>
-            </div>
-            <div className="my-4 flex justify-center items-center gap-5">
-              <div
-                onClick={onCropDone}
-                className="px-5 font-semibold text-sm py-2 flex justify-center bg-black text-white rounded cursor-pointer"
-              >
-                Save
+
+          <div className="p-6 space-y-6">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700 ">Aspect Ratio</label>
+              <div className="flex flex-wrap  gap-2">
+                <AspectRatioButton ratio={1/1} label="Square (1:1)" />
+                <AspectRatioButton ratio={4/3} label="Standard (4:3)" />
+                <AspectRatioButton ratio={16/9} label="Widescreen (16:9)" />
               </div>
-              <div
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Zoom</label>
+              <input
+                type="range"
+                min={1}
+                max={3}
+                step={0.1}
+                value={zoom}
+                onChange={(e) => setZoom(Number(e.target.value))}
+                className="w-full h-2  bg-gray-200 rounded-lg appearance-none cursor-pointer"
+              />
+            </div>
+
+            <div className="flex justify-end space-x-3">
+              <button
                 onClick={onCropCancel}
-                className="px-5 font-semibold text-sm py-2 flex justify-center bg-gray-300 rounded cursor-pointer"
+                className="px-4 py-2 text-xs rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 transition-colors duration-200"
               >
                 Cancel
-              </div>
+              </button>
+              <button
+                onClick={onCropDone}
+                className="px-4 py-2 text-xs rounded-lg bg-blue-900 text-white hover:bg-blue-950 transition-colors duration-200"
+              >
+                Apply Crop
+              </button>
             </div>
           </div>
         </div>
       )}
 
       {croppedImageUrl && (
-        <div className="max-w-[600px] mx-auto mt-4">
-          <img
-            src={croppedImageUrl}
-            alt="Cropped"
-            className="object-cover rounded-md"
-            style={{ maxWidth: "100%" }}
-          />
+        <div className=" rounded-xl  space-y-4">
+          <div className="flex items-center justify-between">
+            {/* <h3 className="text-lg font-semibold text-gray-900">Cropped Image</h3> */}
+            <button
+              onClick={onCropCancel}
+              className="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <div className="relative shadow rounded-lg overflow-hidden border border-gray-200">
+            <img 
+              src={croppedImageUrl} 
+              alt="Cropped" 
+              className="w-full h-auto"
+            />
+          </div>
+          
+          <div className="flex justify-end text-xs">
+            <button
+              onClick={onCropCancel}
+              className="px-4 py-2 rounded-lg bg-blue-900 text-white hover:bg-blue-950 transition-colors duration-200"
+            >
+              Crop New Image
+            </button>
+          </div>
         </div>
       )}
     </div>

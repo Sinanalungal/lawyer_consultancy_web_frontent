@@ -92,7 +92,7 @@ const LawyerWalletPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-8 my-4">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl max-sm:text-2xl font-bold text-gray-800 mb-4">
+        <h1 className="text-3xl max-sm:text-2xl flex justify-center py-6 font-bold text-gray-800 mb-4">
           WALLET DASHBOARD
         </h1>
 
@@ -119,7 +119,7 @@ const LawyerWalletPage: React.FC = () => {
                 <div className="flex space-x-4">
                   <button
                     onClick={handleAddFunds}
-                    className="w-full bg-slate-700 text-white py-2 rounded flex items-center justify-center"
+                    className="w-full bg-slate-900 text-white py-2 rounded flex items-center justify-center"
                   >
                     <ArrowUpRight className="mr-2" /> Add Funds
                   </button>
@@ -137,14 +137,14 @@ const LawyerWalletPage: React.FC = () => {
           {/* Transactions Table */}
           <div className="bg-white shadow rounded-lg h-[500px] overflow-y-scroll no-scrollbar">
             <div className="p-4 border-b">
-              <h2 className="text-xl font-semibold">Recent Transactions</h2>
-              <p className="text-gray-500">Your latest financial activities</p>
+              <h2 className="text-lg font-semibold">Recent Transactions</h2>
+              <p className="text-gray-500 text-[13px]">Your latest financial activities</p>
             </div>
             <div className="p-4">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b">
+                    <tr className="border-b ">
                       <th className="text-left p-2">Type</th>
                       <th className="text-left p-2">Amount</th>
                       <th className="text-left p-2">Date</th>

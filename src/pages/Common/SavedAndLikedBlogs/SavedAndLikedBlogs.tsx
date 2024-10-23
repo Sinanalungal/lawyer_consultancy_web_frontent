@@ -128,7 +128,7 @@ const SavedAndLikedBlogs: React.FC = () => {
           (prevBlog) => prevBlog && { ...prevBlog, is_saved: result.saved }
         );
       }
-    } catch (error:any) {
+    } catch (error) {
       console.error("Error saving blog:", error);
     }
   };
@@ -153,7 +153,7 @@ const SavedAndLikedBlogs: React.FC = () => {
           (prevBlog) => prevBlog && { ...prevBlog, is_liked: result.like }
         );
       }
-    } catch (error:any) {
+    } catch (error) {
       console.error("Error liking blog:", error);
     }
   };
@@ -204,11 +204,11 @@ const SavedAndLikedBlogs: React.FC = () => {
       ) : (
         <div className="px-10 py-4  grid gap-5 2xl:grid-cols-4 xl:grid-cols-3 sm:grid-cols-2 sm:mx-auto lg:max-w-full">
           {blogsData.map((blog, index) => {
-            console.log(blog, "this si the lbog"); 
+            console.log(blog, "this si the lbog");
             return (
               <BlogCard
                 key={index}
-                imageUrl={`${import.meta.env.VITE_BASE_URL}${blog.blog.image}`} 
+                imageUrl={`${import.meta.env.VITE_BASE_URL}${blog.blog.image}`}
                 date={formatDate(blog.blog.created_at)}
                 title={blog.blog.title}
                 author={blog.blog.user.full_name}
@@ -226,7 +226,7 @@ const SavedAndLikedBlogs: React.FC = () => {
           })}
         </div>
       )}
-      {page != totalPages && (
+      {blogsData.length > 0 && page != totalPages && (
         <div className="flex items-center text-[10px] justify-center my-4">
           <button
             onClick={handlePrevPage}

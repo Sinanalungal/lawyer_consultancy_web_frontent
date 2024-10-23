@@ -134,11 +134,10 @@ const AddBlog: React.FC = () => {
 
             if (response.status === 201) {
               addToast("success", "Blog added successfully");
-              setCroppedImageUrl("");
+              setCroppedImageUrl(null);
               setContent("");
               formik.resetForm();
               console.log(response.data, "this is the response data");
-              setCroppedImageUrl(null);
             } else {
               addToast("danger", "Give a valid content");
             }
@@ -151,7 +150,6 @@ const AddBlog: React.FC = () => {
       }
 
       if (isEditing) {
-        // console.log(croppedImageUrl);
         const formData = new FormData();
         formData.append("title", preprocessedValues.title);
         formData.append("description", preprocessedValues.description);
@@ -163,25 +161,18 @@ const AddBlog: React.FC = () => {
           }
         }
 
-        if (
-          content.length > 50 &&
-          blogData
-          // &&
-          // croppedImageUrl &&
-          // croppedImageUrl.length > 0
-        ) {
+        if (content.length > 50 && blogData) {
           try {
             const response = await BlogUpdating(blogData?.id, formData);
             if (response) {
               addToast("success", "Blog Updated successfully");
-              setCroppedImageUrl("");
+              setCroppedImageUrl(null);
               setContent("");
               setBlogData(null);
               formik.resetForm();
               console.log(response.data, "this is the response data");
-              setCroppedImageUrl(null);
             } else {
-              addToast("danger", "Somehting Wrong");
+              addToast("danger", "Something went wrong");
             }
           } catch (error) {
             console.log(error);
@@ -223,16 +214,16 @@ const AddBlog: React.FC = () => {
 
   return (
     <>
-      {role == "admin" ? (
+      {role === "admin" ? (
         <>
           <AdminPageTitle
             title={isEditing ? "Update Blog" : "Add Blog"}
-            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,"
+            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s."
           />
 
-          <div className="max-w-md mx-auto space-y-2">
-            <form onSubmit={formik.handleSubmit}>
-              {isEditing && !croppedImageUrl && blogData && blogData.image && (
+          <div className="max-w-md mx-auto ">
+             <div>
+             {isEditing && !croppedImageUrl && blogData && blogData.image && (
                 <div className="mb-2">
                   <h1 className="text-xs flex justify-center text-gray-800">
                     Previous Image
@@ -240,13 +231,17 @@ const AddBlog: React.FC = () => {
                   <ImageCrop
                     croppedImageUrl={blogData.image}
                     setCroppedImageUrl={() => {}}
+                  
                   />
                 </div>
               )}
               <ImageCrop
                 croppedImageUrl={croppedImageUrl}
                 setCroppedImageUrl={setCroppedImageUrl}
+                
               />
+             </div>
+            <form onSubmit={formik.handleSubmit} className="space-y-3 ">
               <CustomInput
                 inputType="text"
                 placeholder="Blog Title"
@@ -293,8 +288,8 @@ const AddBlog: React.FC = () => {
                   }}
                 />
               </div>
-              <div className="w-full pb-28 gap-2 flex justify-center max-w-md mx-auto pt-2">
-                <CustomButton
+              <div className="w-full pb-28 gap-2 flex justify-center max-w-md mx-auto">
+              <CustomButton
                   text={isEditing ? "Update" : "Add"}
                   type="submit"
                   className="bg-[#131314] py-3 w-full text-white   hover:bg-slate-900"
@@ -304,85 +299,7 @@ const AddBlog: React.FC = () => {
           </div>
         </>
       ) : (
-        <>
-          <AdminPageTitle
-            title={isEditing ? "Update Blog" : "Add Blog"}
-            description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industrys standard dummy text ever since the 1500s,"
-          />
-
-          <div className="max-w-md mx-auto space-y-2">
-            <form onSubmit={formik.handleSubmit}>
-              {isEditing && !croppedImageUrl && blogData && blogData.image && (
-                <div className="mb-2">
-                  <h1 className="text-xs flex justify-center text-gray-800">
-                    Previous Image
-                  </h1>
-                  <ImageCrop
-                    croppedImageUrl={blogData.image}
-                    setCroppedImageUrl={() => {}}
-                  />
-                </div>
-              )}
-              <ImageCrop
-                croppedImageUrl={croppedImageUrl}
-                setCroppedImageUrl={setCroppedImageUrl}
-              />
-              <CustomInput
-                inputType="text"
-                placeholder="Blog Title"
-                name="title"
-                id="title"
-                label="Blog Title"
-                error={
-                  formik.touched.title && formik.errors.title
-                    ? formik.errors.title
-                    : ""
-                }
-                value={formik.values.title}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-
-              <CustomInput
-                inputType="text"
-                placeholder="Description"
-                name="description"
-                id="description"
-                label="Blog Description"
-                error={
-                  formik.touched.description && formik.errors.description
-                    ? formik.errors.description
-                    : ""
-                }
-                value={formik.values.description}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-              />
-
-              <div className="">
-                <label className="block text-xs font-medium leading-6 text-gray-900">
-                  Content
-                </label>
-                <JoditEditor
-                  ref={editor}
-                  value={content}
-                  config={config}
-                  onBlur={(newContent) => setContent(newContent)}
-                  onChange={(newContent) => {
-                    setContent(newContent);
-                  }}
-                />
-              </div>
-              <div className="w-full pb-28 gap-2 flex justify-center max-w-md mx-auto pt-2">
-                <CustomButton
-                  text={isEditing ? "Update" : "Add"}
-                  type="submit"
-                  className="bg-[#131314] py-3 w-full text-white   hover:bg-slate-900"
-                />
-              </div>
-            </form>
-          </div>
-        </>
+        <h1 className="text-center text-3xl">Access Denied</h1>
       )}
     </>
   );
