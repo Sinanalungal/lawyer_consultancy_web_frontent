@@ -192,11 +192,9 @@ const ChatComponent: React.FC = () => {
         }
       };
 
-      // Trigger the FileReader to read the blob as a Data URL
       reader.readAsDataURL(recorderControls.recordingBlob as Blob);
     }
 
-    // Reset states
     setAudioStart(false);
     setAudioPreview(null);
     setShowEmojiPicker(false);
