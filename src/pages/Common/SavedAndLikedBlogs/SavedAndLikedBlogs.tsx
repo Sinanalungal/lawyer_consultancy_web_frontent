@@ -55,7 +55,7 @@ const SavedAndLikedBlogs: React.FC = () => {
       setBlogs(response.results);
       console.log(response, "this is the response");
       setTotalPages(Math.ceil(response.count / 10));
-    } catch (error:any) {
+    } catch (error) {
       setError("Error fetching blogs.");
     } finally {
       setIsLoading(false);
@@ -208,7 +208,7 @@ const SavedAndLikedBlogs: React.FC = () => {
             return (
               <BlogCard
                 key={index}
-                imageUrl={`${import.meta.env.VITE_BASE_URL}${blog.blog.image}`}
+                imageUrl={`${blog.blog.image}`}
                 date={formatDate(blog.blog.created_at)}
                 title={blog.blog.title}
                 author={blog.blog.user.full_name}
@@ -364,7 +364,7 @@ const SavedAndLikedBlogs: React.FC = () => {
         </div>
         <div className="rounded-xl mt-6 h-[500px]">
           <img
-            src={`${import.meta.env.VITE_BASE_URL}${readingBlog?.image}`}
+            src={`${readingBlog?.image}`}
             alt="Blog Image"
             className="h-[500px] object-cover w-full rounded-xl"
           />
