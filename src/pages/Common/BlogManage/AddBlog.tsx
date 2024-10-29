@@ -111,7 +111,7 @@ const AddBlog: React.FC = () => {
         formData.append("description", preprocessedValues.description);
         formData.append("content", content);
         if (blob) {
-          formData.append("image", blob, "image.png");
+          formData.append("image", blob, `${crypto.randomUUID()}.png`);
         }
 
         if (
