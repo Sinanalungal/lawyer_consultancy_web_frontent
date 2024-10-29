@@ -214,7 +214,7 @@ const AddBlog: React.FC = () => {
 
   return (
     <>
-      {role === "admin" ? (
+      {(role === "admin" || role === "lawyer") ? (
         <>
           <AdminPageTitle
             title={isEditing ? "Update Blog" : "Add Blog"}

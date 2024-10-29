@@ -57,7 +57,7 @@ const AvailableCases: React.FC = () => {
         const selectedCaseData = { case_model: selectedCaseId };
         await createSelectedCase(selectedCaseData);
         addToast('success',"Case attended successfully!");
-        setIsModalOpen(false); // Close the modal after successful submission
+        setIsModalOpen(false);
       } catch (error:any) {
         console.error("Error attending case:",  error.response?.data.detail as string || error.message as string);
         addToast('danger',error.response?.data.detail as string || error.message as string);
