@@ -157,10 +157,10 @@ const AddBlog: React.FC = () => {
         if (croppedImageUrl) {
           const blob = await dataURItoBlob(croppedImageUrl);
           if (blob) {
-            formData.append("image", blob, "image.png");
+            formData.append("image", blob, `${crypto.randomUUID()}.png`);
           }
         }
-
+        
         if (content.length > 50 && blogData) {
           try {
             const response = await BlogUpdating(blogData?.id, formData);

@@ -97,7 +97,6 @@ const LawyerWalletPage: React.FC = () => {
         </h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Current Balance Section */}
           <div className="bg-white shadow rounded-lg h-[300px]">
             <div className="p-4 border-b">
               <h2 className="flex items-center text-xl font-semibold">
