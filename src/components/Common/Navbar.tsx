@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { RootState, useAppSelector } from "../../redux/store";
@@ -92,19 +92,7 @@ export default function Navbar() {
       setOpenLawyerListView(false);
     }, 100);
   };
-  const reRoute = useCallback(
-    (incomingUrl:string) => {
   
-      return () => {
-        if (isAuthenticated) {
-          incomingUrl
-        } else {
-          '/login'
-        }
-      };
-    },
-    []
-  );
   const handleNextCalling = async () => {
     if (next != null) {
       try {
