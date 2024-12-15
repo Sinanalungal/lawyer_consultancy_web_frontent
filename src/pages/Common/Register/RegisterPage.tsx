@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import RegisterForm from "../../../components/Auth/RegisterForm";
 import GoogleLoginButton from "../../../components/GoogleLoginButton/GoogleLoginButton";
-import { BeatLoader, RingLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 
 const RegisterPage: React.FC = () => {
   const { loading, registered } = useSelector((state: any) => state.register);
