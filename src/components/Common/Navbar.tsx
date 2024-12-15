@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { RootState, useAppSelector } from "../../redux/store";
@@ -9,7 +9,6 @@ import { fetchUserSideLawyerList } from "../../services/fetchLawyers";
 import { Lawyer } from "../../types";
 import Drawer from "../Drawer/Drawer";
 import NotificationCountSocket from "./NotificationCountSocket";
-
 
 interface LawyerListResponse {
   count?: number;
@@ -39,7 +38,6 @@ export default function Navbar() {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
-  
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
 
@@ -94,6 +92,19 @@ export default function Navbar() {
       setOpenLawyerListView(false);
     }, 100);
   };
+  const reRoute = useCallback(
+    (incomingUrl:string) => {
+  
+      return () => {
+        if (isAuthenticated) {
+          incomingUrl
+        } else {
+          '/login'
+        }
+      };
+    },
+    []
+  );
   const handleNextCalling = async () => {
     if (next != null) {
       try {
@@ -189,16 +200,16 @@ export default function Navbar() {
               )}
             </div>
 
-            <Link to={"../../../../user/lawyers"}>
+            <Link to={isAuthenticated?"../../../../user/lawyers":"/login"}>
               <p>Lawyers </p>
             </Link>
-            <Link to={"../../../../user/appointments"}>
+            <Link to={isAuthenticated?"../../../../user/appointments":"/login"}>
               <p>Appointments</p>
             </Link>
-            <Link to={"../../../../user/blog"}>
+            <Link to={isAuthenticated?"../../../../user/blog":"/login"}>
               <p>Blogs </p>
             </Link>
-            <Link to={"../../../../../chat"}>
+            <Link to={isAuthenticated?"../../../../../chat":"/login"}>
               <p>Chat</p>
             </Link>
           </div>
@@ -249,10 +260,13 @@ export default function Navbar() {
                 className="cursor-pointer"
                 onClick={() => setNotificationsOpen(!notificationsOpen)}
               >
-                <NotificationCountSocket /> 
+                <NotificationCountSocket />
               </div>
               {notificationsOpen && (
-                <NotificationLayer onClose={()=>setNotificationsOpen(false)} open={notificationsOpen} />
+                <NotificationLayer
+                  onClose={() => setNotificationsOpen(false)}
+                  open={notificationsOpen}
+                />
               )}
             </>
           )}
@@ -325,19 +339,19 @@ export default function Navbar() {
                       </div>
                     </div>
                     <Link
-                      to="../../../../user/saved-liked-blogs"
+                      to={isAuthenticated?"../../../../user/saved-liked-blogs":"/login"}
                       className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
                     >
                       Saved & Liked Blogs
                     </Link>
                     <Link
-                      to="../../../../user/wallet"
+                      to={isAuthenticated?"../../../../user/wallet":"/login"}
                       className="block p-1  text-xs text-gray-700  rounded-md  font-medium hover:bg-gray-100"
                     >
                       Wallet
                     </Link>
                     <Link
-                      to="../../../../user/profile"
+                      to={isAuthenticated?"../../../../user/profile":"/login"}
                       className="block p-1 rounded-mdr text-xs text-gray-700 font-medium hover:bg-gray-100"
                     >
                       Profile
@@ -497,44 +511,43 @@ export default function Navbar() {
                 {isHoveringMenu && (
                   <div className=" top-full  mt-4   w-48 bg-white  border-l-8 border-gray-200 ">
                     <Link
-                      to="../../../../../../user/ongoing-cases"
+                      to={isAuthenticated?"../../../../../../user/ongoing-cases":"/login"}
                       className="block px-4 py-2 text-sm font-semibold hover:bg-gray-100"
                     >
                       Ongoing Cases
                     </Link>
                     <Link
-                      to="../../../../../../user/post-cases"
+                      to={isAuthenticated?"../../../../../../user/post-cases":"/login"}
                       className="block px-4 py-2 text-sm font-semibold hover:bg-gray-100"
                     >
                       Apply new cases
                     </Link>
-                 
                   </div>
                 )}
               </div>
               <Link
-                to="../../../../user/lawyers"
+                to={isAuthenticated?"../../../../user/lawyers":"/login"}
                 className="text-base font-semibold"
                 onClick={toggleSidebar}
               >
                 Lawyers
               </Link>
               <Link
-                to="../../../../user/blog"
+                to={isAuthenticated?"../../../../user/blog":"/login"}
                 className="text-base font-semibold"
                 onClick={toggleSidebar}
               >
                 Blogs
               </Link>
               <Link
-                to="../../../../user/appointments"
+                to={isAuthenticated?"../../../../user/appointments":"/login"}
                 className="text-base font-semibold"
                 onClick={toggleSidebar}
               >
                 Appoinments
               </Link>
               <Link
-                to={"../../../../../chat"}
+                to={isAuthenticated?"../../../../../chat":"/login"}
                 className="text-base sm:hidden font-semibold"
                 onClick={toggleSidebar}
               >

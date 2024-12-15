@@ -120,7 +120,7 @@ const AddLawyer: React.FC = () => {
       formData.append("postal_code", values.postal_code);
 
       if (adminProfile) {
-        formData.append("profile_image", adminProfile, "profile_image.jpg");
+        formData.append("profile_image", adminProfile, `profile_image-${crypto.randomUUID()}.jpg`);
       }
 
       try {
