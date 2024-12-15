@@ -27,13 +27,16 @@ interface StateOption {
   label: string;
 }
 
+
+
 const AddLawyer: React.FC = () => {
   const [departments, setDepartments] = useState<DepartmentOption[]>([]);
   const [languages, setLanguages] = useState<LanguageOption[]>([]);
   const [states, setStates] = useState<StateOption[]>([]);
   const [adminProfile, setAdminProfile] = useState<Blob | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { addToast } = useToast();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   
   useEffect(() => {
     const loadData = async () => {
@@ -99,44 +102,71 @@ const AddLawyer: React.FC = () => {
       state: Yup.object().nullable().required("State is required"),
       postal_code: Yup.string().required("Postal Code is required"),
     }),
+    validateOnChange: false,
+    validateOnBlur: false,
     onSubmit: async (values, { resetForm }) => {
-      const formData = new FormData();
-      formData.append("full_name", values.full_name);
-      formData.append("email", values.email);
-      formData.append("phone_number", values.phone_number);
-      formData.append("experience", values.experience.toString());
-      formData.append("description", values.description);
-      formData.append(
-        "department",
-        JSON.stringify(values.department.map((d) => d.value))
-      );
-      formData.append(
-        "language",
-        JSON.stringify(values.language.map((l) => l.value))
-      );
-      formData.append("address", values.address);
-      formData.append("city", values.city);
-      formData.append("state", values.state ? values.state.label : "");
-      formData.append("postal_code", values.postal_code);
-
-      if (adminProfile) {
-        formData.append("profile_image", adminProfile, `profile_image-${crypto.randomUUID()}.jpg`);
-      }
-
       try {
+        setIsSubmitting(true);
+        
+        // Validate all fields before submission
+        await formik.validateForm();
+        
+        // If there are errors, stop submission
+        if (Object.keys(formik.errors).length > 0) {
+          setIsSubmitting(false);
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append("full_name", values.full_name);
+        formData.append("email", values.email);
+        formData.append("phone_number", values.phone_number);
+        formData.append("experience", values.experience.toString());
+        formData.append("description", values.description);
+        formData.append(
+          "department",
+          JSON.stringify(values.department.map((d) => d.value))
+        );
+        formData.append(
+          "language",
+          JSON.stringify(values.language.map((l) => l.value))
+        );
+        formData.append("address", values.address);
+        formData.append("city", values.city);
+        formData.append("state", values.state ? values.state.label : "");
+        formData.append("postal_code", values.postal_code);
+
+        if (adminProfile) {
+          formData.append("profile_image", adminProfile, `profile_image-${crypto.randomUUID()}.jpg`);
+        }
+
         const response = await addLawyer(formData);
         console.log("Lawyer added successfully:", response);
         addToast("success", "Lawyer added successfully!");
+        
         // Reset the form after successful submission
         resetForm();
         setAdminProfile(null);
-        navigate(-1)
+        navigate(-1);
       } catch (error) {
         addToast("danger", "Failed to add lawyer. Please try again.");
         console.error("Error adding lawyer:", error);
+      } finally {
+        setIsSubmitting(false);
       }
     },
   });
+
+  // Trigger validation on form submission
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    formik.validateForm().then((errors) => {
+      formik.setErrors(errors);
+      if (Object.keys(errors).length === 0) {
+        formik.handleSubmit(e as any);
+      }
+    });
+  };
 
   const departmentOptions = departments.map((data) => ({
     value: data.value,
@@ -160,6 +190,8 @@ const AddLawyer: React.FC = () => {
       height: "50px",
       borderColor: state.isFocused
         ? "rgba(0, 123, 255, 0.8)"
+        : (formik.errors as Record<string, string>)[state.selectProps.name]
+        ? "red"
         : "rgba(108, 117, 125, 0.1)",
       boxShadow: state.isFocused
         ? "0 0 0 1px rgba(0, 123, 255, 0.8)"
@@ -191,7 +223,7 @@ const AddLawyer: React.FC = () => {
         title="ADD LAWYER"
         description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
       />
-      <form onSubmit={formik.handleSubmit} className="max-[400px]:px-0 px-5">
+      <form onSubmit={handleSubmit} className="max-[400px]:px-0 px-5">
         <div className="max-w-5xl xl:px-8 mx-auto flex w-full max-sm:grid">
           <div className="w-[150px] max-sm:mb-6 sm:mt-3 lg:mt-0 max-sm:flex cursor-pointer justify-center sm:justify-end rounded-lg max-sm:w-full max-sm:h-24 h-40">
             <LawyerProfileAdding setAdminProfile={setAdminProfile} />
@@ -203,8 +235,7 @@ const AddLawyer: React.FC = () => {
               id="full_name"
               value={formik.values.full_name}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={(formik.errors.full_name as string) ?? ""}
+              error={formik.errors.full_name as string}
               required
             />
             <CustomInputFullSized
@@ -214,8 +245,7 @@ const AddLawyer: React.FC = () => {
               id="email"
               value={formik.values.email}
               onChange={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={(formik.errors.email as string) ?? ""}
+              error={formik.errors.email as string}
               required
             />
           </div>
@@ -227,8 +257,7 @@ const AddLawyer: React.FC = () => {
             id="phone_number"
             value={formik.values.phone_number}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={(formik.errors.phone_number as string) ?? ""}
+            error={formik.errors.phone_number as string}
             required
           />
           <CustomInputFullSized
@@ -238,8 +267,7 @@ const AddLawyer: React.FC = () => {
             inputType="number"
             value={formik.values.experience}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={(formik.errors.experience as string) ?? ""}
+            error={formik.errors.experience as string}
             required
           />
           <CustomInputFullSized
@@ -248,8 +276,7 @@ const AddLawyer: React.FC = () => {
             id="address"
             value={formik.values.address}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={(formik.errors.address as string) ?? ""}
+            error={formik.errors.address as string}
             required
           />
           <CustomInputFullSized
@@ -258,8 +285,7 @@ const AddLawyer: React.FC = () => {
             id="city"
             value={formik.values.city}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={(formik.errors.city as string) ?? ""}
+            error={formik.errors.city as string}
             required
           />
           <div className="flex flex-col md:pt-1 pb-2 justify-center space-y-1">
@@ -270,16 +296,15 @@ const AddLawyer: React.FC = () => {
                 name="state"
                 options={stateOptions}
                 onChange={(selected) => formik.setFieldValue("state", selected)}
-                onBlur={formik.handleBlur}
                 value={formik.values.state}
                 className="block w-full rounded-md text-xs mt-1"
                 styles={customSelectStyles}
               />
-              {formik.touched.state && formik.errors.state ? (
+              {formik.errors.state && (
                 <div className="text-red-600 w-full flex justify-end text-xs">
                   {formik.errors.state as string}
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
           <CustomInputFullSized
@@ -288,8 +313,7 @@ const AddLawyer: React.FC = () => {
             id="postal_code"
             value={formik.values.postal_code}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={(formik.errors.postal_code as string) ?? ""}
+            error={formik.errors.postal_code as string}
             required
           />
           <div className="flex flex-col md:pt-1 pb-2 justify-center space-y-1">
@@ -303,16 +327,15 @@ const AddLawyer: React.FC = () => {
                 onChange={(selected) =>
                   formik.setFieldValue("department", selected)
                 }
-                onBlur={formik.handleBlur}
                 value={formik.values.department}
                 className="block w-full rounded-md text-xs mt-1"
                 styles={customSelectStyles}
               />
-              {formik.touched.department && formik.errors.department ? (
+              {formik.errors.department && (
                 <div className="text-red-600 w-full flex justify-end text-xs">
                   {formik.errors.department as string}
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
           <div className="flex flex-col md:pt-1 pb-2 justify-center space-y-1">
@@ -326,16 +349,15 @@ const AddLawyer: React.FC = () => {
                 onChange={(selected) =>
                   formik.setFieldValue("language", selected)
                 }
-                onBlur={formik.handleBlur}
                 value={formik.values.language}
                 className="block w-full rounded-md text-xs mt-1"
                 styles={customSelectStyles}
               />
-              {formik.touched.language && formik.errors.language ? (
+              {formik.errors.language && (
                 <div className="text-red-600 w-full flex justify-end text-xs">
                   {formik.errors.language as string}
                 </div>
-              ) : null}
+              )}
             </div>
           </div>
           <CustomInputFullSized
@@ -344,8 +366,7 @@ const AddLawyer: React.FC = () => {
             id="description"
             value={formik.values.description}
             onChange={formik.handleChange}
-            onBlur={formik.handleBlur}
-            error={(formik.errors.description as string) ?? ""}
+            error={formik.errors.description as string}
             required
           />
         </div>
@@ -358,9 +379,12 @@ const AddLawyer: React.FC = () => {
             </Link>
             <button
               type="submit"
-              className="bg-slate-700 border px-2 p-1 text-white rounded-md"
+              disabled={isSubmitting}
+              className={`bg-slate-700 border px-2 p-1 text-white rounded-md ${
+                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+              }`}
             >
-              Add
+              {isSubmitting ? 'Adding...' : 'Add'}
             </button>
           </div>
         </div>
