@@ -3,7 +3,10 @@ import AdminPageTitle from "../../../components/PageTitle/AdminPageTitle";
 import ItemTable from "../../../components/Table/ItemTable";
 import { Link } from "react-router-dom";
 import { User, UserResponse } from "../../../types";
-import { fetchLawyer, updateLawyerVerification } from "../../../services/fetchLawyers";
+import {
+  fetchLawyer,
+  updateLawyerVerification,
+} from "../../../services/fetchLawyers";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
 
 const AdminUser: React.FC = () => {
@@ -14,24 +17,30 @@ const AdminUser: React.FC = () => {
   const [prevPage, setPrevPage] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState<number>(0);
   const [blocked, setBlocked] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<string | null>(`${process.env.VITE_BASE_URL}/api/filter-lawyer/?page=${pageNum}`);
+  const [currentPage, setCurrentPage] = useState<string | null>(
+    `${process.env.VITE_BASE_URL}/api/filter-lawyer/?page=${pageNum}`
+  );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   // const navigate = useNavigate();
 
   const handleToggleVerification = (user: User) => {
-    setSelectedUser(user); 
+    setSelectedUser(user);
     setIsModalOpen(true);
   };
 
   const fetchData = async () => {
     if (currentPage) {
       try {
-        const data: UserResponse = await fetchLawyer(currentPage, search, blocked);
+        const data: UserResponse = await fetchLawyer(
+          currentPage,
+          search,
+          blocked
+        );
         setLawyers(data.results);
         setNextPage(data.next);
         setPrevPage(data.previous);
-        setTotalCount(data.count);
+        setTotalCount(Math.ceil(data.count / 10));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -41,27 +50,27 @@ const AdminUser: React.FC = () => {
   const handleConfirmVerification = async () => {
     if (selectedUser) {
       try {
-        await updateLawyerVerification(selectedUser.pk, !selectedUser.is_verified);
-  
-        fetchData(); 
-        
+        await updateLawyerVerification(
+          selectedUser.pk,
+          !selectedUser.is_verified
+        );
+
+        fetchData();
       } catch (error) {
         console.error("Failed to update user:", error);
       } finally {
-        setIsModalOpen(false); 
-        setSelectedUser(null); 
+        setIsModalOpen(false);
+        setSelectedUser(null);
       }
     }
   };
 
   const handleCancelVerification = () => {
-    setIsModalOpen(false); 
-    setSelectedUser(null); 
+    setIsModalOpen(false);
+    setSelectedUser(null);
   };
 
-  
   useEffect(() => {
-
     fetchData();
   }, [currentPage, search, blocked]);
 
@@ -91,20 +100,18 @@ const AdminUser: React.FC = () => {
 
   const data = lawyers.map((user) => ({
     id: user.pk,
-    image: (
-      user.profile_image ? (
-        <img
-          src={user.profile_image}
-          alt={user.full_name}
-          className="rounded-full w-[50px] h-[50px] object-cover"
-        />
-      ) : (
-        <img
-          src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
-          alt="Default Profile"
-          className="rounded-full w-[50px] h-[50px] object-cover"
-        />
-      )
+    image: user.profile_image ? (
+      <img
+        src={user.profile_image}
+        alt={user.full_name}
+        className="rounded-full w-[50px] h-[50px] object-cover"
+      />
+    ) : (
+      <img
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2c/Default_pfp.svg/2048px-Default_pfp.svg.png"
+        alt="Default Profile"
+        className="rounded-full w-[50px] h-[50px] object-cover"
+      />
     ),
     full_name: user.full_name,
     email: user.email,
@@ -112,7 +119,9 @@ const AdminUser: React.FC = () => {
     created_at: new Date(user.created_at).toLocaleDateString(),
     actions: (
       <button
-        className={`px-3 py-2 ${user.is_verified ? "bg-red-500" : "bg-green-500"} text-white`}
+        className={`px-3 py-2 ${
+          user.is_verified ? "bg-red-500" : "bg-green-500"
+        } text-white`}
         onClick={() => handleToggleVerification(user)}
       >
         {user.is_verified ? "Block" : "Unblock"}
@@ -127,7 +136,7 @@ const AdminUser: React.FC = () => {
         description="Manage user verification statuses and view Lawyer details."
       />
       <div className="w-full flex justify-end text-white text-xs">
-        <Link to={'add-lawyer'}>
+        <Link to={"add-lawyer"}>
           <p className="bg-slate-800 px-3 py-2 cursor-pointer rounded-sm mb-4">
             Add Lawyer
           </p>
@@ -150,8 +159,12 @@ const AdminUser: React.FC = () => {
       {selectedUser && (
         <ConfirmationModal
           isOpen={isModalOpen}
-          title={`Confirm ${selectedUser.is_verified ? "Blocking" : "Unblocking"}`}
-          description={`Are you sure you want to ${selectedUser.is_verified ? "block" : "unblock"} ${selectedUser.full_name}?`}
+          title={`Confirm ${
+            selectedUser.is_verified ? "Blocking" : "Unblocking"
+          }`}
+          description={`Are you sure you want to ${
+            selectedUser.is_verified ? "block" : "unblock"
+          } ${selectedUser.full_name}?`}
           onConfirm={handleConfirmVerification}
           onCancel={handleCancelVerification}
         />

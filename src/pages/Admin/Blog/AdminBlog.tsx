@@ -7,7 +7,7 @@ import ConfirmationModal from "../../../components/Modal/AlertModal";
 import SearchForm from "../../../components/Search/Search";
 import Pagination from "../../../components/Pagination/Pagination";
 import SelectionBox from "../../../components/SelectBox/SelectBox";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, DatabaseBackup } from "lucide-react";
 
 interface TableColumn {
   key: string;
@@ -41,7 +41,7 @@ const AdminBlog: React.FC = () => {
         setBlogs(data.results);
         setNextPage(data.next);
         setPrevPage(data.previous);
-        setTotalCount(Math.ceil(data.count / 10)); // total number of pages
+        setTotalCount(Math.ceil(data.count / 10));
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -64,7 +64,7 @@ const AdminBlog: React.FC = () => {
   // Handle previous page
   const handlePreviousPage = () => {
     if (prevPage) {
-      setCurrentUrl(prevPage); 
+      setCurrentUrl(prevPage);
       setPageNum((prev) => prev - 1);
     }
   };
@@ -87,7 +87,7 @@ const AdminBlog: React.FC = () => {
             ? "Blocked"
             : "Listed"
         );
-        fetchData(currentUrl); 
+        fetchData(currentUrl);
       } catch (error) {
         console.error("Failed to update blog:", error);
       } finally {
@@ -151,7 +151,7 @@ const AdminBlog: React.FC = () => {
         title="Blogs"
         description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s,"
       />
-      
+
       <div className="flex flex-col  h-full pb-16 ">
         <div className="flex items-center  justify-between max-sm:flex-col max-sm:items-end">
           {options && (
@@ -168,7 +168,7 @@ const AdminBlog: React.FC = () => {
         </div>
         <div className="overflow-x-auto bg-white  no-scrollbar border-b">
           <div className="min-w-full inline-block align-middle">
-            <div className="min-h-[350px] relative">
+            <div className="h-auto relative">
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
@@ -203,9 +203,10 @@ const AdminBlog: React.FC = () => {
                     <tr>
                       <td
                         colSpan={columns.length}
-                        className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"
+                        className="px-6 py-16 whitespace-nowrap text-sm text-gray-500 text-center"
                       >
                         <div className="flex flex-col items-center justify-center space-y-2">
+                          <DatabaseBackup className="h-12 w-12 text-gray-400" />
                           <p>No data available</p>
                         </div>
                       </td>

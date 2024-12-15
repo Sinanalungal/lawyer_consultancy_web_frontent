@@ -10,6 +10,7 @@ import { useToast } from "../../../components/Toast/ToastManager";
 import Pagination from "../../../components/Pagination/Pagination";
 import SearchForm from "../../../components/Search/Search";
 import SelectionBox from "../../../components/SelectBox/SelectBox";
+import { DatabaseBackup } from "lucide-react";
 
 interface TableColumn {
   key: string;
@@ -173,7 +174,7 @@ const BlogManage: React.FC = () => {
         </div>
         <div className="overflow-x-auto no-scrollbar">
           <div className="min-w-full inline-block align-middle">
-            <div className="border  border-gray-300  min-h-[350px]">
+            <div className="border  border-gray-300  h-auto">
               <table className="min-w-full relative">
                 <thead>
                   <tr className="bg-gray-50">
@@ -202,9 +203,17 @@ const BlogManage: React.FC = () => {
                       </tr>
                     ))
                   ) : (
-                    <div className=" w-full absolute flex justify-center items-center min-h-[250px]   text-gray-500 text-xs">
-                      no data available
-                    </div>
+                    <tr>
+                      <td
+                        colSpan={columns.length}
+                        className="px-6 py-16 whitespace-nowrap text-sm text-gray-500 text-center"
+                      >
+                        <div className="flex flex-col items-center justify-center space-y-2">
+                          <DatabaseBackup className="h-12 w-12 text-gray-400" />
+                          <p>No data available</p>
+                        </div>
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>

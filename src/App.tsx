@@ -2,7 +2,7 @@ import { Suspense, lazy, useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useSelector } from "react-redux";
-import { RingLoader } from "react-spinners";
+import { BeatLoader  } from "react-spinners";
 
 // Lazy load components and pages
 const Modal = lazy(() => import("./components/Modal/Modal"));
@@ -52,7 +52,7 @@ function App() {
         <Suspense
           fallback={
             <div style={spinnerStyle}>
-              <RingLoader color="#36d7b7" />
+              <BeatLoader  color="#312e81" />
             </div>
           }
         >
@@ -66,7 +66,7 @@ function App() {
             <Suspense
               fallback={
                 <div style={spinnerStyle}>
-                  <RingLoader color="#36d7b7" />
+                  <BeatLoader  color="#312e81" />
                 </div>
               }
             >

@@ -12,7 +12,7 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import { Users, Scale, DollarSign } from "lucide-react";
+import { Users, Scale, DollarSign, DatabaseBackup } from "lucide-react";
 
 ChartJS.register(
   CategoryScale,
@@ -132,29 +132,43 @@ const Dashboard: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <div className="bg-white p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-gray-800">Total Users</h3>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Total Users
+              </h3>
               <Users className="text-blue-500 w-8 h-8" />
             </div>
-            <p className="text-3xl font-bold text-blue-600 mt-4">{data?.total_users}</p>
+            <p className="text-3xl font-bold text-blue-600 mt-4">
+              {data?.total_users}
+            </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-gray-800">Total Lawyers</h3>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Total Lawyers
+              </h3>
               <Scale className="text-orange-500 w-8 h-8" />
             </div>
-            <p className="text-3xl font-bold text-orange-600 mt-4">{data?.total_lawyers}</p>
+            <p className="text-3xl font-bold text-orange-600 mt-4">
+              {data?.total_lawyers}
+            </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl">
             <div className="flex items-center justify-between">
-              <h3 className="text-xl font-semibold text-gray-800">Total Revenue</h3>
+              <h3 className="text-xl font-semibold text-gray-800">
+                Total Revenue
+              </h3>
               <DollarSign className="text-green-500 w-8 h-8" />
             </div>
-            <p className="text-3xl font-bold text-green-600 mt-4">₹{data?.total_revenue}</p>
+            <p className="text-3xl font-bold text-green-600 mt-4">
+              ₹{data?.total_revenue}
+            </p>
           </div>
         </div>
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">User Growth</h2>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+              User Growth
+            </h2>
             <div className="overflow-x-auto">
               <Bar
                 data={chartData}
@@ -164,10 +178,25 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Top Lawyers by Completed Sessions</h2>
-            <div className="w-full h-[300px] mx-auto">
-              <Pie data={pieChartData} options={{ maintainAspectRatio: false }} />
-            </div>
+            <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+              Top Lawyers by Completed Sessions
+            </h2>
+
+            {data?.top_lawyers && data.top_lawyers.length > 0 ? (
+              <div className="w-full h-[300px] mx-auto">
+                <Pie
+                  data={pieChartData}
+                  options={{ maintainAspectRatio: false }}
+                />
+              </div>
+            ) : (
+              <div className="px-6 sm:py-20 whitespace-nowrap text-sm text-gray-500 text-center">
+                <div className="flex flex-col items-center justify-center space-y-2">
+                  <DatabaseBackup className="h-12 w-12 text-gray-400" />
+                  <p>No data available</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>

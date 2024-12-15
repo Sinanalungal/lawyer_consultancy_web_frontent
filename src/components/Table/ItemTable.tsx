@@ -1,7 +1,7 @@
 import React from "react";
 import SearchForm from "../Search/Search";
 import SelectionBox from "../SelectBox/SelectBox";
-import { Table, ChevronDown } from "lucide-react";
+import { ChevronDown, DatabaseBackup } from "lucide-react";
 import Pagination from "../Pagination/Pagination";
 
 interface TableColumn {
@@ -57,7 +57,7 @@ const ItemTable: React.FC<TableProps> = ({
       </div>
       <div className="overflow-x-auto no-scrollbar">
         <div className="min-w-full inline-block align-middle">
-          <div className="min-h-[350px] relative">
+          <div className="h-auto relative">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
@@ -95,10 +95,10 @@ const ItemTable: React.FC<TableProps> = ({
                   <tr>
                     <td
                       colSpan={columns.length}
-                      className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center"
+                      className="px-6 sm:py-16 py-10 whitespace-nowrap text-sm text-gray-500 text-center"
                     >
                       <div className="flex flex-col items-center justify-center space-y-2">
-                        <Table className="h-12 w-12 text-gray-400" />
+                        <DatabaseBackup  className="h-12 w-12 text-gray-400" />
                         <p>No data available</p>
                       </div>
                     </td>

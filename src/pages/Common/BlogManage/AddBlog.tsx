@@ -123,14 +123,9 @@ const AddBlog: React.FC = () => {
             const axiosInstance = await getAxiosInstance();
             const response = await axiosInstance.post(
               `${import.meta.env.VITE_BASE_URL}` + "/blogsession/create-blog/",
-              formData,
-              {
-                headers: {
-                  Accept: "application/json",
-                  "Content-Type": "multipart/form-data",
-                },
-              }
+              formData
             );
+            console.log(response, "this is response");
 
             if (response.status === 201) {
               addToast("success", "Blog added successfully");
@@ -160,7 +155,7 @@ const AddBlog: React.FC = () => {
             formData.append("image", blob, `${crypto.randomUUID()}.png`);
           }
         }
-        
+
         if (content.length > 50 && blogData) {
           try {
             const response = await BlogUpdating(blogData?.id, formData);
@@ -214,7 +209,7 @@ const AddBlog: React.FC = () => {
 
   return (
     <>
-      {(role === "admin" || role === "lawyer") ? (
+      {role === "admin" || role === "lawyer" ? (
         <>
           <AdminPageTitle
             title={isEditing ? "Update Blog" : "Add Blog"}
@@ -222,8 +217,8 @@ const AddBlog: React.FC = () => {
           />
 
           <div className="max-w-md mx-auto ">
-             <div>
-             {isEditing && !croppedImageUrl && blogData && blogData.image && (
+            <div>
+              {isEditing && !croppedImageUrl && blogData && blogData.image && (
                 <div className="mb-2">
                   <h1 className="text-xs flex justify-center text-gray-800">
                     Previous Image
@@ -231,16 +226,14 @@ const AddBlog: React.FC = () => {
                   <ImageCrop
                     croppedImageUrl={blogData.image}
                     setCroppedImageUrl={() => {}}
-                  
                   />
                 </div>
               )}
               <ImageCrop
                 croppedImageUrl={croppedImageUrl}
                 setCroppedImageUrl={setCroppedImageUrl}
-                
               />
-             </div>
+            </div>
             <form onSubmit={formik.handleSubmit} className="space-y-3 ">
               <CustomInput
                 inputType="text"
@@ -289,7 +282,7 @@ const AddBlog: React.FC = () => {
                 />
               </div>
               <div className="w-full pb-28 gap-2 flex justify-center max-w-md mx-auto">
-              <CustomButton
+                <CustomButton
                   text={isEditing ? "Update" : "Add"}
                   type="submit"
                   className="bg-[#131314] py-3 w-full text-white   hover:bg-slate-900"

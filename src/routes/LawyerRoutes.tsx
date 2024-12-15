@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import LawyerPrivateRoute from "./PrivateRouter/LawyerPrivateRoute";
-import { RingLoader } from "react-spinners";
+import { BeatLoader  } from "react-spinners";
 
 // Lazy load components
 const FailPage = lazy(() => import("../pages/User/SuccessFailPages/FailPage"));
@@ -43,7 +43,7 @@ function LawyerRoutes() {
     <Suspense
       fallback={
         <div style={spinnerStyle}>
-          <RingLoader color="#36d7b7" />
+          <BeatLoader  color="#312e81" />
         </div>
       }
     >

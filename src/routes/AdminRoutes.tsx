@@ -1,7 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import AdminPrivateRoute from "./PrivateRouter/AdminPrivateRoute";
-import { RingLoader } from "react-spinners";
+import { BeatLoader  } from "react-spinners";
 import UserWalletDetails from "../pages/Admin/UserWalletDetails/UserWalletDetails";
 
 // Lazy load components
@@ -38,7 +38,7 @@ function AdminRoutes() {
     <Suspense
       fallback={
         <div style={spinnerStyle}>
-          <RingLoader color="#36d7b7" />
+          <BeatLoader  color="#312e81" />
         </div>
       }
     >
