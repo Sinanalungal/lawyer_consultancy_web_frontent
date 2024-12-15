@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import OtpForm from "../../../components/Auth/OtpForm";
+import { BeatLoader } from "react-spinners";
 
 const OtpPage: React.FC = () => {
   const {  user, loading } = useSelector(
@@ -31,10 +32,15 @@ const OtpPage: React.FC = () => {
       }
     }
   }, [user, isAuthenticated, role, navigate]);
-
+  const spinnerStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "100vh",
+  };
   return (
     <>
-      {!loading && (
+      {!loading ? (
         <div className="3xl:container min-h-screen flex mx-auto">
           <div className="w-[600px]  2xl:w-[800px] xl:h-screen 3xl:h-full h-full 3xl:hidden max-lg:hidden bg-slate-500">
             <img
@@ -50,7 +56,9 @@ const OtpPage: React.FC = () => {
           </div>
         </div>
       
-      )}
+      ):<div style={spinnerStyle}>
+            <BeatLoader  color="#312e81" />
+          </div>}
     </>
   );
 };

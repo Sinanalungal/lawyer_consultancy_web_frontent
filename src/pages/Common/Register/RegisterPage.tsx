@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import RegisterForm from "../../../components/Auth/RegisterForm";
 import GoogleLoginButton from "../../../components/GoogleLoginButton/GoogleLoginButton";
-import { RingLoader } from "react-spinners";
+import { BeatLoader, RingLoader } from "react-spinners";
 
 const RegisterPage: React.FC = () => {
   const { loading, registered } = useSelector((state: any) => state.register);
@@ -87,7 +87,7 @@ const RegisterPage: React.FC = () => {
         </div>
       ) : (
         <div style={spinnerStyle}>
-          <RingLoader color="#36d7b7" />
+          <BeatLoader  color="#312e81" />
         </div>
       )}
     </>
