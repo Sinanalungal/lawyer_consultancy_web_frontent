@@ -14,7 +14,7 @@ import ConfirmationModal from "../../../components/Modal/AlertModal";
 import Modal from "../../../components/Modal/Modal";
 import CommentSection from "../../../components/Comments/Comments";
 import { useToast } from "../../../components/Toast/ToastManager";
-import { RingLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 
 interface BlogSavedOrLiked {
   blog: Blog;
@@ -193,7 +193,7 @@ const SavedAndLikedBlogs: React.FC = () => {
       {isLoading ? (
         // <p>Loading...</p>
         <div style={spinnerStyle}>
-          <RingLoader color="#36d7b7" />
+          <BeatLoader color="#312e81" />
         </div>
       ) : error ? (
         <p>{error}</p>

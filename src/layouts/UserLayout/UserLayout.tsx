@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/store';
 import Navbar from '../../components/Common/Navbar';
 import Footer from '../../components/Footer/Footer';
 import { fetchUserAsync } from '../../redux/slice/UserDataFetch';
-import { RingLoader } from 'react-spinners';
+import { BeatLoader } from 'react-spinners';
 import { useLoader } from '../../components/GlobelLoader/GlobelLoader';
 import NotificationSocket from '../../components/Common/NotificationSocket';
 
@@ -48,7 +48,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
     <>
       {loader && ReactDOM.createPortal(
         <div style={spinnerStyle} >
-          <RingLoader color="#36d7b7" />
+          <BeatLoader color="#312e81" />
         </div>,
         document.getElementById('portal-div') as HTMLElement
       )}
