@@ -124,7 +124,7 @@ export function SidebarDemoAdmin({ children }: LawyerLayoutProps) {
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row 3xl:container bg-gray-100 dark:bg-neutral-800 w-full flex-1  mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
+        "rounded-md flex font-roboto flex-col md:flex-row 3xl:container bg-gray-100 dark:bg-neutral-800 w-full flex-1  mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden",
         "h-screen"
       )}
     >

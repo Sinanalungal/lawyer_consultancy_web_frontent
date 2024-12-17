@@ -278,7 +278,7 @@ const ChatComponent: React.FC = () => {
     setContentType("text");
   };
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
+    <div className="flex font-roboto h-screen bg-gray-100 overflow-hidden">
       <motion.div
         initial={{ x: -300, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}

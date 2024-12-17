@@ -128,22 +128,20 @@ const OtpForm: React.FC<OtpFormProps> = () => {
 
   return (
     <>
-      <h1 className="text-2xl text-center mb-10 font-bold">Otp Verification</h1>
+      <h1 className="text-2xl font-roboto text-center mb-10 font-bold">OTP Verification</h1>
 
       <form onSubmit={handleSubmit}>
-        <div
-          className={`${
-            closed ? "hidden" : "bg-slate-50 mb-4 max-w-md mx-auto border-gray-200 border text-gray-600 text-xs p-4 w-full rounded-md flex justify-between"
-          }`}
-        >
-          <span>OTP sent to your phone number.</span>
-          <span
-            className="text-gray-600 cursor-pointer"
-            onClick={() => setClosed(true)}
+      {!closed && (
+        <div className="bg-blue-50  mb-6 p-3 rounded-md flex justify-between items-center text-blue-800">
+          <span className="text-sm font-roboto">OTP sent to your registered phone number</span>
+          <button 
+            onClick={() => setClosed(true)} 
+            className="text-blue-600 hover:text-blue-800"
           >
-            <IoIosClose size={18} />
-          </span>
+            <IoIosClose size={24} />
+          </button>
         </div>
+      )}
 
         <div className="w-full max-[400px]:hidden flex justify-center">
           <OtpInput
@@ -168,13 +166,13 @@ const OtpForm: React.FC<OtpFormProps> = () => {
 
         <div className="w-full flex justify-center">
           {seconds > 0 ? (
-            <p className="font-semibold text-sm cursor-pointer mt-4 mb-5 text-gray-700">
+            <p className="font-semibold font-roboto text-sm cursor-pointer mt-4 mb-5 text-gray-700">
               {`00:${seconds > 9 ? seconds : `0${seconds}`}`}
             </p>
           ) : (
             <p
               onClick={resendOtp}
-              className="font-semibold text-xs cursor-pointer mt-3 mb-5 hover:underline text-gray-700"
+              className="font-semibold font-roboto text-xs cursor-pointer mt-3 mb-5 hover:underline text-gray-700"
             >
               Resend OTP?
             </p>

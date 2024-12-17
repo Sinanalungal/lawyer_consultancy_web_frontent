@@ -12,7 +12,10 @@ module.exports = {
   theme: {
   	extend: {
   		fontFamily: {
-  			sans: ['Montserrat', ...defaultTheme.fontFamily.sans]
+  			sans: ['Montserrat', ...defaultTheme.fontFamily.sans],
+			'inter': ['Inter', 'sans-serif'],
+			'poppins':["Poppins"],
+			'roboto':['Roboto']
   		},
   		keyframes: {
   			scroll: {

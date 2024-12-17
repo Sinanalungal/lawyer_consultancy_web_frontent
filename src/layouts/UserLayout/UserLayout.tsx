@@ -52,7 +52,7 @@ const UserLayout: React.FC<UserLayoutProps> = ({ children }) => {
         </div>,
         document.getElementById('portal-div') as HTMLElement
       )}
-      <div className="min-h-screen mx-auto  justify-center 3xl:container">
+      <div className="min-h-screen font-roboto mx-auto  justify-center 3xl:container">
         <NotificationSocket/>
         <div className="my-auto">
           <div

@@ -70,18 +70,25 @@ const LoginForm = () => {
 
   return (
     <>
-      <h1 className="text-2xl text-center mb-10 font-bold">
-        Sign In to Lawyer Consultancy
+      <h1 className="text-3xl text-center mb-1 font-extrabold text-gray-900 leading-snug">
+        Sign In
       </h1>
+      <p className="text-center text-sm mb-3 text-gray-600">
+        Access your account and manage your cases efficiently.
+      </p>
 
       <GoogleLoginButton
         text="Sign in with Google"
         className="bg-white border  font-black text-xs max-w-md mx-auto h-12 rounded-xl"
       />
-      <div className="my-8 relative w-[80%] max-w-sm text-xs flex justify-center mx-auto border-t border-gray-300 ">
-        <p className="absolute top-0  -mt-2 text-gray-500 rounded-full border bg-white px-5">
-          or sign in with email
-        </p>
+      {/* Divider */}
+      <div className="relative my-6 border-t border-gray-300">
+        <span
+          className="absolute left-1/2 -translate-x-1/2 -top-3 
+          bg-white px-4 text-gray-500 text-sm"
+        >
+          or
+        </span>
       </div>
 
       <form className="my-6" onSubmit={formik.handleSubmit}>

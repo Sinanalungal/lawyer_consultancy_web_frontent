@@ -23,9 +23,7 @@ const RegisterForm: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
   const { addToast } = useToast();
-  const {error}=useSelector(
-    (state: any) => state.register
-  );
+  const { error } = useSelector((state: any) => state.register);
 
   const formik = useFormik({
     initialValues: {
@@ -79,25 +77,28 @@ const RegisterForm: React.FC = () => {
               "Proceed to OTP verification, OTP sent to your phone number..."
             );
           }
-        }else{
+        } else {
           addToast("danger", error.message);
         }
-      } catch (error:any) {
+      } catch (error) {
         console.error("Registration error:", error);
-        addToast("danger", 'Something Went Wrong');
+        addToast("danger", "Something Went Wrong");
       }
     },
   });
 
   return (
     <>
-     <h1 className="text-2xl  text-center max-w-md mx-auto mb-2 font-bold">
-        Sign up to Lawyer Consultancy
+      <h1 className="text-2xl mb-1 text-center max-w-md mx-auto  font-bold">
+        Sign Up
       </h1>
+      <p className="text-center mb-2 text-sm text-gray-600">
+        Create your account and start managing your cases with ease.
+      </p>
 
       <form className="py-5" onSubmit={formik.handleSubmit}>
         <CustomInput
-          inputType="text"
+          inputType="full_name"
           placeholder="Your Full Name"
           name="full_name"
           id="full_name"
@@ -129,7 +130,7 @@ const RegisterForm: React.FC = () => {
         />
 
         <CustomInput
-          inputType="number"
+          inputType="tel"
           placeholder="Your Phone Number"
           name="phone_number"
           id="phone_number"
@@ -183,7 +184,12 @@ const RegisterForm: React.FC = () => {
         />
       </form>
 
-      <p className="text-[10px] mt-1 w-full text-center">already have an account? <Link to={'../login'}><span className="underline font-medium">Sign In</span></Link></p>
+      <p className="text-xs mt-1 w-full text-center">
+        already have an account?{" "}
+        <Link to={"../login"}>
+          <span className="underline font-medium">Sign In</span>
+        </Link>
+      </p>
     </>
   );
 };

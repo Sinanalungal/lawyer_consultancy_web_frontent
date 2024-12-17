@@ -31,7 +31,7 @@ const ForgotPasswordForm: React.FC = () => {
 
   return (
     <>
-      <>
+      <div className="py-24">
         <h1 className="text-2xl  text-center mb-10 font-bold">
           Forgot Password
         </h1>
@@ -56,7 +56,7 @@ const ForgotPasswordForm: React.FC = () => {
             className={`bg-[#131314] py-3 w-full text-white   hover:bg-slate-900 `}
           />
         </form>
-      </>
+      </div>
     </>
   );
 };

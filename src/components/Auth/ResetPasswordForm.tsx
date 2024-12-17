@@ -69,7 +69,7 @@ const ResetPasswordForm: React.FC = () => {
 
   return (
     <>
-      <h1 className="text-2xl  text-center mb-10 font-bold">Change Password</h1>
+      <h1 className="text-2xl font-roboto text-center mb-10 font-bold">Change Password</h1>
       <form onSubmit={handleSubmit}>
         <CustomInput
           inputType="password"

@@ -17,11 +17,11 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   ariaLabel,
 }) => {
   return (
-    <div className='w-full flex mt-5'>
+    <div className='w-full font-roboto flex mt-5'>
       <button
         type={type}
         onClick={onClick}
-        className={`px-4 text-xs font-semibold max-w-md mx-auto border rounded-md text-black ${className}`}
+        className={`px-4 text-xs sm:text-sm font-semibold max-w-md mx-auto border rounded-md text-black ${className}`}
         aria-label={ariaLabel}
       >
         {text}
