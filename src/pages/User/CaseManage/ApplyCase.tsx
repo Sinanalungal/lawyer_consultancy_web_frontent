@@ -15,7 +15,6 @@ import {
 import * as Yup from "yup";
 import CustomInputFullSized from "../../../components/Input/InputFullSize";
 import { useToast } from "../../../components/Toast/ToastManager";
-import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 import { BeatLoader, PulseLoader } from "react-spinners";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
 
