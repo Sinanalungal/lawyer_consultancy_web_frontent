@@ -10,10 +10,10 @@ import {
   updateBlogSave,
 } from "../../../services/Blogs";
 import type { Blog, BlogResponse, ReadingBlog } from "../../../types";
-import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 import Modal from "../../../components/Modal/Modal";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
 import { useToast } from "../../../components/Toast/ToastManager";
+import { BeatLoader } from "react-spinners";
 
 const Blog: React.FC = () => {
   const [isDrawerOpen, setDrawerOpen] = useState<boolean>(false);
@@ -26,7 +26,8 @@ const Blog: React.FC = () => {
   const [isReportModalOpen, setReportModalOpen] = useState<boolean>(false);
   const [isConfirmationModalOpen, setConfirmationModalOpen] = useState<boolean>(false);
   const [reportNote, setReportNote] = useState<string>("");
-  const { setLoader } = useLoader();
+  const [loading,setLoader]=useState<boolean>(false);
+  // const { setLoader } = useLoader();
   const { addToast } = useToast();
   const fetchData = async () => {
     setLoader(true);
@@ -52,6 +53,12 @@ const Blog: React.FC = () => {
 
     fetchData();
   }, [search]);
+  const spinnerStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop:'50px'
+  };
 
   const fetchMoreBlogs = async () => {
     if (nextPage) {
@@ -185,7 +192,7 @@ console.log(readingBlog,'this is the reading blog');
           title="BLOGS"
           description="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s"
         />
-        <div className="">
+        {!loading ?<div className="">
           {blogData.length > 0 ? (
             <div className="grid 2xl:grid-cols-4 max-sm:p-2 md:grid-cols-2 justify-center sm:grid-cols-1 sm:max-w-[350px] md:max-w-[710px] xl:grid-cols-3 xl:max-w-[1070px]  2xl:max-w-[1430px] gap-3 mx-auto">
               {blogData.map((blog, index) => (<>
@@ -230,7 +237,9 @@ console.log(readingBlog,'this is the reading blog');
               </p>
             </div>
           )}
-        </div>
+        </div>:<div  style={spinnerStyle}>
+              <BeatLoader  color="#312e81" />
+            </div>}
 
         <DrawerBottomToTop
           isOpen={isDrawerOpen}

@@ -21,8 +21,9 @@ import Modal from "../../../components/Modal/Modal";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "../../../components/Toast/ToastManager";
 import { AxiosResponse } from "axios";
-import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
+// import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 import { WalletBalanceApi } from "../../../services/Wallet";
+import { BeatLoader } from "react-spinners";
 
 interface AvailableLawyerSessionsProps {}
 
@@ -36,7 +37,8 @@ const SessionScheduler: React.FC = () => {
   const [_modalOpen, setModalOpen] = useState(false);
   const [paymentModal, setPaymentModal] = useState<boolean>(false);
   const [walletPayment, setWalletPayment] = useState<number>(0);
-  const { setLoader } = useLoader();
+  const [loading, setLoader] = useState<boolean>(false);
+  // const { setLoader } = useLoader();
   const { addToast } = useToast();
 
   const navigate = useNavigate();
@@ -272,6 +274,12 @@ const SessionScheduler: React.FC = () => {
 
     return days;
   };
+  const spinnerStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "90px",
+  };
 
   return (
     <>
@@ -312,42 +320,50 @@ const SessionScheduler: React.FC = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.4 }}
         >
-          <AnimatePresence>
-            <div
-              key={selectedDate ? format(selectedDate, "yyyy-MM-dd") : "none"}
-            >
-              <div className="grid max-[400px]:grid-cols-1 min-w-[300px]  grid-cols-2 xl:grid-cols-3 gap-2">
-                {availableTimes.length > 0 ? (
-                  availableTimes.map((time) => (
-                    <motion.button
-                      key={time.start_time}
-                      onClick={() => {
-                        handleTimeSelect(time.start_time);
-                        setSelectedSession(time);
-                      }}
-                      className={`w-full py-4 gap-1 grid space-y-2 transform ease-in-out rounded-lg text-xs ${
-                        selectedTime === time.start_time
-                          ? "bg-slate-800 text-white"
-                          : "text-gray-700 border border-gray-200"
-                      }`}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3 }}
-                    >
-                      {time.start_time} - {time.end_time}
-                      <span className="text-gray-400">Fee - {time.price}</span>
-                    </motion.button>
-                  ))
-                ) : (
-                  <p className="max-[400px]:col-span-1 min-h-[250px] flex justify-center items-center text-sm text-gray-600 col-span-2 xl:col-span-3 h-">
-                    No available times for this date.
-                  </p>
-                )}
+          {!loading ? (
+            <AnimatePresence>
+              <div
+                key={selectedDate ? format(selectedDate, "yyyy-MM-dd") : "none"}
+              >
+                <div className="grid max-[400px]:grid-cols-1 min-w-[300px]  grid-cols-2 xl:grid-cols-3 gap-2">
+                  {availableTimes.length > 0 ? (
+                    availableTimes.map((time) => (
+                      <motion.button
+                        key={time.start_time}
+                        onClick={() => {
+                          handleTimeSelect(time.start_time);
+                          setSelectedSession(time);
+                        }}
+                        className={`w-full py-4 gap-1 grid space-y-2 transform ease-in-out rounded-lg text-xs ${
+                          selectedTime === time.start_time
+                            ? "bg-slate-800 text-white"
+                            : "text-gray-700 border border-gray-200"
+                        }`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        {time.start_time} - {time.end_time}
+                        <span className="text-gray-400">
+                          Fee - {time.price}
+                        </span>
+                      </motion.button>
+                    ))
+                  ) : (
+                    <p className="max-[400px]:col-span-1 min-h-[250px] flex justify-center items-center text-sm text-gray-600 col-span-2 xl:col-span-3 h-">
+                      No available times for this date.
+                    </p>
+                  )}
+                </div>
               </div>
+            </AnimatePresence>
+          ) : (
+            <div style={spinnerStyle}>
+              <BeatLoader color="#312e81" />
             </div>
-          </AnimatePresence>
+          )}
           {selectedSession && (
             <motion.button
               className="w-full mt-6 py-3 px-6 bg-slate-800 text-white rounded-lg text-sm font-bold tracking-wide uppercase hover:bg-slate-600 transition-colors ease-in-out"

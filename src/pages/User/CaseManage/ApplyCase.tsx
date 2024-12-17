@@ -16,7 +16,7 @@ import * as Yup from "yup";
 import CustomInputFullSized from "../../../components/Input/InputFullSize";
 import { useToast } from "../../../components/Toast/ToastManager";
 import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
-import { PulseLoader } from "react-spinners";
+import { BeatLoader, PulseLoader } from "react-spinners";
 import ConfirmationModal from "../../../components/Modal/AlertModal";
 
 const validationSchema = Yup.object({
@@ -54,9 +54,10 @@ const ClientCaseManagement: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<
     "all" | "selected" | "unselected"
   >("all");
+  const [loading, setLoader] = useState<boolean>(false);
 
   const { addToast } = useToast();
-  const { setLoader } = useLoader();
+  // const { setLoader } = useLoader();
 
   useEffect(() => {
     if (activeTab === "appliedCases") {
@@ -132,6 +133,12 @@ const ClientCaseManagement: React.FC = () => {
   const openConfirmationModalForDelete = (caseId: number) => {
     setCaseToDelete(caseId);
     setIsConfirmationModalOpen(true);
+  };
+  const spinnerStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: "90px",
   };
 
   const handleDeleteCase = async () => {
@@ -210,31 +217,33 @@ const ClientCaseManagement: React.FC = () => {
           </nav>
         </div>
 
-        {activeTab === "appliedCases" && (
-          <section id="applied-cases" className="mb-12 max-w-5xl mx-auto">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800 p-5 text-center">
-              Your Applied Cases
-            </h2>
-            <div className="flex justify-end text-xs py-2">
-              <select
-                className="p-1 bg-transparent border text-xs shadow px-3 py-2 border-white  rounded-lg"
-                value={selectedFilter}
-                onChange={handleFilterChange}
-              >
-                <option value="all">All Cases</option>
-                <option value="selected">Selected Cases</option>
-                <option value="unselected">Unselected Cases</option>
-              </select>
-            </div>
-            <motion.div
-              className="bg-white no-scrollbar rounded-lg overflow-x-scroll shadow-md border border-gray-200"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-            >
-              <table className="w-full border table-auto border-collapse bg-white">
-                <thead>
-                  {/* <tr className="bg-gray-50 border-b-2 text-sm">
+        {!loading ? (
+          <div>
+            {activeTab === "appliedCases" && (
+              <section id="applied-cases" className="mb-12 max-w-5xl mx-auto">
+                <h2 className="text-2xl font-semibold mb-4 text-gray-800 p-5 text-center">
+                  Your Applied Cases
+                </h2>
+                <div className="flex justify-end text-xs py-2">
+                  <select
+                    className="p-1 bg-transparent border text-xs shadow px-3 py-2 border-white  rounded-lg"
+                    value={selectedFilter}
+                    onChange={handleFilterChange}
+                  >
+                    <option value="all">All Cases</option>
+                    <option value="selected">Selected Cases</option>
+                    <option value="unselected">Unselected Cases</option>
+                  </select>
+                </div>
+                <motion.div
+                  className="bg-white no-scrollbar rounded-lg overflow-x-scroll shadow-md border border-gray-200"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <table className="w-full border table-auto border-collapse bg-white">
+                    <thead>
+                      {/* <tr className="bg-gray-50 border-b-2 text-sm">
                     <th className="py-3 px-4 text-center text-gray-600 font-medium">
                       Case Type
                     </th>
@@ -246,99 +255,101 @@ const ClientCaseManagement: React.FC = () => {
                     </th>
                     <th className="py-3 px-4 text-center text-gray-600 font-medium"></th>
                   </tr> */}
-                  <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                    <th className="px-6 py-3">Case Type</th>
-                    <th className="px-6 py-3">Status</th>
-                    <th className="px-6 py-3">Reference Until</th>
-                    <th className="px-6 py-3">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {cases.length > 0 ? (
-                    cases.map((caseItem) => (
-                      <tr
-                        key={caseItem.id}
-                        className="hover:bg-gray-50 text-xs"
-                      >
-                        <td className="py-4 text-center px-4 text-gray-800">
-                          {caseItem.case_type}
-                        </td>
-                        <td className="py-4 px-4 text-center">
-                          <span
-                            className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-md ${
-                              caseItem.status === "Accepted"
-                                ? "bg-green-100 text-green-800"
-                                : caseItem.status === "Pending"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-red-100 text-red-800"
-                            }`}
-                          >
-                            {caseItem.status}
-                          </span>
-                        </td>
-                        <td className="py-4 px-4 text-center text-gray-600">
-                          {caseItem.reference_until}
-                        </td>
-                        <td className="py-4 flex  px-4 text-center space-x-4">
-                          {caseItem.status == "Outdated" ? (
-                            <button className="text-gray-500">No Data</button>
-                          ) : (
-                            <button
-                              onClick={() => handleViewDetails(caseItem.id)}
-                              className="text-blue-600 hover:underline"
-                            >
-                              View Details
-                            </button>
-                          )}
-                          <button
-                            onClick={() =>
-                              openConfirmationModalForDelete(caseItem.id)
-                            }
-                            className="text-red-600 hover:underline"
-                          >
-                            Delete
-                          </button>
-                        </td>
+                      <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <th className="px-6 py-3">Case Type</th>
+                        <th className="px-6 py-3">Status</th>
+                        <th className="px-6 py-3">Reference Until</th>
+                        <th className="px-6 py-3">Actions</th>
                       </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan={4}
-                        className="py-4 px-4 text-center text-gray-600"
-                      >
-                        No cases available.
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+                    </thead>
+                    <tbody>
+                      {cases.length > 0 ? (
+                        cases.map((caseItem) => (
+                          <tr
+                            key={caseItem.id}
+                            className="hover:bg-gray-50 text-xs"
+                          >
+                            <td className="py-4 text-center px-4 text-gray-800">
+                              {caseItem.case_type}
+                            </td>
+                            <td className="py-4 px-4 text-center">
+                              <span
+                                className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-md ${
+                                  caseItem.status === "Accepted"
+                                    ? "bg-green-100 text-green-800"
+                                    : caseItem.status === "Pending"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-red-100 text-red-800"
+                                }`}
+                              >
+                                {caseItem.status}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-center text-gray-600">
+                              {caseItem.reference_until}
+                            </td>
+                            <td className="py-4 flex  px-4 text-center space-x-4">
+                              {caseItem.status == "Outdated" ? (
+                                <button className="text-gray-500">
+                                  No Data
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleViewDetails(caseItem.id)}
+                                  className="text-blue-600 hover:underline"
+                                >
+                                  View Details
+                                </button>
+                              )}
+                              <button
+                                onClick={() =>
+                                  openConfirmationModalForDelete(caseItem.id)
+                                }
+                                className="text-red-600 hover:underline"
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={4}
+                            className="py-4 px-4 text-center text-gray-600"
+                          >
+                            No cases available.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
 
-              {/* Pagination Controls */}
-              <div className="flex justify-end items-center bg-gray-50 px-6 py-3 border-t border-gray-200">
-                <button
-                  className="px-4 py-2 border border-gray-300 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-3"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.max(prev - 1, 1))
-                  }
-                  disabled={currentPage === 1}
-                >
-                  Previous
-                </button>
-                <span className="text-xs text-gray-700">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  className="ml-3 px-4 py-2 border border-gray-300 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                  }
-                  disabled={currentPage === totalPages}
-                >
-                  Next
-                </button>
-              </div>
-              {/* <div className="flex justify-end gap-3  text-[10px] items-center mt-4">
+                  {/* Pagination Controls */}
+                  <div className="flex justify-end items-center bg-gray-50 px-6 py-3 border-t border-gray-200">
+                    <button
+                      className="px-4 py-2 border border-gray-300 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 mr-3"
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.max(prev - 1, 1))
+                      }
+                      disabled={currentPage === 1}
+                    >
+                      Previous
+                    </button>
+                    <span className="text-xs text-gray-700">
+                      Page {currentPage} of {totalPages}
+                    </span>
+                    <button
+                      className="ml-3 px-4 py-2 border border-gray-300 rounded-md text-xs font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      onClick={() =>
+                        setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                      }
+                      disabled={currentPage === totalPages}
+                    >
+                      Next
+                    </button>
+                  </div>
+                  {/* <div className="flex justify-end gap-3  text-[10px] items-center mt-4">
                 <button
                   className="px-4 py-2 bg-gray-200 rounded-full hover:bg-gray-300"
                   onClick={() =>
@@ -361,133 +372,146 @@ const ClientCaseManagement: React.FC = () => {
                   Next
                 </button>
               </div> */}
-            </motion.div>
-          </section>
-        )}
+                </motion.div>
+              </section>
+            )}
 
-        {activeTab === "applyCase" && (
-          <section id="apply" className="max-w-5xl mx-auto">
-            <h2 className="text-2xl font-semibold mb-4 text-gray-800 p-6 text-center">
-              Apply for a New Case
-            </h2>
-            <motion.div
-              className="p-6 rounded-lg bg-white shadow-md border border-gray-200"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              <Formik
-                initialValues={{
-                  case_type: "",
-                  description: "",
-                  reference_until: "",
-                  budget: "",
-                  state: "",
-                }}
-                validationSchema={validationSchema}
-                onSubmit={handleFormSubmit}
-              >
-                {({ values, errors, touched, handleChange, handleBlur }) => (
-                  <Form className="space-y-6">
-                    <div className="sm:grid sm:gap-2 grid-cols-2">
-                      <CustomInputFullSized
-                        label="Case Type"
-                        inputType="text"
-                        name="case_type"
-                        id="case_type"
-                        value={values.case_type}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.case_type ? errors.case_type : ""}
-                        required
-                      />
-                      <CustomInputFullSized
-                        label="Budget"
-                        inputType="number"
-                        name="budget"
-                        id="budget"
-                        value={values.budget}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.budget ? errors.budget : ""}
-                        required
-                      />
-                    </div>
-                    <div className="sm:grid sm:grid-cols-2 sm:gap-2 items-start">
-                      <CustomInputFullSized
-                        label="Reference Until"
-                        inputType="date"
-                        name="reference_until"
-                        id="reference_until"
-                        value={values.reference_until}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={
-                          touched.reference_until ? errors.reference_until : ""
-                        }
-                        required
-                      />
-                      <div className="sm:grid text-xs max-sm:mt-4">
-                        <label
-                          htmlFor="state"
-                          className="block text-gray-700 mb-1"
-                        >
-                          State
-                        </label>
-                        <Field
-                          as="select"
-                          id="state"
-                          name="state"
-                          className={`
+            {activeTab === "applyCase" && (
+              <section id="apply" className="max-w-5xl mx-auto">
+                <h2 className="text-2xl font-semibold mb-4 text-gray-800 p-6 text-center">
+                  Apply for a New Case
+                </h2>
+                <motion.div
+                  className="p-6 rounded-lg bg-white shadow-md border border-gray-200"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Formik
+                    initialValues={{
+                      case_type: "",
+                      description: "",
+                      reference_until: "",
+                      budget: "",
+                      state: "",
+                    }}
+                    validationSchema={validationSchema}
+                    onSubmit={handleFormSubmit}
+                  >
+                    {({
+                      values,
+                      errors,
+                      touched,
+                      handleChange,
+                      handleBlur,
+                    }) => (
+                      <Form className="space-y-6">
+                        <div className="sm:grid sm:gap-2 grid-cols-2">
+                          <CustomInputFullSized
+                            label="Case Type"
+                            inputType="text"
+                            name="case_type"
+                            id="case_type"
+                            value={values.case_type}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={touched.case_type ? errors.case_type : ""}
+                            required
+                          />
+                          <CustomInputFullSized
+                            label="Budget"
+                            inputType="number"
+                            name="budget"
+                            id="budget"
+                            value={values.budget}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={touched.budget ? errors.budget : ""}
+                            required
+                          />
+                        </div>
+                        <div className="sm:grid sm:grid-cols-2 sm:gap-2 items-start">
+                          <CustomInputFullSized
+                            label="Reference Until"
+                            inputType="date"
+                            name="reference_until"
+                            id="reference_until"
+                            value={values.reference_until}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={
+                              touched.reference_until
+                                ? errors.reference_until
+                                : ""
+                            }
+                            required
+                          />
+                          <div className="sm:grid text-xs max-sm:mt-4">
+                            <label
+                              htmlFor="state"
+                              className="block text-gray-700 mb-1"
+                            >
+                              State
+                            </label>
+                            <Field
+                              as="select"
+                              id="state"
+                              name="state"
+                              className={`
      block mt-1 w-full py-4 text-xs border rounded-lg shadow-sm text-gray-700
      ${errors.state && touched.state ? "border-red-600" : "border-gray-200"}
    `}
-                        >
-                          <option value="" label="Select a state" />
-                          {states.map((state) => (
-                            <option
-                              key={state.id}
-                              value={state.id}
-                              label={state.name}
+                            >
+                              <option value="" label="Select a state" />
+                              {states.map((state) => (
+                                <option
+                                  key={state.id}
+                                  value={state.id}
+                                  label={state.name}
+                                />
+                              ))}
+                            </Field>
+                            <ErrorMessage
+                              name="state"
+                              component="div"
+                              className="text-red-600 text-[10px]"
                             />
-                          ))}
-                        </Field>
-                        <ErrorMessage
-                          name="state"
-                          component="div"
-                          className="text-red-600 text-[10px]"
+                          </div>
+                        </div>
+                        <CustomInputFullSized
+                          label="Description"
+                          inputType="textarea"
+                          name="description"
+                          id="description"
+                          value={values.description}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          error={touched.description ? errors.description : ""}
+                          required
                         />
-                      </div>
-                    </div>
-                    <CustomInputFullSized
-                      label="Description"
-                      inputType="textarea"
-                      name="description"
-                      id="description"
-                      value={values.description}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      error={touched.description ? errors.description : ""}
-                      required
-                    />
 
-                    <button
-                      type="submit"
-                      className="w-full bg-slate-600 text-white text-xs py-3 rounded-lg"
-                    >
-                      {isSubmitting ? (
-                        <PulseLoader color="#ffffff" />
-                      ) : (
-                        "Submit Case"
-                      )}
-                    </button>
-                  </Form>
-                )}
-              </Formik>
-            </motion.div>
-          </section>
+                        <button
+                          type="submit"
+                          className="w-full bg-slate-600 text-white text-xs py-3 rounded-lg"
+                        >
+                          {isSubmitting ? (
+                            <PulseLoader color="#ffffff" />
+                          ) : (
+                            "Submit Case"
+                          )}
+                        </button>
+                      </Form>
+                    )}
+                  </Formik>
+                </motion.div>
+              </section>
+            )}
+          </div>
+        ) : (
+          <div style={spinnerStyle}>
+            <BeatLoader color="#312e81" />
+          </div>
         )}
-
         {/* Modal for Case Details */}
         {isModalOpen && (
           <Modal

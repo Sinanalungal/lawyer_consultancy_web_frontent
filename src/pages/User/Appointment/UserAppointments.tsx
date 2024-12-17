@@ -5,11 +5,11 @@ import {
   fetchBookedSessions,
 } from "../../../services/ScheduleSession";
 import { Appointment } from "../../../types";
-import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 import { useToast } from "../../../components/Toast/ToastManager";
 import Modal from "../../../components/Modal/Modal";
 import { useNavigate } from "react-router-dom";
 import isOnline from 'is-online';
+import { BeatLoader } from "react-spinners";
 
 
 interface AppointmentManipulated {
@@ -36,7 +36,8 @@ const UserAppointments: React.FC = () => {
   );
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [modalData, setModalData] = useState<AppointmentManipulated | null>(null);
-  const { setLoader } = useLoader();
+  const [loading,setLoader] = useState<boolean>(false)
+  // const { setLoader } = useLoader();
   const { addToast } = useToast();
   const navigate = useNavigate();
 
@@ -94,7 +95,12 @@ const UserAppointments: React.FC = () => {
   useEffect(() => {
     fetchAppointments(activeTab);
   }, [activeTab]);
-
+  const spinnerStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop:'90px'
+  };
   return (
     <>
       <div className="relative sm:px-6 px-2 mx-auto w-full min-h-[400px]">
@@ -131,7 +137,7 @@ const UserAppointments: React.FC = () => {
               </button>
             </nav>
           </div>
-          <motion.div
+          {!loading?<motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
@@ -239,7 +245,9 @@ const UserAppointments: React.FC = () => {
                 </p>{" "}
               </div>
             )}{" "}
-          </motion.div>{" "}
+          </motion.div>:<div  style={spinnerStyle}>
+              <BeatLoader color="#312e81" />
+            </div>}
         </motion.div>{" "}
       </div>{" "}
       {modalData && (

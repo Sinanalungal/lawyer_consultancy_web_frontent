@@ -3,6 +3,7 @@ import { getUserNotifications } from "../../services/Notifications";
 import { useToast } from "../Toast/ToastManager";
 import "./Notification.css";
 import { useAppSelector } from "../../redux/store";
+import { DatabaseBackup } from "lucide-react";
 
 interface Notification {
   id: number;
@@ -64,13 +65,13 @@ const NotificationLayer: React.FC<NotificationLayerProps> = ({ open = false ,onC
       <div
         className={`fixed z-50 max-sm:min-w-[220px] ${
           role == "user" && "top-[75px] sm:right-6"
-        } sm:w-[350px] no-scrollbar overflow-y-scroll h-[400px] right-0 bg-white border border-gray-200 shadow-lg py-4 rounded-lg transition-transform transform ${
+        } sm:w-[350px] no-scrollbar overflow-y-scroll right-0 bg-white border border-gray-200 shadow-lg py-4 rounded-lg transition-transform transform ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
       >
         <div className="px-4">
           <h2 className="font-bold text-xl text-gray-800 mb-4 flex justify-between"><span>Notifications</span> <span className="cursor-pointer" onClick={onClose}><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span></h2>
-          <div className="grid gap-4">
+          {notifications.length > 0 && <div className="grid gap-4">
             {notifications.map((notificationObj, index) => (
               <div
                 key={index}
@@ -92,7 +93,8 @@ const NotificationLayer: React.FC<NotificationLayerProps> = ({ open = false ,onC
                 </div>
               </div>
             ))}
-          </div>
+          </div>}
+          {notifications.length == 0  && !loading && <div className="flex justify-center items-center gap-2"><DatabaseBackup /><div className="text-sm">No notifications</div></div>}
 
           {loading && (
             <div className="flex justify-center items-center mt-4">

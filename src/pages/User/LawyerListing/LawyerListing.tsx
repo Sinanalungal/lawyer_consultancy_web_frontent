@@ -10,8 +10,8 @@ import LanguageSelector from "../../../components/Filter/FilterComponentLanguage
 import ExperienceSelector from "../../../components/Filter/FilterComponentExperience";
 import SearchComponent from "./Search";
 import { AnimatePresence, motion } from "framer-motion";
-import { useLoader } from "../../../components/GlobelLoader/GlobelLoader";
 import { BlurFade } from "../../../components/Ui/blur-fade";
+import { BeatLoader } from "react-spinners";
 
 const experienceLevels: string[] = [
   "All",
@@ -50,7 +50,8 @@ const LawyerListing: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const [next, setNext] = useState<string | null>(null);
-  const { setLoader } = useLoader();
+  const [loader,setLoader]=useState<boolean>(false)
+  // const { setLoader } = useLoader();
 
   console.log(searchQuery);
   useEffect(() => {
@@ -136,6 +137,12 @@ const LawyerListing: React.FC = () => {
 
   const toggleDrawer = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+  const spinnerStyle = {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop:'50px'
   };
 
   return (
@@ -255,7 +262,7 @@ const LawyerListing: React.FC = () => {
 
       <div className="relative z-10 -mt-8 pt-20">
         <BlurFade delay={0.25} inView>
-          <div className="flex flex-wrap justify-center gap-3 py-6 px-3">
+          {!loader ?<div className="flex flex-wrap justify-center gap-3 py-6 px-3">
             {lawyers && Array.isArray(lawyers) && lawyers.length > 0 ? (
               lawyers.map((lawyer, index) => (
                 <div
@@ -292,7 +299,9 @@ const LawyerListing: React.FC = () => {
                 </p>
               </div>
             )}
-          </div>
+          </div>:<div  style={spinnerStyle}>
+              <BeatLoader  color="#312e81" />
+            </div>}
         </BlurFade>
 
         {next && (

@@ -161,7 +161,7 @@ const SavedAndLikedBlogs: React.FC = () => {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    height: "100vh",
+    height: "90px",
   };
 
   return (

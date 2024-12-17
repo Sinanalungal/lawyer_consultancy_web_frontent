@@ -8,6 +8,7 @@ import SearchForm from "../../../components/Search/Search";
 import Pagination from "../../../components/Pagination/Pagination";
 import SelectionBox from "../../../components/SelectBox/SelectBox";
 import { ChevronDown, DatabaseBackup } from "lucide-react";
+import { BeatLoader } from "react-spinners";
 
 interface TableColumn {
   key: string;
@@ -31,19 +32,23 @@ const AdminBlog: React.FC = () => {
   );
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
+  const [loading, setLoader] = useState<boolean>(false);
   // const navigate = useNavigate();
 
   // Fetch data function
   const fetchData = async (url: string | null) => {
     if (url) {
       try {
+        setLoader(true);
         const data: BlogResponse = await fetchBlogs(url, search, status);
         setBlogs(data.results);
         setNextPage(data.next);
         setPrevPage(data.previous);
         setTotalCount(Math.ceil(data.count / 10));
+        setLoader(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setLoader(false);
       }
     }
   };
@@ -185,34 +190,49 @@ const AdminBlog: React.FC = () => {
                     ))}
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {data.length > 0 ? (
-                    data.map((row: TableRow, rowIndex) => (
-                      <tr
-                        key={rowIndex}
-                        className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
-                      >
-                        {columns.map((column) => (
-                          <td key={column.key} className="px-4 py-4">
-                            {row[column.key]}
-                          </td>
-                        ))}
-                      </tr>
-                    ))
-                  ) : (
+                {loading ? (
+                  <tbody>
                     <tr>
                       <td
                         colSpan={columns.length}
-                        className="px-6 py-16 whitespace-nowrap text-sm text-gray-500 text-center"
+                        className="text-center py-16"
                       >
-                        <div className="flex flex-col items-center justify-center space-y-2">
-                          <DatabaseBackup className="h-12 w-12 text-gray-400" />
-                          <p>No data available</p>
+                        <div className="flex justify-center items-center w-full">
+                          <BeatLoader color="#312e81" />
                         </div>
                       </td>
                     </tr>
-                  )}
-                </tbody>
+                  </tbody>
+                ) : (
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {data.length > 0 ? (
+                      data.map((row: TableRow, rowIndex) => (
+                        <tr
+                          key={rowIndex}
+                          className={`p-5 whitespace-nowrap text-xs leading-6 font-medium text-gray-900`}
+                        >
+                          {columns.map((column) => (
+                            <td key={column.key} className="px-4 py-4">
+                              {row[column.key]}
+                            </td>
+                          ))}
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td
+                          colSpan={columns.length}
+                          className="px-6 py-16 whitespace-nowrap text-sm text-gray-500 text-center"
+                        >
+                          <div className="flex flex-col items-center justify-center space-y-2">
+                            <DatabaseBackup className="h-12 w-12 text-gray-400" />
+                            <p>No data available</p>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                )}
               </table>
             </div>
           </div>
