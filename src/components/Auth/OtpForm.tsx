@@ -133,7 +133,7 @@ const OtpForm: React.FC<OtpFormProps> = () => {
       <form onSubmit={handleSubmit}>
       {!closed && (
         <div className="bg-blue-50  mb-6 p-3 rounded-md flex justify-between items-center text-blue-800">
-          <span className="text-sm font-roboto">OTP sent to your registered phone number</span>
+          <span className="text-sm font-roboto">OTP sent to your registered email</span>
           <button 
             onClick={() => setClosed(true)} 
             className="text-blue-600 hover:text-blue-800"
